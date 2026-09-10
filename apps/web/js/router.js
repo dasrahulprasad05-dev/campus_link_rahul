@@ -103,5 +103,11 @@ const Router = (() => {
     return Object.fromEntries(new URLSearchParams(queryString));
   }
 
+  // Initialize router
+  function init() {
+    window.addEventListener('hashchange', () => _resolve(false));
+    _resolve(true); // Handle initial load
+  }
+
   return { register, navigate, current, onNotFound, init, resolve: _resolve, getParams };
 })();

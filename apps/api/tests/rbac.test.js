@@ -3,18 +3,19 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const request = require('supertest');
 const app = require('../server');
+const { generateToken } = require('../middleware/auth');
 
-async function getAuthToken(role, customEmail) {
-  const email = customEmail || `rbac_${role}_${Date.now()}_${Math.random().toString(36).substring(7)}@campuslink.in`;
-  const res = await request(app)
-    .post('/api/v1/auth/register')
-    .send({
-      name: `${role.toUpperCase()} User`,
-      email,
-      password: 'TestPassword123!',
-      role,
-    });
-  return res.body.token;
+function getAuthToken(role) {
+  if (role === 'admin') {
+    return generateToken({ id: 'u-2', name: 'Dr. Rajesh Nayak', email: 'admin@campuslink.in', role: 'admin' });
+  }
+  if (role === 'recruiter') {
+    return generateToken({ id: 'u-3', name: 'Sneha Patel', email: 'recruiter@campuslink.in', role: 'recruiter' });
+  }
+  if (role === 'mentor') {
+    return generateToken({ id: 'u-4', name: 'Prof. Suresh Mishra', email: 'mentor@campuslink.in', role: 'mentor' });
+  }
+  return generateToken({ id: 'u-1', name: 'Ananya Sharma', email: 'student@campuslink.in', role: 'student' });
 }
 
 test('RBAC: Student cannot create a job posting (403 Forbidden)', async () => {

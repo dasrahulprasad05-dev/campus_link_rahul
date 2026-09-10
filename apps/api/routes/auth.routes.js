@@ -38,7 +38,9 @@ router.post('/register', async (req, res) => {
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
-    const assignedRole = role && ['student', 'admin', 'recruiter', 'mentor'].includes(role) ? role : 'student';
+    // Architecture Freeze Rule 4: Public registration strictly creates STUDENT accounts only.
+    // Any role parameter in request body is intentionally ignored to prevent privilege escalation.
+    const assignedRole = 'student';
 
     const newUser = await userRepo.create({
       name: name.trim(),

@@ -126,3 +126,21 @@ test('GET /api/v1/auth/me returns 401 Unauthorized without token', async () => {
   assert.equal(res.status, 401);
   assert.equal(res.body.success, false);
 });
+
+test('POST /api/v1/auth/register prevents privilege escalation (forces student role when admin requested)', async () => {
+  const email = `hacker_attempt_${Date.now()}@university.edu`;
+  const res = await request(app)
+    .post('/api/v1/auth/register')
+    .send({
+      name: 'Sneaky Attacker',
+      email,
+      password: 'AttackPassword123!',
+      role: 'admin', // Malicious attempt to self-provision admin account
+    });
+
+  assert.equal(res.status, 201);
+  assert.equal(res.body.success, true);
+  assert.equal(res.body.user.role, 'student', 'Public registration MUST force role to student');
+  assert.notEqual(res.body.user.role, 'admin', 'Public registration must never allow self-promoting to admin');
+});
+

@@ -30,21 +30,19 @@ router.get('/', authenticate, async (req, res) => {
 // POST /api/v1/applications — submit job application (Student only)
 router.post('/', authenticate, authorize('student'), async (req, res) => {
   try {
-    const { jobId, jobTitle, company } = req.body;
-    if (!jobTitle || !company) {
+    const targetJobId = jobId || req.body.job_id;
+    if (!targetJobId && (!jobTitle || !company)) {
       return res.status(400).json({
         success: false,
-        error: { code: 'VALIDATION_ERROR', message: 'Job title and company are required to apply' }
+        error: { code: 'VALIDATION_ERROR', message: 'Job ID or job details are required to apply' }
       });
     }
 
     const app = await appRepo.createApplication({
       student_id: req.user.id,
-      job_id: jobId,
-      job: jobTitle,
-      company: company,
+      job_id: targetJobId || 'job-1',
       status: 'applied',
-      round: 'Initial Screening',
+      current_round: 'Resume Screening',
     });
 
     res.status(201).json({ success: true, data: app });

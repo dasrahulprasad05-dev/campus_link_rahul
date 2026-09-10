@@ -54,11 +54,14 @@ router.post('/', authenticate, authorize('recruiter', 'admin'), async (req, res)
     const job = await jobRepo.createJob({
       title,
       company,
+      company_id: req.body.company_id,
+      recruiter_id: req.user.id,
+      description: req.body.description,
       location,
       type,
       deadline,
-      skills: Array.isArray(skills) ? skills : (skills ? skills.split(',').map(s => s.trim()) : []),
-      match: 85,
+      min_cgpa: req.body.min_cgpa || 0,
+      skills_required: Array.isArray(skills) ? skills : (skills ? skills.split(',').map(s => s.trim()) : []),
     });
 
     res.status(201).json({ success: true, data: job });

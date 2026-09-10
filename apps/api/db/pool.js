@@ -477,5 +477,7 @@ const memoryDb = (() => {
 module.exports = {
   query,
   pool,
+  getPool: () => pool,
   isConnected: () => isConnected,
+  isDatabaseConnected: () => isConnected,
 };

@@ -5,7 +5,10 @@
    ============================================================ */
 
 const API = (() => {
-  const BASE = '/api/v1';
+  const getBase = () => {
+    const root = (window.__API_URL__ || localStorage.getItem('CAMPUSLINK_API_URL') || '').replace(/\/+$/, '');
+    return `${root}/api/v1`;
+  };
 
   // ---- Demo / Offline Data ----
   const DEMO = {
@@ -167,7 +170,7 @@ const API = (() => {
     };
 
     try {
-      const res = await fetch(BASE + path, { ...options, headers });
+      const res = await fetch(getBase() + path, { ...options, headers });
 
       if (res.status === 401) {
         Store.reset();

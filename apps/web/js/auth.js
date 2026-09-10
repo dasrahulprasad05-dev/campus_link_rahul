@@ -13,9 +13,14 @@ const Auth = (() => {
     'mentor@campuslink.in':  { id: 'u-4', name: 'Prof. Suresh Mishra', email: 'mentor@campuslink.in', role: 'mentor', password: 'demo123' },
   };
 
+  const getBase = () => {
+    const root = (window.__API_URL__ || localStorage.getItem('CAMPUSLINK_API_URL') || '').replace(/\/+$/, '');
+    return `${root}/api/v1/auth`;
+  };
+
   async function login(email, password) {
     try {
-      const res = await fetch('/api/v1/auth/login', {
+      const res = await fetch(`${getBase()}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -61,7 +66,7 @@ const Auth = (() => {
 
   async function register(data) {
     try {
-      const res = await fetch('/api/v1/auth/register', {
+      const res = await fetch(`${getBase()}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -102,7 +107,7 @@ const Auth = (() => {
 
   async function forgotPassword(email) {
     try {
-      const res = await fetch('/api/v1/auth/forgot-password', {
+      const res = await fetch(`${getBase()}/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
@@ -119,7 +124,7 @@ const Auth = (() => {
 
   async function resetPassword(token, newPassword) {
     try {
-      const res = await fetch('/api/v1/auth/reset-password', {
+      const res = await fetch(`${getBase()}/reset-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, newPassword }),
@@ -136,7 +141,7 @@ const Auth = (() => {
 
   async function verifyEmail(token) {
     try {
-      const res = await fetch(`/api/v1/auth/verify-email?token=${encodeURIComponent(token)}`);
+      const res = await fetch(`${getBase()}/verify-email?token=${encodeURIComponent(token)}`);
       const data = await res.json();
       if (!res.ok) {
         return { success: false, error: data.error?.message || 'Verification failed' };
@@ -155,7 +160,7 @@ const Auth = (() => {
 
   async function resendVerification(email) {
     try {
-      const res = await fetch('/api/v1/auth/resend-verification', {
+      const res = await fetch(`${getBase()}/resend-verification`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

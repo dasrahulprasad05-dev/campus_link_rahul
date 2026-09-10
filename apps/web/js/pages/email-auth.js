@@ -260,12 +260,30 @@ const EmailAuthPages = (() => {
             <form id="reset-password-form" onsubmit="return false">
               <div class="form-group mb-4">
                 <label class="form-label" for="new-password">New Password</label>
-                <input type="password" id="new-password" class="form-input" placeholder="Min 8 characters" required>
+                <div style="position:relative; display:flex; align-items:center; width:100%;">
+                  <input type="password" id="new-password" class="form-input" placeholder="Min 8 characters" required style="padding-right:44px; width:100%;">
+                  <button type="button" class="password-toggle-btn"
+                          onclick="Forms.togglePasswordVisibility('new-password', this)"
+                          style="position:absolute; right:12px; background:none; border:none; color:var(--text-muted, #94a3b8); cursor:pointer; font-size:18px; padding:4px; display:flex; align-items:center; justify-content:center; user-select:none; z-index:2;"
+                          title="Show password"
+                          aria-label="Toggle password visibility">
+                    👁️
+                  </button>
+                </div>
               </div>
 
               <div class="form-group mb-6">
                 <label class="form-label" for="confirm-password">Confirm New Password</label>
-                <input type="password" id="confirm-password" class="form-input" placeholder="••••••••" required>
+                <div style="position:relative; display:flex; align-items:center; width:100%;">
+                  <input type="password" id="confirm-password" class="form-input" placeholder="••••••••" required style="padding-right:44px; width:100%;">
+                  <button type="button" class="password-toggle-btn"
+                          onclick="Forms.togglePasswordVisibility('confirm-password', this)"
+                          style="position:absolute; right:12px; background:none; border:none; color:var(--text-muted, #94a3b8); cursor:pointer; font-size:18px; padding:4px; display:flex; align-items:center; justify-content:center; user-select:none; z-index:2;"
+                          title="Show password"
+                          aria-label="Toggle password visibility">
+                    👁️
+                  </button>
+                </div>
               </div>
 
               <button type="submit" class="btn btn-primary btn-lg" style="width:100%;" id="btn-save-new-pwd">

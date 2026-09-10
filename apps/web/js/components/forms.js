@@ -6,13 +6,26 @@
 const Forms = (() => {
   function input(options) {
     const { id, label, type = 'text', placeholder = '', value = '', required = false, hint = '', error = '' } = options;
+    const isPassword = type === 'password';
     return `
       <div class="form-group">
         ${label ? `<label class="form-label" for="${id}">${label}${required ? ' <span class="text-danger">*</span>' : ''}</label>` : ''}
-        <input class="form-input ${error ? 'error' : ''}"
-               type="${type}" id="${id}" name="${id}"
-               placeholder="${placeholder}" value="${value}"
-               ${required ? 'required' : ''}>
+        <div style="${isPassword ? 'position:relative; display:flex; align-items:center; width:100%;' : ''}">
+          <input class="form-input ${error ? 'error' : ''}"
+                 type="${type}" id="${id}" name="${id}"
+                 placeholder="${placeholder}" value="${value}"
+                 ${required ? 'required' : ''}
+                 ${isPassword ? 'style="padding-right: 44px; width:100%;"' : ''}>
+          ${isPassword ? `
+            <button type="button" class="password-toggle-btn"
+                    onclick="Forms.togglePasswordVisibility('${id}', this)"
+                    style="position:absolute; right:12px; background:none; border:none; color:var(--text-muted, #94a3b8); cursor:pointer; font-size:18px; padding:4px; display:flex; align-items:center; justify-content:center; user-select:none; z-index:2;"
+                    title="Show password"
+                    aria-label="Toggle password visibility">
+              👁️
+            </button>
+          ` : ''}
+        </div>
         ${hint ? `<div class="form-hint">${hint}</div>` : ''}
         ${error ? `<div class="form-error">${error}</div>` : ''}
       </div>
@@ -65,5 +78,21 @@ const Forms = (() => {
     return { valid, data };
   }
 
-  return { input, textarea, select, validate };
+  function togglePasswordVisibility(inputId, btn) {
+    const inputEl = document.getElementById(inputId);
+    if (!inputEl) return;
+    if (inputEl.type === 'password') {
+      inputEl.type = 'text';
+      btn.textContent = '🙈';
+      btn.title = 'Hide password';
+      btn.setAttribute('aria-label', 'Hide password');
+    } else {
+      inputEl.type = 'password';
+      btn.textContent = '👁️';
+      btn.title = 'Show password';
+      btn.setAttribute('aria-label', 'Show password');
+    }
+  }
+
+  return { input, textarea, select, validate, togglePasswordVisibility };
 })();

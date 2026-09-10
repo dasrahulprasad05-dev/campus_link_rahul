@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CAMPUSLINK — AI-powered campus-to-corporate placement management platform. Readiness scoring, skill-gap analysis, resume matching, mock interviews, and analytics.">
+  <meta name="keywords" content="placement, campus recruitment, AI, readiness score, skill gap, resume analyzer, BPUT">
+  <meta name="author" content="CAMPUSLINK">
+  <meta name="theme-color" content="#0f1117">
+  <title>CAMPUSLINK — Placement Intelligence Platform</title>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/design-system.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+
+  <!-- Favicon (inline SVG data URI) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%233b82f6'/%3E%3Ctext x='50' y='65' font-size='48' font-weight='800' font-family='Arial' text-anchor='middle' fill='white'%3ECL%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- SVG Definitions (gradients for score rings) -->
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="hsl(217, 91%, 60%)" />
+        <stop offset="100%" stop-color="hsl(270, 80%, 65%)" />
+      </linearGradient>
+      <linearGradient id="successGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="hsl(152, 60%, 48%)" />
+        <stop offset="100%" stop-color="hsl(180, 65%, 50%)" />
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <!-- App Mount Point -->
+  <div id="app"></div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- JS Modules -->
+  <script src="js/store.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/router.js"></script>
+  <script src="js/components/sidebar.js"></script>
+  <script src="js/components/topbar.js"></script>
+  <script src="js/components/kpi-card.js"></script>
+  <script src="js/components/chart.js"></script>
+  <script src="js/components/data-table.js"></script>
+  <script src="js/components/modal.js"></script>
+  <script src="js/components/forms.js"></script>
+  <script src="js/components/score-ring.js"></script>
+  <script src="js/components/skill-badge.js"></script>
+  <script src="js/components/toast.js"></script>
+  <script src="js/pages/landing.js"></script>
+  <script src="js/pages/login.js"></script>
+  <script src="js/pages/register.js"></script>
+  <script src="js/pages/student/dashboard.js"></script>
+  <script src="js/pages/student/profile.js"></script>
+  <script src="js/pages/student/readiness.js"></script>
+  <script src="js/pages/student/skill-gap.js"></script>
+  <script src="js/pages/student/jobs.js"></script>
+  <script src="js/pages/student/applications.js"></script>
+  <script src="js/pages/student/resume.js"></script>
+  <script src="js/pages/student/interview.js"></script>
+  <script src="js/pages/student/roadmap.js"></script>
+  <script src="js/pages/admin/dashboard.js"></script>
+  <script src="js/pages/admin/students.js"></script>
+  <script src="js/pages/admin/companies.js"></script>
+  <script src="js/pages/admin/drives.js"></script>
+  <script src="js/pages/admin/scheduler.js"></script>
+  <script src="js/pages/admin/analytics.js"></script>
+  <script src="js/pages/admin/interventions.js"></script>
+  <script src="js/pages/recruiter/dashboard.js"></script>
+  <script src="js/pages/recruiter/jobs.js"></script>
+  <script src="js/pages/recruiter/matches.js"></script>
+  <script src="js/pages/recruiter/pipeline.js"></script>
+  <script src="js/pages/mentor/dashboard.js"></script>
+  <script src="js/pages/mentor/students.js"></script>
+  <script src="js/pages/mentor/roadmaps.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

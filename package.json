@@ -1,0 +1,17 @@
+{
+  "name": "campuslink",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CAMPUSLINK — AI-Powered Campus-to-Corporate Placement Management Platform",
+  "scripts": {
+    "dev": "cd apps/api && npm run dev",
+    "start": "cd apps/api && npm start",
+    "test": "cd apps/api && npm test",
+    "install:api": "cd apps/api && npm install",
+    "setup": "npm run install:api",
+    "ai-service": "cd apps/ai-service && uvicorn main:app --reload --port 8000"
+  },
+  "keywords": ["placement", "campus-recruitment", "ai", "bput-hackathon"],
+  "author": "CAMPUSLINK Team",
+  "license": "MIT"
+}

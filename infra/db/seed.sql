@@ -13,7 +13,7 @@ ON CONFLICT (email) DO NOTHING;
 
 -- Student Profile
 INSERT INTO student_profiles (user_id, reg_no, branch, year, cgpa, target_role, phone, linkedin, github, skills, certifications, profile_completion, readiness_score) VALUES
-('a1b2c3d4-0001-0001-0001-000000000001', 'BPUT2022CSE1042', 'Computer Science & Engineering', 2026, 8.42, 'Data Analyst', '+91 98765 43210', 'linkedin.com/in/ananya-sharma', 'github.com/ananyasharma', ARRAY['Python','SQL','Excel','Data Analysis','Communication','Statistics'], ARRAY['Google Data Analytics Certificate','AWS Cloud Practitioner'], 91, 78)
+('a1b2c3d4-0001-0001-0001-000000000001', 'UNIV2022CSE1042', 'Computer Science & Engineering', 2026, 8.42, 'Data Analyst', '+91 98765 43210', 'linkedin.com/in/ananya-sharma', 'github.com/ananyasharma', ARRAY['Python','SQL','Excel','Data Analysis','Communication','Statistics'], ARRAY['Google Data Analytics Certificate','AWS Cloud Practitioner'], 91, 78)
 ON CONFLICT (user_id) DO NOTHING;
 
 -- Companies

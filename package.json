@@ -11,7 +11,7 @@
     "setup": "npm run install:api",
     "ai-service": "cd apps/ai-service && uvicorn main:app --reload --port 8000"
   },
-  "keywords": ["placement", "campus-recruitment", "ai", "bput-hackathon"],
+  "keywords": ["placement", "campus-recruitment", "ai", "placement-intelligence", "career-automation"],
   "author": "CAMPUSLINK Team",
   "license": "MIT"
 }

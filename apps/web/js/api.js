@@ -56,8 +56,8 @@ const API = (() => {
       ],
       profile: {
         name: 'Ananya Sharma',
-        email: 'ananya.sharma@bput.edu.in',
-        regNo: 'BPUT2022CSE1042',
+        email: 'ananya.sharma@campuslink.in',
+        regNo: 'UNIV2022CSE1042',
         branch: 'Computer Science & Engineering',
         year: 2026,
         cgpa: 8.42,

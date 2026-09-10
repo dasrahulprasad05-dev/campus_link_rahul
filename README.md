@@ -1,7 +1,7 @@
 # CAMPUSLINK
 
-> AI-Powered Campus-to-Corporate Placement Management Platform  
-> BPUT Hackathon 2026 — Problem Statement 10
+> Enterprise AI Placement Intelligence Platform  
+> Scalable campus-to-corporate talent intelligence, readiness scoring, and placement automation.
 
 ## 🚀 Quick Start
 

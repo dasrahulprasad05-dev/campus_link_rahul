@@ -44,7 +44,7 @@ const RegisterPage = (() => {
 
             <form id="register-form" onsubmit="return false">
               ${Forms.input({ id: 'reg-name', label: 'Full Name', placeholder: 'e.g. Ananya Sharma', required: true })}
-              ${Forms.input({ id: 'reg-email', label: 'Email', type: 'email', placeholder: 'your.name@bput.edu.in', required: true })}
+              ${Forms.input({ id: 'reg-email', label: 'Email', type: 'email', placeholder: 'your.name@university.edu', required: true })}
               <div class="form-row">
                 ${Forms.input({ id: 'reg-password', label: 'Password', type: 'password', placeholder: 'Min 8 characters', required: true })}
                 ${Forms.input({ id: 'reg-confirm', label: 'Confirm Password', type: 'password', placeholder: '••••••••', required: true })}

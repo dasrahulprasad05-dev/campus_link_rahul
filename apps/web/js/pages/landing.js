@@ -23,7 +23,7 @@ const LandingPage = (() => {
         <!-- Hero -->
         <section class="landing-section landing-hero">
           <div class="landing-hero-badge">
-            🚀 BPUT Hackathon 2026 — PS10
+            🚀 The Enterprise AI Placement Intelligence Platform
           </div>
           <h1>
             Your <span class="gradient-text">AI-Powered</span> Campus Placement Engine
@@ -120,7 +120,7 @@ const LandingPage = (() => {
         <!-- Footer -->
         <footer style="border-top:1px solid var(--border-subtle);padding:var(--space-6) var(--space-8);text-align:center">
           <p class="text-sm text-muted">
-            © 2026 CAMPUSLINK · Built for BPUT Hackathon PS10 · Privacy-first AI placement intelligence
+            © 2026 CAMPUSLINK Technologies Inc. · Next-Gen Placement Intelligence Platform · Privacy-First AI
           </p>
         </footer>
       </div>

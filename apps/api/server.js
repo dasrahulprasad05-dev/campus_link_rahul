@@ -4,6 +4,7 @@
    and structured response format.
    ============================================================ */
 
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
@@ -51,11 +52,16 @@ app.use('/api/v1/analytics', analyticsRoutes);
 app.use('/api/v1/scheduler', schedulerRoutes);
 app.use('/api/v1/ai', aiRoutes);
 
-// Dashboard endpoint (serves role-based data)
+const { authenticate } = require('./middleware/auth');
+
+// Dashboard endpoint (strictly authenticated; enforces role scoping)
 const demoData = require('./data/demo-data');
 
-app.get('/api/v1/dashboard', (req, res) => {
-  const role = req.query.role || 'student';
+app.get('/api/v1/dashboard', authenticate, (req, res) => {
+  let role = req.user.role || 'student';
+  if (req.user.role === 'admin' && req.query.role) {
+    role = req.query.role;
+  }
   const data = demoData[role];
   if (!data) return res.status(400).json({ success: false, error: { code: 'INVALID_ROLE', message: 'Invalid role' } });
   res.json(data);
@@ -109,9 +115,12 @@ app.post('/api/interviews/feedback', handleInterviewFeedback);
 app.post('/api/v1/scheduler/check', handleSchedulerCheck);
 app.post('/api/scheduler/check', handleSchedulerCheck);
 
-// Legacy dashboard compatibility route
-app.get('/api/dashboard', (req, res) => {
-  const role = req.query.role || 'student';
+// Legacy dashboard compatibility route (strictly authenticated)
+app.get('/api/dashboard', authenticate, (req, res) => {
+  let role = req.user.role || 'student';
+  if (req.user.role === 'admin' && req.query.role) {
+    role = req.query.role;
+  }
   res.json(demoData[role] || demoData.student);
 });
 

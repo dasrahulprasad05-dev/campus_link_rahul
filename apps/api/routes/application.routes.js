@@ -14,9 +14,15 @@ router.get('/', authenticate, async (req, res) => {
     let apps;
     if (req.user.role === 'student') {
       apps = await appRepo.listByStudent(req.user.id);
-    } else {
+    } else if (req.user.role === 'admin' || req.user.role === 'recruiter') {
       apps = await appRepo.listAll();
+    } else {
+      return res.status(403).json({
+        success: false,
+        error: { code: 'FORBIDDEN', message: 'Mentors cannot access cross-company application pipelines' }
+      });
     }
+
     res.json({
       success: true,
       data: apps.length ? apps : demoData.student.applications,
@@ -30,17 +36,17 @@ router.get('/', authenticate, async (req, res) => {
 // POST /api/v1/applications — submit job application (Student only)
 router.post('/', authenticate, authorize('student'), async (req, res) => {
   try {
-    const targetJobId = jobId || req.body.job_id;
-    if (!targetJobId && (!jobTitle || !company)) {
+    const targetJobId = req.body.jobId || req.body.job_id;
+    if (!targetJobId) {
       return res.status(400).json({
         success: false,
-        error: { code: 'VALIDATION_ERROR', message: 'Job ID or job details are required to apply' }
+        error: { code: 'VALIDATION_ERROR', message: 'Job ID is required to apply' }
       });
     }
 
     const app = await appRepo.createApplication({
       student_id: req.user.id,
-      job_id: targetJobId || 'job-1',
+      job_id: targetJobId,
       status: 'applied',
       current_round: 'Resume Screening',
     });
@@ -54,8 +60,9 @@ router.post('/', authenticate, authorize('student'), async (req, res) => {
 // PATCH /api/v1/applications/:id/status — update round/status (Recruiter / Admin only)
 router.patch('/:id/status', authenticate, authorize('recruiter', 'admin'), async (req, res) => {
   try {
-    const { status, round } = req.body;
-    const updated = await appRepo.updateStatus(req.params.id, status, round);
+    const { status, round, current_round } = req.body;
+    const targetRound = current_round || round;
+    const updated = await appRepo.updateStatus(req.params.id, status, targetRound);
     if (!updated) {
       return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Application not found' } });
     }

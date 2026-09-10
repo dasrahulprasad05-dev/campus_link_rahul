@@ -34,7 +34,8 @@ const Auth = (() => {
       const err = await res.json().catch(() => ({}));
       return { success: false, error: err.error?.message || 'Invalid credentials' };
     } catch (e) {
-      // Offline: check demo users
+      console.warn('[Auth] Backend API unreachable. Entering local demo simulation mode.');
+      if (typeof Toast !== 'undefined') Toast.show('API offline: Entering local demo mode', 'info');
       return loginOffline(email, password);
     }
   }
@@ -53,6 +54,7 @@ const Auth = (() => {
       user: safeUser,
       token: 'demo-jwt-' + Date.now(),
       role: safeUser.role,
+      isOfflineDemo: true,
     });
     return { success: true };
   }
@@ -78,17 +80,20 @@ const Auth = (() => {
       const err = await res.json().catch(() => ({}));
       return { success: false, error: err.error?.message || 'Registration failed' };
     } catch (e) {
-      // Offline: create demo user
+      console.warn('[Auth] Backend API unreachable. Creating simulated local student account.');
+      if (typeof Toast !== 'undefined') Toast.show('API offline: Account created in demo mode', 'info');
+      // Architecture Freeze Rule 4: Strictly lock role to student, preventing client-side escalation
       const newUser = {
         id: 'u-' + Date.now(),
         name: data.name,
         email: data.email,
-        role: data.role || 'student',
+        role: 'student',
       };
       Store.setMany({
         user: newUser,
         token: 'demo-jwt-' + Date.now(),
-        role: newUser.role,
+        role: 'student',
+        isOfflineDemo: true,
       });
       return { success: true };
     }

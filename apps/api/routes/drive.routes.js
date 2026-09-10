@@ -24,7 +24,7 @@ router.get('/', async (req, res) => {
 // POST /api/v1/drives — create drive (Strictly Admin only)
 router.post('/', authenticate, authorize('admin'), async (req, res) => {
   try {
-    const { company, role, date, venue, eligible } = req.body;
+    const { company, role, date, drive_date, venue, min_cgpa, branches } = req.body;
     if (!company || !role) {
       return res.status(400).json({
         success: false,
@@ -32,13 +32,22 @@ router.post('/', authenticate, authorize('admin'), async (req, res) => {
       });
     }
 
+    const rawDate = drive_date || date;
+    let validDriveDate;
+    if (rawDate && !isNaN(new Date(rawDate).getTime())) {
+      validDriveDate = new Date(rawDate).toISOString();
+    } else {
+      // Default to 14 days from now as a valid PostgreSQL TIMESTAMPTZ
+      validDriveDate = new Date(Date.now() + 14 * 86400000).toISOString();
+    }
+
     const drive = await driveRepo.createDrive({
       company,
       role,
-      date: date || 'TBD',
-      venue: venue || 'Seminar Hall A',
-      eligible: eligible || 0,
-      applied: 0,
+      drive_date: validDriveDate,
+      venue: venue || 'Auditorium Hall A',
+      min_cgpa: min_cgpa || 0,
+      branches: Array.isArray(branches) ? branches : (branches ? branches.split(',').map(b => b.trim()) : []),
       status: 'scheduled',
     });
 

@@ -17,9 +17,21 @@ app = FastAPI(
     version="1.0.0",
 )
 
+import os
+
+# Configurable CORS: Restrict in production, allow development origins locally
+allowed_origins_env = os.getenv("ALLOWED_ORIGINS")
+if allowed_origins_env:
+    origins = [o.strip() for o in allowed_origins_env.split(",") if o.strip()]
+elif os.getenv("ENVIRONMENT") == "production":
+    origins = ["https://campuslink-rahul.vercel.app"]
+else:
+    origins = ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )

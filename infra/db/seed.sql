@@ -3,12 +3,12 @@
 -- Populates the database with demo data for testing.
 -- ============================================================
 
--- Users
+-- Users (Password for all demo accounts is: demo123)
 INSERT INTO users (id, name, email, password_hash, role) VALUES
-('a1b2c3d4-0001-0001-0001-000000000001', 'Ananya Sharma', 'student@campuslink.in', '$2b$10$demoHashedPassword', 'student'),
-('a1b2c3d4-0001-0001-0001-000000000002', 'Dr. Rajesh Nayak', 'admin@campuslink.in', '$2b$10$demoHashedPassword', 'admin'),
-('a1b2c3d4-0001-0001-0001-000000000003', 'Sneha Patel', 'recruiter@campuslink.in', '$2b$10$demoHashedPassword', 'recruiter'),
-('a1b2c3d4-0001-0001-0001-000000000004', 'Prof. Suresh Mishra', 'mentor@campuslink.in', '$2b$10$demoHashedPassword', 'mentor')
+('a1b2c3d4-0001-0001-0001-000000000001', 'Ananya Sharma', 'student@campuslink.in', '$2a$10$wPDyRSAtzSq0PgxfnHL6oeDMaP3NEdgfJha5h9HWk2GhyJQ2oc0fq', 'student'),
+('a1b2c3d4-0001-0001-0001-000000000002', 'Dr. Rajesh Nayak', 'admin@campuslink.in', '$2a$10$wPDyRSAtzSq0PgxfnHL6oeDMaP3NEdgfJha5h9HWk2GhyJQ2oc0fq', 'admin'),
+('a1b2c3d4-0001-0001-0001-000000000003', 'Sneha Patel', 'recruiter@campuslink.in', '$2a$10$wPDyRSAtzSq0PgxfnHL6oeDMaP3NEdgfJha5h9HWk2GhyJQ2oc0fq', 'recruiter'),
+('a1b2c3d4-0001-0001-0001-000000000004', 'Prof. Suresh Mishra', 'mentor@campuslink.in', '$2a$10$wPDyRSAtzSq0PgxfnHL6oeDMaP3NEdgfJha5h9HWk2GhyJQ2oc0fq', 'mentor')
 ON CONFLICT (email) DO NOTHING;
 
 -- Student Profile

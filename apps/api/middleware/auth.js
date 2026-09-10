@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'campuslink_secure_enterprise_secret_key_2026_dev';
 
 if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
-  console.error('[SECURITY WARNING] Running in production without a configured JWT_SECRET environment variable!');
+  throw new Error('[SECURITY ERROR] JWT_SECRET must be explicitly configured in environment variables for production.');
 }
 
 function authenticate(req, res, next) {

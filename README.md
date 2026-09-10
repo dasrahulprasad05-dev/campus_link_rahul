@@ -52,22 +52,23 @@ CAMPUS_LINK/
 └── .env.example          # Environment config template
 ```
 
-## 🔟 Locked Features
+## 🔟 The 10 Locked Platform Features
 
-1. **Readiness Score** — Explainable composite placement-readiness score
-2. **Skill-Gap Analyzer** — Compare skills against target role
-3. **Resume ↔ JD Matcher** — AI-powered resume analysis
-4. **AI Candidate Matching** — Transparent ranking for recruiters
-5. **Mock Interviews** — STAR-based practice with scoring
-6. **Smart Scheduler** — Conflict-free drive scheduling
-7. **At-Risk Detection** — Advisory signals for student support
-8. **Career Roadmaps** — Milestone-based learning plans
-9. **Admin Command Center** — Funnel, analytics, interventions
-10. **Multi-Role Platform** — Student, Admin, Recruiter, Mentor portals
+1. **Placement Readiness Scoring (ML)** — Multi-dimensional student readiness tracking with explainable factors.
+2. **Explainable Skill-Gap Analysis (NLP)** — Skill ontology & entity extraction comparing student skills against target roles.
+3. **Resume ↔ Job Description Semantic Matcher (NLP)** — Dense vector embeddings and cosine similarity scoring.
+4. **AI Mock Interview Coach (LLM)** — Real-time STAR-method evaluation with structured feedback rubrics.
+5. **Adaptive Question Generator (LLM)** — Dynamic role- and skill-gap-conditioned technical & behavioral questions.
+6. **Drive Conflict Scheduler (Deterministic)** — Mathematical constraint satisfaction preventing venue and drive overlaps.
+7. **Personalized Career Roadmap (Hybrid)** — Milestone-based progression with syllabus curriculum rules and tailored guidance.
+8. **Recruiter Candidate Ranking Engine (ML)** — Multi-factor candidate ranking and shortlisting.
+9. **Early Warning At-Risk Student System (ML)** — Automated classification flagging students in need of intervention.
+10. **Placement Policy & Eligibility Q&A (RAG)** — Retrieval-augmented generation indexing university placement bylaws.
 
 ## 🧪 Running Tests
 
 ```bash
+# Run all automated test suites (Auth, Database, RBAC, AI baselines)
 npm test
 ```
 

@@ -192,11 +192,12 @@ const StudentInterview = (() => {
         apiKey: customApiKey,
       });
 
-      if (!result.success || !result.data?.questions?.length) {
+      const qs = result.data?.questions || result.questions;
+      if (!result.success && !qs?.length) {
         throw new Error(result.error?.message || 'Failed to receive questions from AI');
       }
 
-      questions = result.data.questions;
+      questions = qs || [];
       currentQ = 0;
       chatHistory = [];
 

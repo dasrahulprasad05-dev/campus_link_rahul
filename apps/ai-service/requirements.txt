@@ -1,17 +1,6 @@
-fastapi==0.115.0
-uvicorn[standard]==0.30.6
-pydantic==2.9.2
-# ML (Features 1, 8, 9)
-scikit-learn>=1.5.0
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+pydantic>=2.10.0
 numpy>=1.26.0
-# NLP Embeddings (Features 2, 3)
-sentence-transformers>=3.0.0
-# LLM via Groq (Features 4, 5, 7)
 groq>=0.11.0
-# RAG (Feature 10)
-langchain>=0.3.0
-langchain-community>=0.3.0
-langchain-groq>=0.2.0
-faiss-cpu>=1.8.0
-# Env
 python-dotenv>=1.0.0

@@ -11,6 +11,10 @@ CREATE TABLE IF NOT EXISTS users (
     password_hash VARCHAR(255) NOT NULL,
     role VARCHAR(20) NOT NULL DEFAULT 'student' CHECK (role IN ('student','admin','recruiter','mentor')),
     avatar_url TEXT,
+    email_verified BOOLEAN DEFAULT false,
+    verification_token VARCHAR(255),
+    reset_password_token VARCHAR(255),
+    reset_password_expires TIMESTAMPTZ,
     created_at TIMESTAMPTZ DEFAULT now(),
     updated_at TIMESTAMPTZ DEFAULT now()
 );

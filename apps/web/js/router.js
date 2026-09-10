@@ -95,11 +95,13 @@ const Router = (() => {
     }
   }
 
-  // Initialize router
-  function init() {
-    window.addEventListener('hashchange', () => _resolve(false));
-    _resolve(true); // Handle initial load
+  function getParams() {
+    const hash = window.location.hash || '';
+    const qIndex = hash.indexOf('?');
+    if (qIndex === -1) return {};
+    const queryString = hash.substring(qIndex + 1);
+    return Object.fromEntries(new URLSearchParams(queryString));
   }
 
-  return { register, navigate, current, onNotFound, init, resolve: _resolve };
+  return { register, navigate, current, onNotFound, init, resolve: _resolve, getParams };
 })();

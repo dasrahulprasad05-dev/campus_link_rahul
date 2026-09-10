@@ -114,8 +114,28 @@ const RegisterPage = (() => {
         const result = await Auth.register({ name, email, password, role });
 
         if (result.success) {
-          Toast.success('Account created! Welcome to CAMPUSLINK 🎉');
-          Router.navigate(role + '/dashboard');
+          const userObj = result.user || { name, email };
+          const userId = userObj.id || email;
+          const dismissalKey = 'campuslink_verification_notified_' + userId;
+          const alreadyNotified = localStorage.getItem(dismissalKey);
+
+          if (!alreadyNotified) {
+            // First time signup: prompt to verify email & check spam folder
+            EmailAuthPages.showFirstTimeSignupModal({
+              user: userObj,
+              role,
+              onDismiss: () => {
+                // Save flag: Never ask a second time
+                localStorage.setItem(dismissalKey, 'true');
+                Toast.success('Welcome to CAMPUSLINK 🎉');
+                Router.navigate(role + '/dashboard');
+              }
+            });
+          } else {
+            // Already prompted before: don't ask a second time
+            Toast.success('Welcome back to CAMPUSLINK 🎉');
+            Router.navigate(role + '/dashboard');
+          }
         } else {
           Toast.error(result.error);
           btn.textContent = 'Create Account →';

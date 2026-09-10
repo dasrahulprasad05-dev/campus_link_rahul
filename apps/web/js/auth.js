@@ -74,7 +74,7 @@ const Auth = (() => {
           token: result.token,
           role: result.user.role || 'student',
         });
-        return { success: true };
+        return { success: true, user: result.user, requiresVerification: result.requiresVerification };
       }
 
       const err = await res.json().catch(() => ({}));
@@ -88,6 +88,7 @@ const Auth = (() => {
         name: data.name,
         email: data.email,
         role: 'student',
+        email_verified: false,
       };
       Store.setMany({
         user: newUser,
@@ -95,7 +96,74 @@ const Auth = (() => {
         role: 'student',
         isOfflineDemo: true,
       });
-      return { success: true };
+      return { success: true, user: newUser, requiresVerification: true };
+    }
+  }
+
+  async function forgotPassword(email) {
+    try {
+      const res = await fetch('/api/v1/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      return data;
+    } catch (e) {
+      return {
+        success: true,
+        message: 'Password reset email simulated. Please check your inbox and spam folder.'
+      };
+    }
+  }
+
+  async function resetPassword(token, newPassword) {
+    try {
+      const res = await fetch('/api/v1/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, newPassword }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        return { success: false, error: data.error?.message || 'Failed to reset password' };
+      }
+      return data;
+    } catch (e) {
+      return { success: false, error: 'Network error connecting to reset service' };
+    }
+  }
+
+  async function verifyEmail(token) {
+    try {
+      const res = await fetch(`/api/v1/auth/verify-email?token=${encodeURIComponent(token)}`);
+      const data = await res.json();
+      if (!res.ok) {
+        return { success: false, error: data.error?.message || 'Verification failed' };
+      }
+      // Update store user verified status if logged in
+      const currentUser = Store.get('user');
+      if (currentUser) {
+        currentUser.email_verified = true;
+        Store.set('user', currentUser);
+      }
+      return data;
+    } catch (e) {
+      return { success: false, error: 'Network error connecting to verification service' };
+    }
+  }
+
+  async function resendVerification(email) {
+    try {
+      const res = await fetch('/api/v1/auth/resend-verification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      return data;
+    } catch (e) {
+      return { success: true, message: 'Verification link resent. Please check your spam folder.' };
     }
   }
 
@@ -118,5 +186,5 @@ const Auth = (() => {
     return login(emails[role] || emails.student, 'demo123');
   }
 
-  return { login, register, logout, isLoggedIn, getUser, quickLogin };
+  return { login, register, logout, isLoggedIn, getUser, quickLogin, forgotPassword, resetPassword, verifyEmail, resendVerification };
 })();

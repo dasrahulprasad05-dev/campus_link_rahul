@@ -50,7 +50,7 @@ const LoginPage = (() => {
                 <label class="form-check">
                   <input type="checkbox" checked> Remember me
                 </label>
-                <a class="text-sm text-accent">Forgot password?</a>
+                <a class="text-sm text-accent" style="cursor:pointer;" onclick="EmailAuthPages.showForgotPasswordModal()">Forgot password?</a>
               </div>
 
               <button type="submit" class="btn btn-primary btn-lg" style="width:100%" id="login-submit">

@@ -66,6 +66,8 @@ const App = (() => {
     Router.register('landing', LandingPage.render);
     Router.register('login', LoginPage.render);
     Router.register('register', RegisterPage.render);
+    Router.register('verify-email', EmailAuthPages.VerifyEmailPage.render);
+    Router.register('reset-password', EmailAuthPages.ResetPasswordPage.render);
 
     // Student routes
     Router.register('student/dashboard', authPage(StudentDashboard.render), { auth: true, roles: ['student'] });

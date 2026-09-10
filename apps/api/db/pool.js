@@ -259,7 +259,7 @@ const memoryDb = (() => {
 
     // 4. INSERT INTO users
     if (q.includes('insert into users')) {
-      const [id, name, email, passwordHash, role] = params;
+      const [id, name, email, passwordHash, role, emailVerified, verificationToken] = params;
       const newUser = {
         id: id || `u-${Date.now()}`,
         name,
@@ -267,11 +267,66 @@ const memoryDb = (() => {
         password_hash: passwordHash,
         role: role || 'student',
         avatar_url: null,
+        email_verified: emailVerified || false,
+        verification_token: verificationToken || null,
+        reset_password_token: null,
+        reset_password_expires: null,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       };
       tables.users.push(newUser);
       return Promise.resolve({ rows: [newUser], rowCount: 1 });
+    }
+
+    // 4a. SELECT FROM users WHERE verification_token = $1
+    if (q.includes('from users where verification_token =')) {
+      const token = params[0];
+      const user = tables.users.find(u => u.verification_token === token);
+      return Promise.resolve({ rows: user ? [{ ...user }] : [], rowCount: user ? 1 : 0 });
+    }
+
+    // 4b. UPDATE users SET email_verified = true
+    if (q.includes('update users') && q.includes('email_verified = true')) {
+      const userId = params[0];
+      const user = tables.users.find(u => u.id === userId);
+      if (user) {
+        user.email_verified = true;
+        user.verification_token = null;
+        return Promise.resolve({ rows: [{ ...user }], rowCount: 1 });
+      }
+      return Promise.resolve({ rows: [], rowCount: 0 });
+    }
+
+    // 4c. UPDATE users SET reset_password_token
+    if (q.includes('update users') && q.includes('reset_password_token = $1')) {
+      const [token, expires, email] = params;
+      const user = tables.users.find(u => u.email.toLowerCase() === email.toLowerCase());
+      if (user) {
+        user.reset_password_token = token;
+        user.reset_password_expires = expires;
+        return Promise.resolve({ rows: [{ ...user }], rowCount: 1 });
+      }
+      return Promise.resolve({ rows: [], rowCount: 0 });
+    }
+
+    // 4d. SELECT FROM users WHERE reset_password_token = $1
+    if (q.includes('from users') && q.includes('reset_password_token = $1')) {
+      const token = params[0];
+      const user = tables.users.find(u => u.reset_password_token === token);
+      return Promise.resolve({ rows: user ? [{ ...user }] : [], rowCount: user ? 1 : 0 });
+    }
+
+    // 4e. UPDATE users SET password_hash = $1
+    if (q.includes('update users') && q.includes('password_hash = $1')) {
+      const [newHash, userId] = params;
+      const user = tables.users.find(u => u.id === userId);
+      if (user) {
+        user.password_hash = newHash;
+        user.reset_password_token = null;
+        user.reset_password_expires = null;
+        return Promise.resolve({ rows: [{ ...user }], rowCount: 1 });
+      }
+      return Promise.resolve({ rows: [], rowCount: 0 });
     }
 
     // 5. SELECT FROM student_profiles

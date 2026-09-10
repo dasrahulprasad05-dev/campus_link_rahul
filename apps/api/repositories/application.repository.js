@@ -90,6 +90,8 @@ async function createApplication(data) {
   const res = await query(
     `INSERT INTO applications (id, student_id, job_id, status, current_round, applied_at, updated_at)
      VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
+     ON CONFLICT (student_id, job_id)
+     DO UPDATE SET status = EXCLUDED.status, current_round = EXCLUDED.current_round, updated_at = NOW()
      RETURNING *`,
     [
       id,

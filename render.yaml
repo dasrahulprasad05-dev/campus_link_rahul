@@ -24,6 +24,10 @@ services:
           name: campuslink-ai
           type: web
           property: host
+      - key: SENDGRID_API_KEY
+        sync: false
+      - key: SENDGRID_FROM_EMAIL
+        value: rahulprasadcoding01@gmail.com
 
   # 2. Python AI Microservice (FastAPI + ML + NLP + Groq LLM + RAG)
   - type: web

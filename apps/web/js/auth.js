@@ -26,7 +26,9 @@ const Auth = (() => {
         body: JSON.stringify({ email, password }),
       });
 
-      if (res.ok) {
+      const contentType = res.headers.get('content-type') || '';
+
+      if (res.ok && contentType.includes('application/json')) {
         const data = await res.json();
         Store.setMany({
           user: data.user,
@@ -36,8 +38,15 @@ const Auth = (() => {
         return { success: true };
       }
 
-      const err = await res.json().catch(() => ({}));
-      return { success: false, error: err.error?.message || 'Invalid credentials' };
+      if (contentType.includes('application/json')) {
+        const err = await res.json().catch(() => ({}));
+        return { success: false, error: err.error?.message || 'Invalid credentials' };
+      }
+
+      // Static host returned HTML (404/405 on Vercel without backend proxy)
+      console.warn('[Auth] Non-JSON API response. Entering local preview mode.');
+      if (typeof Toast !== 'undefined') Toast.info('Backend on Render: Entering demo mode');
+      return loginOffline(email, password);
     } catch (e) {
       console.warn('[Auth] Backend API unreachable. Entering local demo simulation mode.');
       if (typeof Toast !== 'undefined') Toast.show('API offline: Entering local demo mode', 'info');
@@ -72,7 +81,9 @@ const Auth = (() => {
         body: JSON.stringify(data),
       });
 
-      if (res.ok) {
+      const contentType = res.headers.get('content-type') || '';
+
+      if (res.ok && contentType.includes('application/json')) {
         const result = await res.json();
         Store.setMany({
           user: result.user,
@@ -82,8 +93,27 @@ const Auth = (() => {
         return { success: true, user: result.user, requiresVerification: result.requiresVerification };
       }
 
-      const err = await res.json().catch(() => ({}));
-      return { success: false, error: err.error?.message || 'Registration failed' };
+      if (contentType.includes('application/json')) {
+        const err = await res.json().catch(() => ({}));
+        return { success: false, error: err.error?.message || 'Registration failed' };
+      }
+
+      // Non-JSON response (e.g. 404 or 405 on static Vercel host without backend proxy)
+      console.warn('[Auth] Backend returned non-JSON (' + res.status + '). Creating preview student account.');
+      const newUser = {
+        id: 'u-' + Date.now(),
+        name: data.name,
+        email: data.email,
+        role: 'student',
+        email_verified: false,
+      };
+      Store.setMany({
+        user: newUser,
+        token: 'demo-jwt-' + Date.now(),
+        role: 'student',
+        isOfflineDemo: true,
+      });
+      return { success: true, user: newUser, requiresVerification: true };
     } catch (e) {
       console.warn('[Auth] Backend API unreachable. Creating simulated local student account.');
       if (typeof Toast !== 'undefined') Toast.show('API offline: Account created in demo mode', 'info');

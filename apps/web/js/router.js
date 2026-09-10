@@ -59,6 +59,9 @@ const Router = (() => {
     if (route.roles && route.roles.length > 0) {
       const role = Store.getRole();
       if (!route.roles.includes(role)) {
+        if (typeof Toast !== 'undefined' && Toast.show) {
+          Toast.show(`Access restricted: requires ${route.roles.join(' or ')} role`, 'warning');
+        }
         navigate(role + '/dashboard');
         return;
       }

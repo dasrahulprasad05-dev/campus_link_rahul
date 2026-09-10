@@ -1,6 +1,6 @@
 -- ============================================================
 -- CAMPUSLINK — Database Schema (PostgreSQL)
--- For future deployment. Currently using in-memory demo data.
+-- Production relational schema: 11 core tables
 -- ============================================================
 
 -- Users

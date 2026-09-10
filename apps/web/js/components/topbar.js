@@ -55,22 +55,13 @@ const Topbar = (() => {
     if (selector) {
       selector.addEventListener('change', async (e) => {
         const newRole = e.target.value;
-        Store.set('role', newRole);
-
-        // Update user for demo
-        const demoNames = {
-          student: 'Ananya Sharma',
-          admin: 'Dr. Rajesh Nayak',
-          recruiter: 'Sneha Patel',
-          mentor: 'Prof. Suresh Mishra',
-        };
-        Store.set('user', {
-          ...Store.get('user'),
-          name: demoNames[newRole] || 'User',
-          role: newRole,
-        });
-
-        Router.navigate(newRole + '/dashboard');
+        const res = await Auth.quickLogin(newRole);
+        if (res.success) {
+          Toast.show(`Switched to ${newRole.toUpperCase()} view`, 'info');
+          Router.navigate(newRole + '/dashboard', true);
+        } else {
+          Toast.show('Unable to switch role: ' + (res.error || 'Authentication error'), 'error');
+        }
       });
     }
 

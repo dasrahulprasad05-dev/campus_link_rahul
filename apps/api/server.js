@@ -67,19 +67,31 @@ const { analyzeSkillGap } = require('./services/readiness.service');
 const { evaluateAnswer } = require('./services/interview.service');
 const { checkConflicts } = require('./services/scheduler.service');
 
-function handleResumeMatch(req, res) {
-  const result = matchResumeToJD(req.body.jobDescription || '');
-  res.json({ success: true, data: result, ...result });
+async function handleResumeMatch(req, res, next) {
+  try {
+    const result = await matchResumeToJD(req.body.jobDescription || '');
+    res.json({ success: true, data: result, ...result });
+  } catch (err) {
+    next(err);
+  }
 }
 
-function handleSkillGap(req, res) {
-  const result = analyzeSkillGap(req.body.targetRole, req.body.skills);
-  res.json({ success: true, data: result, ...result });
+async function handleSkillGap(req, res, next) {
+  try {
+    const result = await analyzeSkillGap(req.body.targetRole, req.body.skills);
+    res.json({ success: true, data: result, ...result });
+  } catch (err) {
+    next(err);
+  }
 }
 
-function handleInterviewFeedback(req, res) {
-  const result = evaluateAnswer(req.body.answer || '', req.body.question || '');
-  res.json({ success: true, data: result, ...result });
+async function handleInterviewFeedback(req, res, next) {
+  try {
+    const result = await evaluateAnswer(req.body.answer || '', req.body.question || '');
+    res.json({ success: true, data: result, ...result });
+  } catch (err) {
+    next(err);
+  }
 }
 
 function handleSchedulerCheck(req, res) {

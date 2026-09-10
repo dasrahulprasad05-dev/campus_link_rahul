@@ -1,26 +1,46 @@
-/* CAMPUSLINK — Auth Middleware */
+/* CAMPUSLINK — Production Auth Middleware */
+require('dotenv').config();
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = process.env.JWT_SECRET || 'campuslink-dev-secret-2026';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'campuslink_secure_enterprise_secret_key_2026_dev';
+
+if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
+  console.error('[SECURITY WARNING] Running in production without a configured JWT_SECRET environment variable!');
+}
 
 function authenticate(req, res, next) {
   const header = req.headers.authorization;
   if (!header || !header.startsWith('Bearer ')) {
-    return res.status(401).json({ success: false, error: { code: 'UNAUTHORIZED', message: 'Authentication required' } });
+    return res.status(401).json({
+      success: false,
+      error: { code: 'UNAUTHORIZED', message: 'Authentication token required' }
+    });
   }
   try {
     const token = header.slice(7);
     req.user = jwt.verify(token, JWT_SECRET);
     next();
   } catch (e) {
-    return res.status(401).json({ success: false, error: { code: 'INVALID_TOKEN', message: 'Invalid or expired token' } });
+    return res.status(401).json({
+      success: false,
+      error: { code: 'INVALID_TOKEN', message: 'Invalid or expired authentication session' }
+    });
   }
 }
 
 function authorize(...roles) {
   return (req, res, next) => {
-    if (!req.user) return res.status(401).json({ success: false, error: { code: 'UNAUTHORIZED', message: 'Authentication required' } });
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        error: { code: 'UNAUTHORIZED', message: 'Authentication required' }
+      });
+    }
     if (roles.length && !roles.includes(req.user.role)) {
-      return res.status(403).json({ success: false, error: { code: 'FORBIDDEN', message: 'Insufficient permissions' } });
+      return res.status(403).json({
+        success: false,
+        error: { code: 'FORBIDDEN', message: `Access denied: requires ${roles.join(' or ')} permission (current: ${req.user.role})` }
+      });
     }
     next();
   };

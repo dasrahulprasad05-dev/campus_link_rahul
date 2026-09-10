@@ -1,7 +1,16 @@
-/* CAMPUSLINK — Interview Service */
+/* CAMPUSLINK — Interview Service
+   Hybrid AI / Rule-Based mock interview evaluation engine.
+   Attempts connection to Python FastAPI AI microservice (port 8000),
+   falling back to STAR framework heuristic evaluator.
+*/
 
-function evaluateAnswer(answer = '', question = '') {
-  const wordCount = answer.split(/\s+/).filter(Boolean).length;
+const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
+
+/**
+ * Deterministic STAR methodology answer evaluation.
+ */
+function ruleBasedEvaluateAnswer(answer = '', question = '') {
+  const wordCount = (answer || '').split(/\s+/).filter(Boolean).length;
   const hasStructure = /situation|task|action|result|challenge|approach|outcome/i.test(answer);
   const hasMetrics = /\d+%|\d+ percent|reduced|increased|improved|saved|built|created|led/i.test(answer);
   const hasSpecifics = /project|team|company|tool|technology|database|api|server/i.test(answer);
@@ -53,8 +62,52 @@ function evaluateAnswer(answer = '', question = '') {
     improvements,
     tip: 'Remember STAR: Situation → Task → Action → Result. Aim for 90–120 seconds when spoken aloud.',
     engineVersion: 'interview-v1',
+    source: 'rule-engine',
     timestamp: new Date().toISOString(),
   };
 }
 
-module.exports = { evaluateAnswer };
+/**
+ * Interview evaluation with FastAPI AI microservice fallback.
+ */
+async function evaluateAnswer(answer = '', question = '', targetRole = 'General') {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 1200);
+
+    const res = await fetch(`${AI_SERVICE_URL}/v1/interview-feedback`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        answer,
+        question,
+        target_role: targetRole,
+      }),
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+
+    if (res.ok) {
+      const data = await res.json();
+      return {
+        score: data.score,
+        feedback: data.feedback,
+        strengths: ['STAR framework evaluation', 'Role-relevant response structure'],
+        improvements: [data.feedback],
+        tip: data.tip || 'STAR: Situation → Task → Action → Result.',
+        engineVersion: data.modelVersion || 'ai-fastapi-v1',
+        source: 'fastapi-ai',
+        timestamp: data.timestamp || new Date().toISOString(),
+      };
+    }
+  } catch (_err) {
+    // Fallback to rule engine
+  }
+
+  return ruleBasedEvaluateAnswer(answer, question);
+}
+
+module.exports = {
+  evaluateAnswer,
+  ruleBasedEvaluateAnswer,
+};

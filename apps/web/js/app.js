@@ -68,35 +68,35 @@ const App = (() => {
     Router.register('register', RegisterPage.render);
 
     // Student routes
-    Router.register('student/dashboard', authPage(StudentDashboard.render), { auth: true });
-    Router.register('student/profile', authPage(StudentProfile.render), { auth: true });
-    Router.register('student/readiness', authPage(StudentReadiness.render), { auth: true });
-    Router.register('student/skill-gap', authPage(StudentSkillGap.render), { auth: true });
-    Router.register('student/jobs', authPage(StudentJobs.render), { auth: true });
-    Router.register('student/applications', authPage(StudentApplications.render), { auth: true });
-    Router.register('student/resume', authPage(StudentResume.render), { auth: true });
-    Router.register('student/interview', authPage(StudentInterview.render), { auth: true });
-    Router.register('student/roadmap', authPage(StudentRoadmap.render), { auth: true });
+    Router.register('student/dashboard', authPage(StudentDashboard.render), { auth: true, roles: ['student'] });
+    Router.register('student/profile', authPage(StudentProfile.render), { auth: true, roles: ['student'] });
+    Router.register('student/readiness', authPage(StudentReadiness.render), { auth: true, roles: ['student'] });
+    Router.register('student/skill-gap', authPage(StudentSkillGap.render), { auth: true, roles: ['student'] });
+    Router.register('student/jobs', authPage(StudentJobs.render), { auth: true, roles: ['student'] });
+    Router.register('student/applications', authPage(StudentApplications.render), { auth: true, roles: ['student'] });
+    Router.register('student/resume', authPage(StudentResume.render), { auth: true, roles: ['student'] });
+    Router.register('student/interview', authPage(StudentInterview.render), { auth: true, roles: ['student'] });
+    Router.register('student/roadmap', authPage(StudentRoadmap.render), { auth: true, roles: ['student'] });
 
     // Admin routes
-    Router.register('admin/dashboard', authPage(AdminDashboard.render), { auth: true });
-    Router.register('admin/students', authPage(AdminStudents.render), { auth: true });
-    Router.register('admin/companies', authPage(AdminCompanies.render), { auth: true });
-    Router.register('admin/drives', authPage(AdminDrives.render), { auth: true });
-    Router.register('admin/scheduler', authPage(AdminScheduler.render), { auth: true });
-    Router.register('admin/analytics', authPage(AdminAnalytics.render), { auth: true });
-    Router.register('admin/interventions', authPage(AdminInterventions.render), { auth: true });
+    Router.register('admin/dashboard', authPage(AdminDashboard.render), { auth: true, roles: ['admin'] });
+    Router.register('admin/students', authPage(AdminStudents.render), { auth: true, roles: ['admin'] });
+    Router.register('admin/companies', authPage(AdminCompanies.render), { auth: true, roles: ['admin'] });
+    Router.register('admin/drives', authPage(AdminDrives.render), { auth: true, roles: ['admin'] });
+    Router.register('admin/scheduler', authPage(AdminScheduler.render), { auth: true, roles: ['admin'] });
+    Router.register('admin/analytics', authPage(AdminAnalytics.render), { auth: true, roles: ['admin'] });
+    Router.register('admin/interventions', authPage(AdminInterventions.render), { auth: true, roles: ['admin'] });
 
     // Recruiter routes
-    Router.register('recruiter/dashboard', authPage(RecruiterDashboard.render), { auth: true });
-    Router.register('recruiter/jobs', authPage(RecruiterJobs.render), { auth: true });
-    Router.register('recruiter/matches', authPage(RecruiterMatches.render), { auth: true });
-    Router.register('recruiter/pipeline', authPage(RecruiterPipeline.render), { auth: true });
+    Router.register('recruiter/dashboard', authPage(RecruiterDashboard.render), { auth: true, roles: ['recruiter'] });
+    Router.register('recruiter/jobs', authPage(RecruiterJobs.render), { auth: true, roles: ['recruiter'] });
+    Router.register('recruiter/matches', authPage(RecruiterMatches.render), { auth: true, roles: ['recruiter'] });
+    Router.register('recruiter/pipeline', authPage(RecruiterPipeline.render), { auth: true, roles: ['recruiter'] });
 
     // Mentor routes
-    Router.register('mentor/dashboard', authPage(MentorDashboard.render), { auth: true });
-    Router.register('mentor/students', authPage(MentorStudents.render), { auth: true });
-    Router.register('mentor/roadmaps', authPage(MentorRoadmaps.render), { auth: true });
+    Router.register('mentor/dashboard', authPage(MentorDashboard.render), { auth: true, roles: ['mentor'] });
+    Router.register('mentor/students', authPage(MentorStudents.render), { auth: true, roles: ['mentor'] });
+    Router.register('mentor/roadmaps', authPage(MentorRoadmaps.render), { auth: true, roles: ['mentor'] });
 
     // 404 handler
     Router.onNotFound((path) => {

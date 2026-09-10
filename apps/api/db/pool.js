@@ -10,6 +10,7 @@ const { Pool } = require('pg');
 
 let pool = null;
 let isConnected = false;
+let initPromise = null;
 
 if (process.env.DATABASE_URL) {
   try {
@@ -30,7 +31,7 @@ if (process.env.DATABASE_URL) {
       console.error('[PostgreSQL] Unexpected error on idle client:', err.message);
     });
 
-    pool.query('SELECT NOW()')
+    initPromise = pool.query('SELECT NOW()')
       .then(() => {
         isConnected = true;
         console.log('[PostgreSQL] Connected successfully to database');
@@ -53,18 +54,25 @@ if (process.env.DATABASE_URL) {
  * @returns {Promise<{ rows: Array, rowCount: number }>}
  */
 async function query(text, params = []) {
-  if (pool && isConnected) {
-    const start = Date.now();
-    try {
-      const res = await pool.query(text, params);
-      const duration = Date.now() - start;
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`[SQL] (${duration}ms):`, text.slice(0, 80));
+  if (pool) {
+    if (!isConnected && initPromise) {
+      try {
+        await initPromise;
+      } catch (_) {}
+    }
+    if (isConnected) {
+      const start = Date.now();
+      try {
+        const res = await pool.query(text, params);
+        const duration = Date.now() - start;
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`[SQL] (${duration}ms):`, text.slice(0, 80));
+        }
+        return res;
+      } catch (err) {
+        console.error('[SQL Error]:', err.message, '\nQuery:', text);
+        throw err;
       }
-      return res;
-    } catch (err) {
-      console.error('[SQL Error]:', err.message, '\nQuery:', text);
-      throw err;
     }
   }
 

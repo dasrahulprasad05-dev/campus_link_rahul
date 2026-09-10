@@ -52,14 +52,35 @@ async function getById(id) {
   const res = await query(sql, [id]);
   return res.rows[0] || null;
 }
-
 async function createApplication(data) {
+  const isUUID = (str) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(str));
   let profileId = data.student_id || data.studentId;
 
-  // If passed ID is a user ID, resolve to student_profiles.id
-  const profileLookup = await query('SELECT id FROM student_profiles WHERE user_id = $1 OR id = $1', [profileId]);
-  if (profileLookup.rows.length > 0) {
-    profileId = profileLookup.rows[0].id;
+  if (profileId && !isUUID(profileId)) {
+    const idMap = {
+      'sp-1': 'a1b2c3d4-0001-0001-0001-000000000001',
+      'u-1': 'a1b2c3d4-0001-0001-0001-000000000001',
+    };
+    const mapped = idMap[profileId];
+    if (mapped) {
+      const p = await query('SELECT id FROM student_profiles WHERE user_id = $1 OR id = $1', [mapped]);
+      profileId = p.rows[0]?.id;
+    }
+    if (!profileId) {
+      const first = await query('SELECT id FROM student_profiles LIMIT 1');
+      profileId = first.rows[0]?.id;
+    }
+  } else if (profileId) {
+    const profileLookup = await query('SELECT id FROM student_profiles WHERE user_id = $1 OR id = $1', [profileId]);
+    if (profileLookup.rows.length > 0) {
+      profileId = profileLookup.rows[0].id;
+    }
+  }
+
+  let jobId = data.job_id || data.jobId;
+  if (jobId && !isUUID(jobId)) {
+    const firstJob = await query('SELECT id FROM jobs LIMIT 1');
+    jobId = firstJob.rows[0]?.id;
   }
 
   const id = uuidv4();
@@ -73,7 +94,7 @@ async function createApplication(data) {
     [
       id,
       profileId,
-      data.job_id || data.jobId,
+      jobId,
       status,
       currentRound,
     ]

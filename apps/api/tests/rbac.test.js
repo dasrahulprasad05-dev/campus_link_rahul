@@ -7,15 +7,15 @@ const { generateToken } = require('../middleware/auth');
 
 function getAuthToken(role) {
   if (role === 'admin') {
-    return generateToken({ id: 'u-2', name: 'Dr. Rajesh Nayak', email: 'admin@campuslink.in', role: 'admin' });
+    return generateToken({ id: 'a1b2c3d4-0001-0001-0001-000000000002', name: 'Dr. Rajesh Nayak', email: 'admin@campuslink.in', role: 'admin' });
   }
   if (role === 'recruiter') {
-    return generateToken({ id: 'u-3', name: 'Sneha Patel', email: 'recruiter@campuslink.in', role: 'recruiter' });
+    return generateToken({ id: 'a1b2c3d4-0001-0001-0001-000000000003', name: 'Sneha Patel', email: 'recruiter@campuslink.in', role: 'recruiter' });
   }
   if (role === 'mentor') {
-    return generateToken({ id: 'u-4', name: 'Prof. Suresh Mishra', email: 'mentor@campuslink.in', role: 'mentor' });
+    return generateToken({ id: 'a1b2c3d4-0001-0001-0001-000000000004', name: 'Prof. Suresh Mishra', email: 'mentor@campuslink.in', role: 'mentor' });
   }
-  return generateToken({ id: 'u-1', name: 'Ananya Sharma', email: 'student@campuslink.in', role: 'student' });
+  return generateToken({ id: 'a1b2c3d4-0001-0001-0001-000000000001', name: 'Ananya Sharma', email: 'student@campuslink.in', role: 'student' });
 }
 
 test('RBAC: Student cannot create a job posting (403 Forbidden)', async () => {

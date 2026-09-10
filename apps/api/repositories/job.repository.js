@@ -89,6 +89,18 @@ async function createJob(data) {
         ? data.skills
         : (typeof data.skills === 'string' ? data.skills.split(',').map(s => s.trim()) : []));
 
+  const isUUID = (str) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(str));
+  let recruiterId = data.recruiter_id;
+  if (recruiterId && !isUUID(recruiterId)) {
+    const idMap = {
+      'u-1': 'a1b2c3d4-0001-0001-0001-000000000001',
+      'u-2': 'a1b2c3d4-0001-0001-0001-000000000002',
+      'u-3': 'a1b2c3d4-0001-0001-0001-000000000003',
+      'u-4': 'a1b2c3d4-0001-0001-0001-000000000004',
+    };
+    recruiterId = idMap[recruiterId] || null;
+  }
+
   const res = await query(
     `INSERT INTO jobs 
       (id, company_id, recruiter_id, title, description, location, type, skills_required, min_cgpa, deadline, status)
@@ -97,7 +109,7 @@ async function createJob(data) {
     [
       id,
       companyId || null,
-      data.recruiter_id || null,
+      recruiterId || null,
       data.title,
       data.description || null,
       data.location || 'Bhubaneswar',

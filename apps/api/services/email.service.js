@@ -6,36 +6,48 @@
    3. Development Simulation (Console log with clickable action links)
    ============================================================ */
 
+require('dotenv').config();
 const crypto = require('crypto');
 
-const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY || '';
-const SENDGRID_FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL || process.env.MAIL_FROM || 'noreply@campuslink.in';
-const APP_URL = process.env.APP_URL || process.env.RENDER_EXTERNAL_URL || 'http://localhost:3000';
+const getApiKey = () => process.env.SENDGRID_API_KEY || '';
+const getFromEmail = () => process.env.SENDGRID_FROM_EMAIL || process.env.MAIL_FROM || 'noreply@campuslink.in';
+const getAppUrl = () => process.env.APP_URL || process.env.RENDER_EXTERNAL_URL || 'http://localhost:3000';
 
 /**
  * Send an email via SendGrid REST API or fallback to simulated delivery
  */
 async function sendEmail({ to, subject, html, text }) {
+  const apiKey = getApiKey();
+  const fromEmail = getFromEmail();
+
   // If SendGrid API Key is configured, send via SendGrid v3 REST API
-  if (SENDGRID_API_KEY && SENDGRID_API_KEY.startsWith('SG.')) {
+  if (apiKey && apiKey.startsWith('SG.')) {
     try {
+      const contentList = [];
+      if (text) {
+        contentList.push({ type: 'text/plain', value: text });
+      }
+      if (html) {
+        contentList.push({ type: 'text/html', value: html });
+      }
+      if (contentList.length === 0) {
+        contentList.push({ type: 'text/plain', value: subject });
+      }
+
       const payload = {
         personalizations: [{ to: [{ email: to }] }],
         from: {
-          email: SENDGRID_FROM_EMAIL,
+          email: fromEmail,
           name: 'CAMPUSLINK Placement Portal',
         },
         subject,
-        content: [
-          { type: 'text/plain', value: text || subject },
-          { type: 'text/html', value: html },
-        ],
+        content: contentList,
       };
 
       const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${SENDGRID_API_KEY}`,
+          'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),
@@ -58,7 +70,7 @@ async function sendEmail({ to, subject, html, text }) {
   console.log('\n======================================================');
   console.log(`[Email Simulated] To: ${to}`);
   console.log(`[Email Simulated] Subject: ${subject}`);
-  console.log(`[Email Simulated] From: ${SENDGRID_FROM_EMAIL}`);
+  console.log(`[Email Simulated] From: ${fromEmail}`);
   console.log('------------------------------------------------------');
   if (text) console.log(text);
   console.log('======================================================\n');
@@ -123,7 +135,7 @@ function _emailWrapper({ title, preview, content, ctaUrl, ctaText, footerNote })
  * 1. Send Email Verification on First-Time Signup
  */
 async function sendVerificationEmail(user, token) {
-  const verifyUrl = `${APP_URL}/#verify-email?token=${token}&email=${encodeURIComponent(user.email)}`;
+  const verifyUrl = `${getAppUrl()}/#verify-email?token=${token}&email=${encodeURIComponent(user.email)}`;
 
   const content = `
     <h2 style="color:#ffffff; margin-top:0;">Verify Your Email Address</h2>
@@ -153,7 +165,7 @@ async function sendVerificationEmail(user, token) {
  * 2. Send Welcome Email (sent after email verification or first login)
  */
 async function sendWelcomeEmail(user) {
-  const portalUrl = `${APP_URL}/#${user.role || 'student'}/dashboard`;
+  const portalUrl = `${getAppUrl()}/#${user.role || 'student'}/dashboard`;
 
   const content = `
     <h2 style="color:#ffffff; margin-top:0;">Welcome to CAMPUSLINK 🎉</h2>
@@ -185,7 +197,7 @@ async function sendWelcomeEmail(user) {
  * 3. Send Password Reset Email
  */
 async function sendPasswordResetEmail(user, token) {
-  const resetUrl = `${APP_URL}/#reset-password?token=${token}&email=${encodeURIComponent(user.email)}`;
+  const resetUrl = `${getAppUrl()}/#reset-password?token=${token}&email=${encodeURIComponent(user.email)}`;
 
   const content = `
     <h2 style="color:#ffffff; margin-top:0;">Reset Your Password</h2>

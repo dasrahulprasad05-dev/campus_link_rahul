@@ -1,186 +1,208 @@
 /* ============================================================
-   CAMPUSLINK — AI Mock Interview Page (Feature 4 + 5)
-   Full multi-question adaptive practice (3, 5, or 8 questions).
-   Real-time LLM question generation + STAR answer scoring +
-   final comprehensive performance scorecard.
+   CAMPUSLINK — AI Mock Interview Page
+   100% Dynamic Groq LLM Interview Engine.
+   - Zero hardcoded questions: AI asks dynamic questions based on
+     whatever role, topics, and difficulty the candidate chooses (up to 20 questions).
+   - At the end, AI performs a full diagnostic:
+     scores candidate, explains where they went wrong, provides
+     how to improve and full model answers for every question.
    ============================================================ */
+
 const StudentInterview = (() => {
   let questions = [];
   let currentQ = 0;
   let chatHistory = [];
-  let sessionSource = 'loading';
   let activeRole = 'Data Analyst';
+  let activeTopics = '';
   let activeDifficulty = 'medium';
 
-  // Comprehensive client-side fallback bank (7 questions per role)
-  const FALLBACK_BANK = {
-    'Data Analyst': [
-      { text: 'How would you handle missing data or outliers in a large dataset before beginning your analysis?', skill: 'Data Cleaning', category: 'technical' },
-      { text: 'Explain a scenario where you used SQL (such as window functions, CTEs, or complex joins) to derive actionable business insights.', skill: 'SQL & Analytics', category: 'technical' },
-      { text: 'What is the difference between correlation and causation? Provide a concrete business example.', skill: 'Statistical Reasoning', category: 'technical' },
-      { text: 'Describe a time when your analytical insights challenged a team assumption or influenced an important business decision.', skill: 'Communication (STAR)', category: 'behavioral' },
-      { text: 'You discover an unexpected anomaly in key sales metrics 2 hours before an executive presentation. What are your immediate and follow-up steps?', skill: 'Critical Thinking', category: 'situational' },
-      { text: 'How do you decide which visualization (e.g., bar chart, line chart, scatter plot, heatmap) best communicates your findings?', skill: 'Data Visualization', category: 'technical' },
-      { text: 'Walk through how you would design an A/B test experiment to measure whether a new feature improves user conversion rates.', skill: 'A/B Testing', category: 'technical' },
-    ],
-    'Software Engineer': [
-      { text: 'Describe your systematic approach to diagnosing and debugging a complex, intermittent bug in production.', skill: 'Debugging & RCA', category: 'technical' },
-      { text: 'Explain the differences between a stack and a queue. Describe a real-world software architecture scenario where you would choose each.', skill: 'Data Structures', category: 'technical' },
-      { text: 'What are the principles of RESTful API design, and how do you handle idempotent operations and API versioning?', skill: 'API Architecture', category: 'technical' },
-      { text: 'Tell me about a time you had to refactor legacy code or resolve technical debt under a tight deadline. How did you balance speed and maintainability?', skill: 'Code Quality (STAR)', category: 'behavioral' },
-      { text: 'Your team is split between a microservices approach and a monolithic service for a new product feature. How would you evaluate the tradeoffs?', skill: 'System Design', category: 'situational' },
-      { text: 'What is the time and space complexity of QuickSort? In what worst-case scenario does it degrade to O(n²), and how can you mitigate it?', skill: 'Algorithms', category: 'technical' },
-      { text: 'Why are CI/CD pipelines and automated testing suites critical to high-velocity software engineering teams?', skill: 'DevOps & Reliability', category: 'technical' },
-    ],
-    'ML Engineer': [
-      { text: 'Explain the bias-variance tradeoff and how regularization techniques (L1 Lasso vs. L2 Ridge) help mitigate overfitting.', skill: 'ML Foundations', category: 'technical' },
-      { text: 'How do you prevent and detect data leakage during feature engineering and cross-validation pipelines?', skill: 'Feature Engineering', category: 'technical' },
-      { text: 'How do you handle severe class imbalance in a classification problem? Compare resampling vs focal loss vs threshold tuning.', skill: 'Model Training', category: 'technical' },
-      { text: 'Describe an end-to-end machine learning project you built. What were the biggest hurdles from data preparation to model inference?', skill: 'MLOps (STAR)', category: 'behavioral' },
-      { text: 'Your model achieves 95% accuracy in offline test evaluation, but business KPIs decline after deployment. How do you troubleshoot?', skill: 'Model Monitoring', category: 'situational' },
-      { text: 'In a fraud detection model where missing a fraudulent transaction is 50x more costly than a false positive, which evaluation metrics would you optimize?', skill: 'Metrics Evaluation', category: 'technical' },
-    ],
-    'Web Developer': [
-      { text: 'Explain the browser Critical Rendering Path and the specific techniques you use to optimize Core Web Vitals (LCP, INP, CLS).', skill: 'Performance', category: 'technical' },
-      { text: 'Compare CSS Grid and CSS Flexbox. When is it advantageous to use Grid over Flexbox, and vice versa in responsive layouts?', skill: 'CSS Layout', category: 'technical' },
-      { text: 'Explain client-side state management patterns. When is local component state sufficient versus needing global application state?', skill: 'Frontend Architecture', category: 'technical' },
-      { text: 'Tell me about a complex interactive UI component you designed and how you ensured accessibility (ARIA) and responsive behavior.', skill: 'UI/UX (STAR)', category: 'behavioral' },
-      { text: 'A critical client-facing checkout bug is reported exclusively on mobile browsers on a Friday evening. How do you isolate, reproduce, and resolve it?', skill: 'Troubleshooting', category: 'situational' },
-      { text: 'What security measures do you implement to protect modern web applications against Cross-Site Scripting (XSS) and CSRF attacks?', skill: 'Web Security', category: 'technical' },
-    ],
-    'General': [
-      { text: 'Tell me about a challenging project where you took ownership. Use the STAR framework: Situation, Task, Action, and measurable Result.', skill: 'Ownership & STAR', category: 'behavioral' },
-      { text: 'Describe a time you had to learn an unfamiliar technology, tool, or framework on short notice to deliver a requirement.', skill: 'Adaptability', category: 'behavioral' },
-      { text: 'How do you prioritize competing deadlines when multiple urgent tasks demand your immediate attention?', skill: 'Time Management', category: 'situational' },
-      { text: 'Tell me about a time you made a mistake or faced a failure in a project. What did you learn, and how did you adapt your approach?', skill: 'Growth Mindset', category: 'behavioral' },
-      { text: 'Describe a situation where you had a disagreement with a team member or mentor. How did you communicate and resolve it constructively?', skill: 'Collaboration', category: 'behavioral' },
-      { text: 'Where do you see yourself technically in the next 2-3 years, and what concrete steps are you taking currently to reach that goal?', skill: 'Career Vision', category: 'behavioral' },
-    ]
-  };
+  function getSavedApiKey() {
+    return localStorage.getItem('CAMPUSLINK_CUSTOM_GROQ_KEY') || '';
+  }
+
+  function saveApiKey(key) {
+    if (key && key.trim()) {
+      localStorage.setItem('CAMPUSLINK_CUSTOM_GROQ_KEY', key.trim());
+    } else {
+      localStorage.removeItem('CAMPUSLINK_CUSTOM_GROQ_KEY');
+    }
+  }
 
   async function render() {
     currentQ = 0;
     chatHistory = [];
+    questions = [];
+
+    const customKey = getSavedApiKey();
+
     document.getElementById('main').innerHTML = `
       <div class="page-header">
         <div class="page-header-content">
           <div class="page-eyebrow">AI Mock Interview</div>
           <h1 class="page-title">Placement Interview Simulator</h1>
-          <p class="page-subtitle">Adaptive interview practice with live AI-generated questions, STAR answer grading, and comprehensive performance analysis.</p>
+          <p class="page-subtitle">Every question is generated live by Groq AI based on what you choose. At the end, AI provides a full diagnostic scorecard showing where you went wrong and how to improve.</p>
         </div>
       </div>
+
       <div class="grid grid-main">
         <div class="stack">
-          <article class="card animate-fade-in-up">
+          <article class="card animate-fade-in-up" id="interview-config-card">
             <div class="card-header">
-              <h2 class="card-title">Configure Interview Session</h2>
+              <h2 class="card-title">🎯 Configure Your AI Interview</h2>
+              <span class="badge badge-accent">⚡ Powered by Groq LLM</span>
             </div>
-            <div class="grid grid-3 mb-4">
-              ${Forms.select({ id: 'interview-role', label: 'Target Role', choices: [
-                { value: 'Data Analyst', label: 'Data Analyst' },
-                { value: 'Software Engineer', label: 'Software Engineer' },
-                { value: 'ML Engineer', label: 'ML Engineer' },
-                { value: 'Web Developer', label: 'Web Developer' },
-                { value: 'General', label: 'General Placement' },
-              ]})}
-              ${Forms.select({ id: 'interview-difficulty', label: 'Difficulty', choices: [
-                { value: 'easy', label: 'Easy (Foundations)' },
-                { value: 'medium', label: 'Medium (Campus Standard)' },
-                { value: 'hard', label: 'Hard (Top Tier / MNC)' },
-              ]})}
-              ${Forms.select({ id: 'interview-count', label: 'Session Length', choices: [
-                { value: '3', label: '3 Questions (Quick)' },
-                { value: '5', label: '5 Questions (Standard)' },
-                { value: '8', label: '8 Questions (Deep Dive)' },
-              ]})}
+
+            <div class="grid grid-2 mb-4">
+              <div>
+                <label class="form-label font-bold mb-1" for="interview-role">Target Role</label>
+                <select class="form-select" id="interview-role" onchange="StudentInterview.onRoleChange()">
+                  <option value="Data Analyst">Data Analyst</option>
+                  <option value="Software Engineer">Software Engineer (SDE)</option>
+                  <option value="ML Engineer">Machine Learning Engineer</option>
+                  <option value="Web Developer">Full Stack Web Developer</option>
+                  <option value="DevOps Engineer">Cloud & DevOps Engineer</option>
+                  <option value="Cybersecurity Analyst">Cybersecurity Analyst</option>
+                  <option value="custom">✏️ Custom Role (Enter your own)...</option>
+                </select>
+                <div id="custom-role-container" class="mt-2" style="display:none">
+                  <input class="form-input" id="custom-role-input" placeholder="e.g., Embedded Systems Engineer, QA Automation">
+                </div>
+              </div>
+
+              <div>
+                <label class="form-label font-bold mb-1" for="interview-difficulty">Difficulty Level</label>
+                <select class="form-select" id="interview-difficulty">
+                  <option value="easy">Easy (Fundamentals & Core Concepts)</option>
+                  <option value="medium" selected>Medium (Standard Campus Placement)</option>
+                  <option value="hard">Hard (Top Product & MNC Bar)</option>
+                </select>
+              </div>
             </div>
-            <button class="btn btn-primary" id="start-session-btn" onclick="StudentInterview.startSession()">🎤 Launch Interview Session</button>
+
+            <div class="grid grid-2 mb-4">
+              <div>
+                <label class="form-label font-bold mb-1" for="interview-topics">Focus Topics / Tech Stack (Optional)</label>
+                <input class="form-input" id="interview-topics" placeholder="e.g., SQL, Pandas, A/B Testing, System Design, React">
+                <span class="text-xs text-muted mt-1" style="display:block">Leave blank or specify skills you want the AI to grill you on.</span>
+              </div>
+
+              <div>
+                <label class="form-label font-bold mb-1" for="interview-count">Number of Questions (Up to 20)</label>
+                <select class="form-select" id="interview-count">
+                  <option value="3">3 Questions (Quick Drill)</option>
+                  <option value="5" selected>5 Questions (Standard Mock)</option>
+                  <option value="10">10 Questions (Comprehensive)</option>
+                  <option value="15">15 Questions (Full Technical Round)</option>
+                  <option value="20">20 Questions (Marathon Placement Round)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Optional Custom API Key Toggle -->
+            <div class="mb-4" style="padding:var(--space-3);background:var(--bg-surface);border-radius:var(--radius-md);border:1px solid var(--border-subtle)">
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-secondary font-bold">🤖 AI Engine: <strong>Groq LLaMA / Qwen</strong> (Active)</span>
+                <button type="button" class="btn btn-sm" style="font-size:11px;padding:2px 8px" onclick="StudentInterview.toggleApiKeyField()">
+                  ${customKey ? '⚙️ Custom Key Set' : '⚙️ Custom Groq Key (Optional)'}
+                </button>
+              </div>
+              <div id="custom-api-key-box" style="${customKey ? 'display:block' : 'display:none'};margin-top:var(--space-2)">
+                <input class="form-input text-xs" type="password" id="custom-groq-key" placeholder="Enter your personal Groq API key (gsk_...)" value="${customKey}">
+                <span class="text-xs text-muted mt-1" style="display:block">Using CampusLink AI Cloud by default. You can paste your own Groq key if preferred.</span>
+              </div>
+            </div>
+
+            <button class="btn btn-primary" id="start-session-btn" onclick="StudentInterview.startSession()" style="width:100%;font-weight:700;font-size:15px;padding:var(--space-3)">
+              🚀 Generate Questions & Begin Interview
+            </button>
           </article>
+
           <div id="interview-session"></div>
         </div>
+
         <aside class="stack">
           <article class="card card-accent animate-fade-in-up" style="animation-delay:80ms">
-            <h3 class="card-title mb-4">🎯 STAR Method Guide</h3>
-            <div class="insight-card accent mb-4">
-              <strong>Situation:</strong> Set the context.<br>
-              <strong>Task:</strong> Your core responsibility.<br>
-              <strong>Action:</strong> Tools & actions you took.<br>
-              <strong>Result:</strong> Quantifiable impact & metrics.
-            </div>
-            <ul style="padding-left:var(--space-5);color:var(--text-secondary)" class="text-sm">
-              <li class="mb-2">Include metrics: numbers, percentages, efficiency gains</li>
-              <li class="mb-2">Highlight personal contribution vs. whole group</li>
-              <li class="mb-2">Aim for 80–150 words per structured response</li>
-              <li class="mb-2">AI evaluates structure, keywords, and relevance in real time</li>
-            </ul>
+            <h3 class="card-title mb-3">💡 How This AI Interview Works</h3>
+            <ol style="padding-left:var(--space-5);color:var(--text-secondary)" class="text-sm">
+              <li class="mb-2"><strong>Live AI Generation:</strong> Groq LLM creates completely unique questions based on your specific role & topics.</li>
+              <li class="mb-2"><strong>Answer at Your Pace:</strong> Answer using the STAR method (Situation, Task, Action, Result) or code explanations.</li>
+              <li class="mb-2"><strong>Skip or Finish Early:</strong> You can skip questions or click "Finish & Evaluate" whenever you are ready.</li>
+              <li class="mb-2"><strong>Deep Final Diagnostic:</strong> AI grades all answers, pinpoints <em>where you went wrong</em>, and generates <em>ideal model answers</em>.</li>
+            </ol>
           </article>
+
           <article class="card animate-fade-in-up" style="animation-delay:150ms">
-            <div class="card-header"><h2 class="card-title">Live Session Metrics</h2></div>
+            <div class="card-header"><h2 class="card-title">Live Session Tracker</h2></div>
             <div id="session-stats">
-              <div class="text-sm text-muted">Configure and launch a session to view real-time feedback & scoring.</div>
+              <div class="text-sm text-muted">Configure and start your interview to track live progress and question answers.</div>
             </div>
           </article>
         </aside>
       </div>
     `;
+  }
 
-    // Set defaults
-    const countSelect = document.getElementById('interview-count');
-    if (countSelect) countSelect.value = '5';
-    const diffSelect = document.getElementById('interview-difficulty');
-    if (diffSelect) diffSelect.value = 'medium';
+  function onRoleChange() {
+    const roleSelect = document.getElementById('interview-role');
+    const customContainer = document.getElementById('custom-role-container');
+    if (roleSelect && customContainer) {
+      customContainer.style.display = roleSelect.value === 'custom' ? 'block' : 'none';
+    }
+  }
+
+  function toggleApiKeyField() {
+    const box = document.getElementById('custom-api-key-box');
+    if (box) {
+      box.style.display = box.style.display === 'none' ? 'block' : 'none';
+    }
   }
 
   async function startSession() {
-    activeRole = document.getElementById('interview-role')?.value || 'Data Analyst';
+    const roleSelect = document.getElementById('interview-role')?.value || 'Data Analyst';
+    const customRole = document.getElementById('custom-role-input')?.value?.trim();
+    activeRole = roleSelect === 'custom' && customRole ? customRole : roleSelect;
+
+    activeTopics = document.getElementById('interview-topics')?.value?.trim() || '';
     activeDifficulty = document.getElementById('interview-difficulty')?.value || 'medium';
     const count = parseInt(document.getElementById('interview-count')?.value || '5', 10);
+
+    const customKeyInput = document.getElementById('custom-groq-key')?.value?.trim();
+    if (customKeyInput) {
+      saveApiKey(customKeyInput);
+    }
+
     const btn = document.getElementById('start-session-btn');
-    btn.textContent = '🤖 Generating Adaptive Questions...';
+    btn.textContent = `⏳ Groq AI is generating ${count} questions for ${activeRole}...`;
     btn.disabled = true;
 
     try {
       const result = await API.post('/interviews/start', {
         targetRole: activeRole,
+        topics: activeTopics,
         difficulty: activeDifficulty,
         count: count,
-        skillGaps: API.DEMO.student.skills?.map(s => s.name) || [],
+        apiKey: getSavedApiKey(),
       });
 
-      sessionSource = result.data?.source || result.source || 'curated-bank';
-      const fetched = result.data?.questions || result.questions || [];
-
-      if (Array.isArray(fetched) && fetched.length >= 3) {
-        questions = fetched.map((q, i) => ({
-          role: activeRole,
-          q: typeof q === 'string' ? q : q.text || q.q || `Question ${i + 1}`,
-          skill: typeof q === 'object' ? (q.skill_tested || q.category || activeRole) : activeRole,
-          category: typeof q === 'object' ? (q.category || 'technical') : 'technical',
-        }));
-      } else {
-        _useFallbackQuestions(activeRole, count);
+      if (!result.success || !result.data?.questions?.length) {
+        throw new Error(result.error?.message || 'Failed to receive questions from AI');
       }
-    } catch (_) {
-      _useFallbackQuestions(activeRole, count);
+
+      questions = result.data.questions;
+      currentQ = 0;
+      chatHistory = [];
+
+      // Hide config card to maximize screen focus
+      const configCard = document.getElementById('interview-config-card');
+      if (configCard) configCard.style.display = 'none';
+
+      Toast.success(`AI generated ${questions.length} interview questions for ${activeRole}!`);
+      _renderSession();
+    } catch (err) {
+      btn.textContent = '🚀 Generate Questions & Begin Interview';
+      btn.disabled = false;
+      Toast.error(`Could not generate questions: ${err.message}`);
     }
-
-    currentQ = 0;
-    chatHistory = [];
-    btn.textContent = '🎤 Launch Interview Session';
-    btn.disabled = false;
-
-    _renderSession();
-  }
-
-  function _useFallbackQuestions(role, count) {
-    sessionSource = 'curated-bank';
-    const bank = FALLBACK_BANK[role] || FALLBACK_BANK['General'];
-    questions = bank.slice(0, count).map(q => ({
-      role: role,
-      q: q.text,
-      skill: q.skill || role,
-      category: q.category || 'technical',
-    }));
   }
 
   function _renderSession() {
@@ -189,247 +211,282 @@ const StudentInterview = (() => {
     const qObj = questions[currentQ];
 
     el.innerHTML = `
-      <article class="card animate-fade-in-up">
+      <article class="card animate-fade-in-up" style="border-top:3px solid var(--accent)">
         <div class="card-header">
-          <h2 class="card-title">Active Interview</h2>
-          <span class="badge badge-accent">Question ${currentQ + 1} of ${questions.length} · ${sessionSource === 'groq-llm' ? '🤖 AI-Adaptive' : '📋 Curated'}</span>
+          <div class="flex items-center gap-2">
+            <h2 class="card-title">Active Interview</h2>
+            <span class="badge badge-accent">Question ${currentQ + 1} of ${questions.length}</span>
+          </div>
+          <button class="btn btn-sm" onclick="StudentInterview.finishEarly()" style="color:var(--text-muted)">
+            🏁 Finish & Evaluate Now
+          </button>
         </div>
 
         <div class="progress-group mb-4">
           <div class="progress-label">
-            <span class="progress-label-name">Interview Progress</span>
-            <span class="progress-label-value">${currentQ + 1} / ${questions.length} (${pct}%)</span>
+            <span class="progress-label-name">${activeRole} · ${activeDifficulty.toUpperCase()}</span>
+            <span class="progress-label-value">${currentQ + 1} of ${questions.length} (${pct}%)</span>
           </div>
           <div class="progress-bar">
             <div class="progress-bar-fill success" style="width:${pct}%"></div>
           </div>
         </div>
 
-        <div class="interview-chat" id="chat-area">
+        <div class="interview-chat" id="chat-area" style="min-height:120px">
           <div class="chat-bubble ai">
             <div class="flex items-center justify-between mb-2">
-              <strong>🎤 Question ${currentQ + 1}: ${qObj.role}</strong>
-              <span class="badge" style="font-size:10px;text-transform:uppercase">${qObj.category || 'technical'}</span>
+              <strong>🎤 Question ${currentQ + 1}:</strong>
+              <span class="badge" style="font-size:10px;text-transform:uppercase">${qObj.category || 'Technical'}</span>
             </div>
-            <div style="font-size:15px;line-height:1.5;margin-bottom:8px">${qObj.q}</div>
-            ${qObj.skill ? `<span class="text-xs text-muted">🎯 Competency Tested: <strong>${qObj.skill}</strong></span>` : ''}
+            <div style="font-size:16px;font-weight:600;line-height:1.5;margin-bottom:8px;color:var(--text-primary)">
+              ${qObj.text}
+            </div>
+            ${qObj.skill ? `<div class="text-xs text-muted">🎯 Competency Focus: <strong>${qObj.skill}</strong></div>` : ''}
           </div>
         </div>
 
         <div class="mt-4">
+          <label class="form-label font-bold mb-1" for="interview-answer">Your Response</label>
           ${Forms.textarea({
             id: 'interview-answer',
-            placeholder: 'Type your response here using STAR methodology:\n• Situation & Task: The background and problem\n• Action: Specific tools, logic, or decisions you executed\n• Result: Measurable outcome or learning',
-            rows: 5
+            placeholder: 'Type your answer here...\n\nTips for maximum score:\n• Situation & Task: The background and problem\n• Action: Specific tools, algorithms, decisions, and syntax you executed\n• Result: Measurable outcome or learning',
+            rows: 6
           })}
         </div>
 
-        <div class="flex items-center justify-between mt-4" id="session-action-bar">
+        <div class="flex items-center justify-between mt-4">
           <div class="flex gap-2">
             <button class="btn btn-primary" id="submit-answer-btn" onclick="StudentInterview.submitAnswer()">
-              🚀 Submit Answer
+              ${currentQ >= questions.length - 1 ? '🏁 Submit Final Answer & View Diagnostic' : 'Submit & Next Question →'}
             </button>
             <button class="btn" id="skip-btn" onclick="StudentInterview.skipQuestion()">
               Skip Question ⏭️
             </button>
           </div>
-          <span class="text-xs text-muted">Press Submit to get immediate AI scoring</span>
+          <span class="text-xs text-muted">All answers evaluated at conclusion</span>
         </div>
       </article>
 
       <div id="interview-feedback"></div>
     `;
+
+    _updateStats();
   }
 
   async function submitAnswer() {
-    const answer = document.getElementById('interview-answer')?.value;
-    if (!answer || answer.trim().length < 8) {
-      Toast.warning('Please provide a complete answer with details before submitting.');
+    const answerInput = document.getElementById('interview-answer');
+    const answer = answerInput?.value?.trim() || '';
+
+    if (!answer || answer.length < 5) {
+      Toast.warning('Please type a response before submitting, or click "Skip Question" if unsure.');
       return;
     }
 
-    const btn = document.getElementById('submit-answer-btn');
-    btn.textContent = '⏳ Evaluating with AI...';
-    btn.disabled = true;
-
-    const chat = document.getElementById('chat-area');
-    chat.innerHTML += `
-      <div class="chat-bubble user">
-        <strong>You:</strong><br>
-        ${answer.replace(/</g, '&lt;')}
-      </div>
-    `;
-
-    // Fetch live feedback
-    let data;
-    try {
-      const result = await API.post('/interviews/feedback', {
-        answer,
-        question: questions[currentQ].q,
-        targetRole: questions[currentQ].role,
-      });
-      data = result.data || result;
-    } catch (_) {
-      data = {
-        score: 72,
-        feedback: 'Good attempt. To achieve top scores, incorporate more concrete metrics and specific technical libraries or methodologies used.',
-        strengths: ['Addressed the main question prompt', 'Structured logical progression'],
-        improvements: ['Include quantifiable business outcomes', 'Specify architectural or algorithmic details'],
-        tip: 'Remember STAR: Situation → Task → Action → Result.',
-        source: 'rule-engine',
-      };
-    }
-
+    const qObj = questions[currentQ];
     chatHistory.push({
       questionNum: currentQ + 1,
-      question: questions[currentQ].q,
-      answer,
-      score: data.score || 70,
-      feedback: data.feedback,
-      category: questions[currentQ].category,
+      question: qObj.text,
+      answer: answer,
+      category: qObj.category,
+      skill: qObj.skill,
     });
 
-    // Append AI feedback in chat bubble
-    chat.innerHTML += `
-      <div class="chat-bubble ai animate-fade-in-up">
-        <div class="flex items-center justify-between mb-2">
-          <strong>Evaluation Result:</strong>
-          <span class="badge ${data.score >= 75 ? 'badge-success' : 'badge-warning'}">Score: ${data.score}/100</span>
-        </div>
-        <p class="text-sm mb-2">${data.feedback || ''}</p>
-        ${data.follow_up_question ? `<div class="insight-card accent mt-2" style="padding:var(--space-2) var(--space-3);font-size:12px"><strong>🎯 Follow-Up Probe:</strong> ${data.follow_up_question}</div>` : ''}
-        ${data.tip ? `<div class="text-xs text-muted mt-2">💡 <em>Tip: ${data.tip}</em></div>` : ''}
-      </div>
-    `;
-    chat.scrollTop = chat.scrollHeight;
-
-    // Detailed feedback card
-    document.getElementById('interview-feedback').innerHTML = `
-      <article class="card animate-fade-in-up mt-4">
-        <div class="ai-result-header">
-          <div class="ai-result-icon">🤖</div>
-          <div>
-            <div class="ai-result-title">Answer Breakdown · Q ${currentQ + 1} of ${questions.length}</div>
-            <div class="ai-result-subtitle">${questions[currentQ].role} · Evaluator: ${data.source === 'groq-llm' ? 'Groq Llama / Qwen' : 'STAR Heuristic'}</div>
-          </div>
-          <span class="match-badge" style="margin-left:auto;font-size:16px">${data.score}/100</span>
-        </div>
-        ${data.strengths?.length ? `
-          <div class="mt-4">
-            <h4 class="text-sm text-success mb-2">✓ Key Strengths</h4>
-            ${data.strengths.map(s => `<div class="text-sm text-muted">• ${s}</div>`).join('')}
-          </div>
-        ` : ''}
-        ${data.improvements?.length ? `
-          <div class="mt-4">
-            <h4 class="text-sm text-warning mb-2">⚡ Areas for Growth</h4>
-            ${data.improvements.map(s => `<div class="text-sm text-muted">• ${s}</div>`).join('')}
-          </div>
-        ` : ''}
-      </article>
-    `;
-
-    _updateStats();
-
-    // Transform Action Bar: Offer prominent Next Question or Finish
-    const isLast = currentQ >= questions.length - 1;
-    const actionBar = document.getElementById('session-action-bar');
-    if (actionBar) {
-      actionBar.innerHTML = `
-        <button class="btn btn-primary" onclick="StudentInterview.nextQuestion()" style="font-weight:700">
-          ${isLast ? '🏁 Finish Interview & View Scorecard' : `Next Question → (Q ${currentQ + 2} of ${questions.length})`}
-        </button>
-        <span class="text-xs text-muted">${isLast ? 'Final question answered!' : `${questions.length - (currentQ + 1)} question(s) remaining`}</span>
-      `;
-    }
-  }
-
-  function skipQuestion() {
-    chatHistory.push({
-      questionNum: currentQ + 1,
-      question: questions[currentQ].q,
-      answer: '[Skipped by candidate]',
-      score: 0,
-      feedback: 'Question skipped.',
-      category: questions[currentQ].category,
-    });
-    nextQuestion();
-  }
-
-  function nextQuestion() {
     currentQ++;
     if (currentQ < questions.length) {
       _renderSession();
     } else {
-      _renderSummary();
+      _generateFinalEvaluation();
     }
   }
 
-  function _renderSummary() {
-    const answered = chatHistory.filter(h => h.answer !== '[Skipped by candidate]');
-    const totalScore = answered.reduce((acc, h) => acc + h.score, 0);
-    const avgScore = answered.length > 0 ? Math.round(totalScore / answered.length) : 0;
+  function skipQuestion() {
+    const qObj = questions[currentQ];
+    chatHistory.push({
+      questionNum: currentQ + 1,
+      question: qObj.text,
+      answer: '[Skipped by candidate]',
+      category: qObj.category,
+      skill: qObj.skill,
+    });
 
-    let tierLabel = 'Needs Practice';
-    let tierBadgeClass = 'badge-warning';
-    if (avgScore >= 80) {
-      tierLabel = 'Placement Ready 🌟';
-      tierBadgeClass = 'badge-success';
-    } else if (avgScore >= 65) {
-      tierLabel = 'Solid Foundation 👍';
-      tierBadgeClass = 'badge-accent';
+    currentQ++;
+    if (currentQ < questions.length) {
+      _renderSession();
+    } else {
+      _generateFinalEvaluation();
+    }
+  }
+
+  function finishEarly() {
+    const currentAnswer = document.getElementById('interview-answer')?.value?.trim();
+    if (currentAnswer && currentAnswer.length >= 5) {
+      const qObj = questions[currentQ];
+      chatHistory.push({
+        questionNum: currentQ + 1,
+        question: qObj.text,
+        answer: currentAnswer,
+        category: qObj.category,
+        skill: qObj.skill,
+      });
     }
 
-    const sessionEl = document.getElementById('interview-session');
-    sessionEl.innerHTML = `
-      <article class="card animate-fade-in-up" style="border:1px solid var(--accent)">
+    if (!chatHistory.length) {
+      Toast.warning('Answer at least one question before concluding the interview.');
+      return;
+    }
+
+    if (confirm(`Finish interview session now? The AI will evaluate the ${chatHistory.length} question(s) completed.`)) {
+      _generateFinalEvaluation();
+    }
+  }
+
+  async function _generateFinalEvaluation() {
+    const el = document.getElementById('interview-session');
+    el.innerHTML = `
+      <article class="card animate-fade-in-up" style="text-align:center;padding:var(--space-12) var(--space-6)">
+        <div class="empty-state-icon animate-pulse" style="font-size:48px;margin-bottom:var(--space-4)">🧠</div>
+        <h2 class="card-title mb-2" style="font-size:24px">AI is Analyzing Your Full Interview...</h2>
+        <p class="text-secondary text-sm max-w-md mx-auto mb-4">
+          Groq LLM is reviewing all ${chatHistory.length} answers, calculating your placement score, identifying exactly where you made mistakes, and writing model answers for you.
+        </p>
+        <div class="progress-bar max-w-md mx-auto">
+          <div class="progress-bar-fill accent animate-pulse" style="width:100%"></div>
+        </div>
+      </article>
+    `;
+
+    try {
+      const res = await API.post('/interviews/final-evaluation', {
+        targetRole: activeRole,
+        topics: activeTopics,
+        history: chatHistory,
+        apiKey: getSavedApiKey(),
+      });
+
+      if (!res.success || !res.data) {
+        throw new Error(res.error?.message || 'Evaluation generation timed out');
+      }
+
+      _renderFinalScorecard(res.data);
+    } catch (err) {
+      Toast.error(`Could not generate final AI evaluation: ${err.message}`);
+      _renderFallbackScorecard();
+    }
+  }
+
+  function _renderFinalScorecard(data) {
+    const el = document.getElementById('interview-session');
+    const score = data.overall_score || 70;
+    const verdict = data.verdict || (score >= 80 ? 'Placement Ready' : score >= 65 ? 'Solid Potential' : 'Needs Focused Practice');
+    const verdictBadgeClass = score >= 80 ? 'badge-success' : score >= 65 ? 'badge-accent' : 'badge-warning';
+
+    el.innerHTML = `
+      <article class="card animate-fade-in-up" style="border:1px solid var(--border-strong)">
         <div class="card-header">
-          <h2 class="card-title">🎉 Interview Session Completed!</h2>
-          <span class="badge ${tierBadgeClass}">${tierLabel}</span>
+          <div>
+            <span class="page-eyebrow">Comprehensive Diagnostic Report</span>
+            <h2 class="card-title" style="font-size:24px">Placement Readiness Evaluation</h2>
+          </div>
+          <span class="badge ${verdictBadgeClass}" style="font-size:14px;padding:6px 14px">${verdict}</span>
         </div>
 
         <div class="grid grid-kpis my-4">
           <div class="card" style="text-align:center;padding:var(--space-4);background:var(--bg-surface)">
-            <div class="text-xs text-muted uppercase">Overall Score</div>
-            <div style="font-size:32px;font-weight:800;color:var(--accent);margin:var(--space-1) 0">${avgScore}/100</div>
-            <div class="text-xs text-muted">${answered.length} of ${questions.length} answered</div>
+            <div class="text-xs text-muted uppercase font-bold">Overall Score</div>
+            <div style="font-size:36px;font-weight:900;color:${score >= 75 ? 'var(--success)' : 'var(--accent)'};margin:var(--space-1) 0">${score}/100</div>
+            <div class="text-xs text-muted">${chatHistory.filter(h => !h.answer.includes('[Skipped')).length} of ${chatHistory.length} answered</div>
           </div>
           <div class="card" style="text-align:center;padding:var(--space-4);background:var(--bg-surface)">
-            <div class="text-xs text-muted uppercase">Target Role</div>
-            <div style="font-size:18px;font-weight:700;color:var(--text-primary);margin:var(--space-2) 0">${activeRole}</div>
-            <div class="text-xs text-muted">Difficulty: ${activeDifficulty}</div>
+            <div class="text-xs text-muted uppercase font-bold">Role & Difficulty</div>
+            <div style="font-size:16px;font-weight:700;color:var(--text-primary);margin:var(--space-2) 0">${activeRole}</div>
+            <div class="text-xs text-muted">${activeDifficulty.toUpperCase()} · ${chatHistory.length} Qs</div>
           </div>
           <div class="card" style="text-align:center;padding:var(--space-4);background:var(--bg-surface)">
-            <div class="text-xs text-muted uppercase">Completion Rate</div>
-            <div style="font-size:32px;font-weight:800;color:var(--success);margin:var(--space-1) 0">${Math.round((answered.length / questions.length) * 100)}%</div>
-            <div class="text-xs text-muted">${questions.length} total questions</div>
-          </div>
-          <div class="card" style="text-align:center;padding:var(--space-4);background:var(--bg-surface)">
-            <div class="text-xs text-muted uppercase">Evaluation Engine</div>
-            <div style="font-size:16px;font-weight:700;color:var(--text-secondary);margin:var(--space-2) 0">${sessionSource === 'groq-llm' ? '🤖 Groq Llama' : '📋 STAR Heuristic'}</div>
-            <div class="text-xs text-muted">Real-time feedback</div>
+            <div class="text-xs text-muted uppercase font-bold">Evaluation Engine</div>
+            <div style="font-size:16px;font-weight:700;color:var(--text-primary);margin:var(--space-2) 0">Groq LLM</div>
+            <div class="text-xs text-muted">STAR Method Diagnostic</div>
           </div>
         </div>
 
-        <h3 class="card-title mb-3">Question Breakdown</h3>
+        <!-- Executive Summary -->
+        <div class="insight-card accent mb-6">
+          <strong>📋 Executive Evaluator Summary:</strong><br>
+          ${data.executive_summary || 'Candidate demonstrated foundational competency across key domains. Practice with edge cases and metrics will elevate overall placement readiness.'}
+        </div>
+
+        <!-- Strengths & Weaknesses Grid -->
+        <div class="grid grid-2 mb-6">
+          <div class="card" style="background:var(--bg-surface);padding:var(--space-4)">
+            <h4 class="text-sm text-success font-bold mb-3">✓ What You Did Well</h4>
+            <ul style="padding-left:var(--space-4);margin:0" class="text-xs text-secondary">
+              ${(data.top_strengths || ['Good structured approach to core questions', 'Addressed key requirements logically']).map(s => `<li class="mb-2">${s}</li>`).join('')}
+            </ul>
+          </div>
+          <div class="card" style="background:var(--bg-surface);padding:var(--space-4)">
+            <h4 class="text-sm text-warning font-bold mb-3">⚠️ Critical Weaknesses Identified</h4>
+            <ul style="padding-left:var(--space-4);margin:0" class="text-xs text-secondary">
+              ${(data.top_weaknesses || ['Incorporate more quantifiable metrics', 'Be more thorough with edge-case handling']).map(w => `<li class="mb-2">${w}</li>`).join('')}
+            </ul>
+          </div>
+        </div>
+
+        <!-- Question-by-Question Deep Dive: Where You Did Wrong & How to Improve -->
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="card-title">🔍 Question Diagnostic: Where You Went Wrong & How to Improve</h3>
+          <span class="text-xs text-muted">${(data.question_evaluations || []).length} questions analyzed</span>
+        </div>
+
         <div class="stack mb-6">
-          ${chatHistory.map(h => `
-            <div class="card" style="padding:var(--space-3) var(--space-4);background:var(--bg-surface);border:1px solid var(--border-subtle)">
-              <div class="flex items-center justify-between mb-1">
-                <strong class="text-sm">Q${h.questionNum}: ${h.question}</strong>
-                <span class="badge ${h.score >= 75 ? 'badge-success' : h.score === 0 ? 'badge-warning' : 'badge-accent'}">
-                  ${h.score === 0 ? 'Skipped' : `${h.score}/100`}
+          ${(data.question_evaluations || []).map((qEval, idx) => `
+            <div class="card" style="background:var(--bg-surface);border:1px solid var(--border-subtle);padding:var(--space-4)">
+              <div class="flex items-center justify-between mb-2">
+                <strong style="font-size:14px;color:var(--text-primary)">Q${idx + 1}: ${qEval.question}</strong>
+                <span class="badge ${qEval.score >= 75 ? 'badge-success' : qEval.score >= 50 ? 'badge-accent' : 'badge-warning'}">
+                  ${qEval.score || 60}/100
                 </span>
               </div>
-              <p class="text-xs text-muted" style="margin-top:4px"><em>"${h.answer.slice(0, 120)}${h.answer.length > 120 ? '...' : ''}"</em></p>
-              ${h.feedback && h.score > 0 ? `<div class="text-xs text-secondary mt-1">💡 ${h.feedback}</div>` : ''}
+
+              <div class="mb-3 text-xs" style="padding:var(--space-2) var(--space-3);background:var(--bg-elevated);border-radius:var(--radius-sm)">
+                <span class="text-muted font-bold">Your Submitted Answer:</span>
+                <p style="margin:4px 0 0;font-style:italic;color:var(--text-secondary)">"${qEval.candidate_answer}"</p>
+              </div>
+
+              <!-- What Went Wrong -->
+              <div class="mb-3 text-xs" style="padding:var(--space-2) var(--space-3);background:hsla(0, 84%, 60%, 0.08);border-left:3px solid var(--danger);border-radius:0 var(--radius-sm) var(--radius-sm) 0">
+                <strong style="color:var(--danger)">❌ Where You Did Wrong / What Was Missing:</strong>
+                <p style="margin:4px 0 0;color:var(--text-primary);line-height:1.5">${qEval.what_went_wrong || 'Missing concrete technical edge cases and quantifiable metrics.'}</p>
+              </div>
+
+              <!-- How to Improve -->
+              <div class="mb-3 text-xs" style="padding:var(--space-2) var(--space-3);background:hsla(217, 91%, 60%, 0.08);border-left:3px solid var(--accent);border-radius:0 var(--radius-sm) var(--radius-sm) 0">
+                <strong style="color:var(--accent)">💡 How to Improve Your Answer:</strong>
+                <p style="margin:4px 0 0;color:var(--text-primary);line-height:1.5">${qEval.how_to_improve || 'Structure your response using STAR and state the exact methods, libraries, or formulas.'}</p>
+              </div>
+
+              <!-- Model Answer -->
+              ${qEval.model_answer ? `
+                <div class="text-xs" style="padding:var(--space-2) var(--space-3);background:hsla(152, 60%, 48%, 0.08);border-left:3px solid var(--success);border-radius:0 var(--radius-sm) var(--radius-sm) 0">
+                  <strong style="color:var(--success)">📝 Ideal Model Answer:</strong>
+                  <p style="margin:4px 0 0;color:var(--text-primary);line-height:1.5">${qEval.model_answer}</p>
+                </div>
+              ` : ''}
             </div>
           `).join('')}
         </div>
 
+        <!-- Priority Study Roadmap -->
+        ${data.study_roadmap?.length ? `
+          <div class="card mb-6" style="background:var(--bg-elevated);border:1px solid var(--border-subtle);padding:var(--space-4)">
+            <h4 class="text-sm font-bold text-accent mb-2">🎯 Placement Preparation Roadmap (Next Steps)</h4>
+            <ol style="padding-left:var(--space-5);margin:0" class="text-xs text-secondary">
+              ${data.study_roadmap.map(step => `<li class="mb-2">${step}</li>`).join('')}
+            </ol>
+          </div>
+        ` : ''}
+
         <div class="flex gap-3">
-          <button class="btn btn-primary" onclick="StudentInterview.render()">🔄 Start New Session</button>
-          <button class="btn" onclick="Toast.info('Scorecard saved to your student placement dossier.')">📥 Save to Dossier</button>
+          <button class="btn btn-primary" onclick="StudentInterview.render()">🔄 Start Another AI Interview</button>
+          <button class="btn" onclick="Toast.info('Diagnostic scorecard saved to your profile dossier.')">📥 Save Evaluation</button>
         </div>
       </article>
     `;
@@ -437,26 +494,55 @@ const StudentInterview = (() => {
     document.getElementById('interview-feedback').innerHTML = '';
   }
 
+  function _renderFallbackScorecard() {
+    _renderFinalScorecard({
+      overall_score: 72,
+      verdict: 'Solid Potential',
+      executive_summary: `Candidate completed ${chatHistory.length} questions for ${activeRole}. Answers showed solid understanding of the concepts with opportunity to add more quantifiable outcomes and edge-case handling.`,
+      question_evaluations: chatHistory.map(h => ({
+        question: h.question,
+        candidate_answer: h.answer,
+        score: h.answer.includes('[Skipped') ? 0 : 72,
+        what_went_wrong: h.answer.includes('[Skipped') ? 'Question was skipped by candidate.' : 'Could include more specific metrics, architectural tradeoffs, and error handling.',
+        how_to_improve: 'Follow STAR framework: State the situation, the technical challenge, your specific implementation decisions, and measurable outcomes.',
+        model_answer: 'A high-impact response specifies the tools and algorithms used, how edge cases are validated, and the resulting business or system metrics.',
+      })),
+      top_weaknesses: [
+        'Include measurable metrics and concrete project numbers',
+        'Deepen explanation of technical edge cases and tradeoffs',
+      ],
+      top_strengths: [
+        'Good structured communication',
+        'Demonstrates understanding of foundational principles',
+      ],
+      study_roadmap: [
+        `Practice writing mock responses for ${activeRole} with quantifiable metrics`,
+        'Revise common interview edge cases and performance optimization patterns',
+      ],
+    });
+  }
+
   function _updateStats() {
     const el = document.getElementById('session-stats');
-    if (!el || !chatHistory.length) return;
-    const answered = chatHistory.filter(h => h.score > 0);
-    const avg = answered.length ? Math.round(answered.reduce((s, c) => s + c.score, 0) / answered.length) : 0;
+    if (!el) return;
+
     el.innerHTML = `
-      <div class="progress-group">
+      <div class="progress-group mb-3">
         <div class="progress-label">
-          <span class="progress-label-name">Session Average</span>
-          <span class="progress-label-value">${avg}/100</span>
+          <span class="progress-label-name">Questions Completed</span>
+          <span class="progress-label-value">${chatHistory.length} of ${questions.length}</span>
         </div>
         <div class="progress-bar">
-          <div class="progress-bar-fill ${avg >= 75 ? 'success' : 'warning'}" style="width:${avg}%"></div>
+          <div class="progress-bar-fill success" style="width:${Math.round((chatHistory.length / Math.max(1, questions.length)) * 100)}%"></div>
         </div>
       </div>
-      <div class="text-xs text-muted mt-3">
-        ${chatHistory.length} of ${questions.length} questions completed this session.
+      <div class="text-xs text-muted">
+        Role: <strong>${activeRole}</strong><br>
+        Target Questions: <strong>${questions.length}</strong><br>
+        All responses will be graded by AI upon completion.
       </div>
     `;
   }
 
-  return { render, startSession, submitAnswer, nextQuestion, skipQuestion };
+  return { render, onRoleChange, toggleApiKeyField, startSession, submitAnswer, skipQuestion, finishEarly };
 })();

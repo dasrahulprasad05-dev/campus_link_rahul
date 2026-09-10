@@ -222,6 +222,47 @@ const API = (() => {
       return simulateSchedulerCheck(body.events || []);
     }
 
+    if (path.includes('generate-questions')) {
+      return {
+        questions: [
+          { text: 'Tell me about a project where you used data to make a decision.', category: 'behavioral', difficulty: 'medium', skill_tested: 'Communication' },
+          { text: 'How would you handle missing data in a large dataset?', category: 'technical', difficulty: 'medium', skill_tested: 'Data Cleaning' },
+          { text: 'Describe a time you had to learn a new technology quickly.', category: 'behavioral', difficulty: 'easy', skill_tested: 'Adaptability' },
+        ],
+        source: 'offline-fallback',
+      };
+    }
+
+    if (path.includes('generate-roadmap')) {
+      return {
+        milestones: [
+          { title: 'Master Core Skills', description: 'Focus on the top 3 skills for your target role.', week: 1, priority: 'critical', category: 'skill', resources: ['Coursera', 'YouTube'], success_criteria: 'Complete 1 online course' },
+          { title: 'Build a Project', description: 'Create a portfolio project demonstrating your skills.', week: 3, priority: 'high', category: 'project', resources: ['GitHub'], success_criteria: 'Deploy 1 project' },
+          { title: 'Practice Interviews', description: 'Complete 3 mock interviews with 70+ score.', week: 5, priority: 'high', category: 'practice', resources: ['CAMPUSLINK'], success_criteria: 'Average score 70+' },
+        ],
+        summary: 'Template roadmap (AI service offline).',
+        source: 'offline-fallback',
+      };
+    }
+
+    if (path.includes('at-risk')) {
+      return {
+        risk_probability: 0.5,
+        risk_level: 'medium',
+        risk_factors: [{ factor: 'Offline', value: 'N/A', impact: 'low', explanation: 'AI service is offline. Showing placeholder.' }],
+        recommended_actions: ['Start the AI service for real predictions.'],
+        source: 'offline-fallback',
+      };
+    }
+
+    if (path.includes('policy-qa')) {
+      return {
+        answer: 'The AI Policy Q&A service is currently offline. Please start the Python AI service for full RAG-powered answers. In the meantime, contact the Placement Office for policy questions.',
+        sources: [],
+        source: 'offline-fallback',
+      };
+    }
+
     return DEMO[role] || {};
   }
 

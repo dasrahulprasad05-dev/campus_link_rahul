@@ -1,16 +1,13 @@
 /* ============================================================
-   CAMPUSLINK — AI Mock Interview Page
+   CAMPUSLINK — AI Mock Interview Page (Feature 4 + 5)
+   Now fetches adaptive questions from the AI service (Feature 5)
+   and gets LLM-powered feedback (Feature 4).
    ============================================================ */
 const StudentInterview = (() => {
-  const QUESTIONS = [
-    { role: 'General', q: 'Tell me about a project where you used data to make a decision.' },
-    { role: 'Data Analyst', q: 'How would you handle missing data in a large dataset?' },
-    { role: 'Software Engineer', q: 'Describe a time you debugged a complex issue in production.' },
-    { role: 'Behavioral', q: 'Tell me about a time you had a conflict in a team. How did you resolve it?' },
-    { role: 'Technical', q: 'What is the difference between a LEFT JOIN and an INNER JOIN?' },
-  ];
+  let questions = [];
   let currentQ = 0;
   let chatHistory = [];
+  let sessionSource = 'loading';
 
   async function render() {
     currentQ = 0;
@@ -20,20 +17,24 @@ const StudentInterview = (() => {
       <div class="grid grid-main">
         <div class="stack">
           <article class="card animate-fade-in-up">
-            <div class="card-header"><h2 class="card-title">Interview Session</h2><span class="badge badge-accent">Question ${currentQ + 1}/${QUESTIONS.length}</span></div>
-            <div class="interview-chat" id="chat-area">
-              <div class="chat-bubble ai">
-                <strong>🎤 ${QUESTIONS[currentQ].role} Question:</strong><br>
-                ${QUESTIONS[currentQ].q}
-              </div>
+            <div class="card-header"><h2 class="card-title">Configure Session</h2></div>
+            <div class="flex gap-3 mb-4">
+              ${Forms.select({ id: 'interview-role', label: 'Target Role', choices: [
+                { value: 'Data Analyst', label: 'Data Analyst' },
+                { value: 'Software Engineer', label: 'Software Engineer' },
+                { value: 'ML Engineer', label: 'ML Engineer' },
+                { value: 'Web Developer', label: 'Web Developer' },
+                { value: 'General', label: 'General' },
+              ]})}
+              ${Forms.select({ id: 'interview-difficulty', label: 'Difficulty', choices: [
+                { value: 'easy', label: 'Easy' },
+                { value: 'medium', label: 'Medium' },
+                { value: 'hard', label: 'Hard' },
+              ]})}
             </div>
-            ${Forms.textarea({ id: 'interview-answer', placeholder: 'Type your answer here... Use the STAR method: Situation → Task → Action → Result', rows: 5 })}
-            <div class="flex gap-3 mt-4">
-              <button class="btn btn-primary" id="submit-answer-btn" onclick="StudentInterview.submitAnswer()">Submit Answer</button>
-              <button class="btn" onclick="StudentInterview.nextQuestion()">Skip →</button>
-            </div>
+            <button class="btn btn-primary" id="start-session-btn" onclick="StudentInterview.startSession()">🎤 Start Interview Session</button>
           </article>
-          <div id="interview-feedback"></div>
+          <div id="interview-session"></div>
         </div>
         <aside class="stack">
           <article class="card card-accent animate-fade-in-up" style="animation-delay:80ms">
@@ -49,11 +50,68 @@ const StudentInterview = (() => {
           <article class="card animate-fade-in-up" style="animation-delay:150ms">
             <div class="card-header"><h2 class="card-title">Session Stats</h2></div>
             <div id="session-stats">
-              <div class="text-sm text-muted">Answer questions to see your stats.</div>
+              <div class="text-sm text-muted">Start a session to see your stats.</div>
             </div>
           </article>
         </aside>
       </div>
+    `;
+  }
+
+  async function startSession() {
+    const role = document.getElementById('interview-role')?.value || 'General';
+    const difficulty = document.getElementById('interview-difficulty')?.value || 'medium';
+    const btn = document.getElementById('start-session-btn');
+    btn.textContent = 'Generating questions...'; btn.disabled = true;
+
+    // Fetch adaptive questions from AI service (Feature 5)
+    const result = await API.post('/interviews/start', {
+      targetRole: role,
+      difficulty,
+      skillGaps: API.DEMO.student.skills?.map(s => s.name) || [],
+    });
+
+    sessionSource = result.data?.source || result.source || 'rule-engine';
+    const fetched = result.data?.questions || result.questions || [];
+    questions = fetched.map((q, i) => ({
+      role: role,
+      q: typeof q === 'string' ? q : q.text || q.q || `Question ${i + 1}`,
+      skill: typeof q === 'object' ? (q.skill_tested || q.category || '') : '',
+    }));
+
+    if (questions.length === 0) {
+      questions = [
+        { role, q: 'Tell me about a project where you used data to make a decision.', skill: '' },
+        { role, q: 'Describe a challenging problem you solved recently.', skill: '' },
+      ];
+    }
+
+    currentQ = 0;
+    chatHistory = [];
+    btn.textContent = '🎤 Start Interview Session'; btn.disabled = false;
+
+    _renderSession();
+  }
+
+  function _renderSession() {
+    const el = document.getElementById('interview-session');
+    el.innerHTML = `
+      <article class="card animate-fade-in-up">
+        <div class="card-header"><h2 class="card-title">Interview Session</h2><span class="badge badge-accent">Q ${currentQ + 1}/${questions.length} · ${sessionSource === 'groq-llm' ? '🤖 AI-Generated' : '📋 Curated'}</span></div>
+        <div class="interview-chat" id="chat-area">
+          <div class="chat-bubble ai">
+            <strong>🎤 ${questions[currentQ].role} Question:</strong><br>
+            ${questions[currentQ].q}
+            ${questions[currentQ].skill ? `<br><span class="text-xs text-muted">Testing: ${questions[currentQ].skill}</span>` : ''}
+          </div>
+        </div>
+        ${Forms.textarea({ id: 'interview-answer', placeholder: 'Type your answer here... Use the STAR method: Situation → Task → Action → Result', rows: 5 })}
+        <div class="flex gap-3 mt-4">
+          <button class="btn btn-primary" id="submit-answer-btn" onclick="StudentInterview.submitAnswer()">Submit Answer</button>
+          <button class="btn" onclick="StudentInterview.nextQuestion()">Skip →</button>
+        </div>
+      </article>
+      <div id="interview-feedback"></div>
     `;
   }
 
@@ -64,49 +122,57 @@ const StudentInterview = (() => {
     const btn = document.getElementById('submit-answer-btn');
     btn.textContent = 'Evaluating...'; btn.disabled = true;
 
-    // Add user bubble
     const chat = document.getElementById('chat-area');
     chat.innerHTML += `<div class="chat-bubble user">${answer.replace(/</g, '&lt;')}</div>`;
 
-    const result = await API.post('/interviews/feedback', { answer, question: QUESTIONS[currentQ].q });
+    // Feature 4: LLM-powered feedback
+    const result = await API.post('/interviews/feedback', {
+      answer,
+      question: questions[currentQ].q,
+      targetRole: questions[currentQ].role,
+    });
+    const data = result.data || result;
 
     btn.textContent = 'Submit Answer'; btn.disabled = false;
 
-    chatHistory.push({ question: QUESTIONS[currentQ].q, answer, score: result.score, feedback: result.feedback });
+    chatHistory.push({ question: questions[currentQ].q, answer, score: data.score, feedback: data.feedback });
 
-    // Add AI feedback bubble
+    // AI feedback bubble
     chat.innerHTML += `
       <div class="chat-bubble ai">
-        <strong>Score: ${result.score}/100</strong><br>
-        ${result.feedback}<br>
-        <em class="text-xs" style="opacity:0.7">💡 ${result.tip || 'Remember STAR: Situation → Task → Action → Result.'}</em>
+        <strong>Score: ${data.score}/100</strong> ${data.source === 'groq-llm' ? '<span class="badge badge-accent" style="font-size:10px">LLM</span>' : ''}<br>
+        ${data.feedback || ''}<br>
+        ${data.follow_up_question ? `<br><em class="text-xs" style="opacity:0.8">🎯 Follow-up: ${data.follow_up_question}</em>` : ''}
+        <em class="text-xs" style="opacity:0.5;display:block;margin-top:var(--space-2)">💡 ${data.tip || 'Remember STAR: Situation → Task → Action → Result.'}</em>
       </div>
     `;
     chat.scrollTop = chat.scrollHeight;
-
     document.getElementById('interview-answer').value = '';
     _updateStats();
 
+    // Detailed feedback card
     document.getElementById('interview-feedback').innerHTML = `
       <article class="card animate-fade-in-up">
         <div class="ai-result-header">
           <div class="ai-result-icon">🤖</div>
-          <div><div class="ai-result-title">Answer Evaluation</div><div class="ai-result-subtitle">${QUESTIONS[currentQ].role} question</div></div>
-          <span class="match-badge" style="margin-left:auto">${result.score}/100</span>
+          <div><div class="ai-result-title">Answer Evaluation</div><div class="ai-result-subtitle">${questions[currentQ].role} · Engine: ${data.source || 'rule-engine'}</div></div>
+          <span class="match-badge" style="margin-left:auto">${data.score}/100</span>
         </div>
-        ${result.strengths?.length ? `<div class="mt-4"><h4 class="text-sm text-success mb-2">✓ Strengths</h4>${result.strengths.map(s => `<div class="text-sm text-muted">• ${s}</div>`).join('')}</div>` : ''}
-        ${result.improvements?.length ? `<div class="mt-4"><h4 class="text-sm text-warning mb-2">⚡ Improve</h4>${result.improvements.map(s => `<div class="text-sm text-muted">• ${s}</div>`).join('')}</div>` : ''}
+        ${data.strengths?.length ? `<div class="mt-4"><h4 class="text-sm text-success mb-2">✓ Strengths</h4>${data.strengths.map(s => `<div class="text-sm text-muted">• ${s}</div>`).join('')}</div>` : ''}
+        ${data.improvements?.length ? `<div class="mt-4"><h4 class="text-sm text-warning mb-2">⚡ Improve</h4>${data.improvements.map(s => `<div class="text-sm text-muted">• ${s}</div>`).join('')}</div>` : ''}
+        ${data.model_answer ? `<div class="divider"></div><div class="insight-card accent"><strong>📝 Model Answer:</strong> ${data.model_answer}</div>` : ''}
       </article>
     `;
   }
 
   function nextQuestion() {
-    currentQ = (currentQ + 1) % QUESTIONS.length;
+    currentQ = (currentQ + 1) % questions.length;
     const chat = document.getElementById('chat-area');
-    chat.innerHTML += `<div class="chat-bubble ai"><strong>🎤 ${QUESTIONS[currentQ].role} Question:</strong><br>${QUESTIONS[currentQ].q}</div>`;
+    chat.innerHTML += `<div class="chat-bubble ai"><strong>🎤 ${questions[currentQ].role} Question:</strong><br>${questions[currentQ].q}</div>`;
     chat.scrollTop = chat.scrollHeight;
     document.getElementById('interview-answer').value = '';
-    document.querySelector('.card-header .badge').textContent = `Question ${currentQ + 1}/${QUESTIONS.length}`;
+    const badge = document.querySelector('.card-header .badge');
+    if (badge) badge.textContent = `Q ${currentQ + 1}/${questions.length} · ${sessionSource === 'groq-llm' ? '🤖 AI-Generated' : '📋 Curated'}`;
   }
 
   function _updateStats() {
@@ -119,5 +185,5 @@ const StudentInterview = (() => {
     `;
   }
 
-  return { render, submitAnswer, nextQuestion };
+  return { render, startSession, submitAnswer, nextQuestion };
 })();

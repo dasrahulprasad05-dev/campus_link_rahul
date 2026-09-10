@@ -22,6 +22,7 @@ const Sidebar = (() => {
       ]},
       { section: 'Preparation', items: [
         { id: 'student/interview', icon: '🎤', label: 'Mock Interview' },
+        { id: 'student/policy-qa', icon: '📋', label: 'Policy Q&A', badge: 'AI' },
       ]},
     ],
     admin: [

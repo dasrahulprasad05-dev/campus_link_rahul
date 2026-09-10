@@ -1,25 +1,96 @@
 """
 CAMPUSLINK — AI Service (FastAPI)
-Expanded AI/ML service with skill-gap analysis, resume matching,
-readiness scoring, candidate matching, and interview evaluation.
+Production AI/ML service with 9 real AI features:
+
+  ML:  scikit-learn     → Features 1 (Readiness), 8 (Ranking), 9 (At-Risk)
+  NLP: sentence-transformers → Features 2 (Skill-Gap), 3 (Resume Match)
+  LLM: Groq (Llama 3.3) → Features 4 (Interview), 5 (Questions), 7 (Roadmap)
+  RAG: LangChain + FAISS → Feature 10 (Policy Q&A)
 """
+
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import List, Optional
+from contextlib import asynccontextmanager
+
+# ---- Feature Imports ----
+from features.readiness_predictor import predict_readiness, train_model as train_readiness
+from features.readiness_predictor import ReadinessRequest
+
+from features.skill_gap_analyzer import analyze_skill_gap
+from features.skill_gap_analyzer import SkillGapRequest
+
+from features.resume_matcher import match_resume_to_jd
+from features.resume_matcher import ResumeMatchRequest
+
+from features.interview_coach import evaluate_answer
+from features.interview_coach import InterviewFeedbackRequest
+
+from features.question_generator import generate_questions
+from features.question_generator import QuestionGenRequest
+
+from features.roadmap_generator import generate_roadmap
+from features.roadmap_generator import RoadmapRequest
+
+from features.candidate_ranker import rank_candidates, train_model as train_ranker
+from features.candidate_ranker import CandidateMatchRequest
+
+from features.at_risk_predictor import predict_at_risk, train_model as train_at_risk
+from features.at_risk_predictor import AtRiskRequest
+
+from features.policy_qa import answer_policy_question, initialize_rag
+from features.policy_qa import PolicyQARequest
+
 from datetime import datetime
-import re
+
+
+# ---- Startup: Train ML Models & Initialize RAG ----
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Train ML models and initialize RAG on startup."""
+    print("\n  ╔══════════════════════════════════════════╗")
+    print("  ║  CAMPUSLINK AI Service — Loading Models  ║")
+    print("  ╚══════════════════════════════════════════╝\n")
+
+    # Phase 1: Train scikit-learn models (fast, no network)
+    print("  [Phase 1] Training ML models...")
+    train_readiness()     # Feature 1
+    train_ranker()        # Feature 8
+    train_at_risk()       # Feature 9
+
+    # Phase 2: Initialize RAG pipeline (loads embeddings + documents)
+    print("\n  [Phase 2] Initializing RAG pipeline...")
+    rag_ok = initialize_rag()  # Feature 10
+
+    # Phase 3: NLP models are lazy-loaded on first request (Features 2, 3)
+    print("\n  [Phase 3] NLP models will lazy-load on first request")
+
+    # Phase 4: LLM (Groq) is initialized on first request (Features 4, 5, 7)
+    groq_key = os.getenv("GROQ_API_KEY", "")
+    if groq_key:
+        print(f"  [Phase 4] Groq API key detected — LLM features enabled")
+    else:
+        print(f"  [Phase 4] No GROQ_API_KEY — LLM features will use fallbacks")
+
+    print("\n  ✅ AI Service ready!\n")
+
+    yield
+
+
+# ---- App ----
 
 app = FastAPI(
     title="CAMPUSLINK AI Service",
-    description="AI-powered placement intelligence APIs",
-    version="1.0.0",
+    description="AI-powered placement intelligence: ML + NLP + LLM + RAG",
+    version="2.0.0",
+    lifespan=lifespan,
 )
 
-import os
-
-# Configurable CORS: Restrict in production, allow development origins locally
+# CORS
 allowed_origins_env = os.getenv("ALLOWED_ORIGINS")
 if allowed_origins_env:
     origins = [o.strip() for o in allowed_origins_env.split(",") if o.strip()]
@@ -36,167 +107,95 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ---- Schemas ----
 
-class SkillGapRequest(BaseModel):
-    skills: List[str] = []
-    target_role: str = "Data Analyst"
-
-class ResumeMatchRequest(BaseModel):
-    job_description: str = ""
-    student_skills: List[str] = ["SQL", "Python", "Excel", "Communication"]
-
-class InterviewRequest(BaseModel):
-    answer: str = ""
-    question: str = ""
-    target_role: str = "General"
-
-class ReadinessRequest(BaseModel):
-    skills: List[str] = []
-    projects_count: int = 0
-    cgpa: float = 7.0
-    aptitude_score: int = 65
-    profile_completion: int = 70
-
-class CandidateMatchRequest(BaseModel):
-    job_skills: List[str] = []
-    candidates: List[dict] = []
-
-# ---- Role-Skill Mappings ----
-
-ROLE_SKILLS = {
-    "Data Analyst": ["SQL", "Python", "Power BI", "Statistics", "Communication", "Excel", "Data Visualization"],
-    "Software Engineer": ["DSA", "Git", "REST APIs", "Databases", "Testing", "System Design", "JavaScript"],
-    "ML Engineer": ["Python", "PyTorch", "Statistics", "Linear Algebra", "MLOps", "SQL"],
-    "Web Developer": ["HTML/CSS", "JavaScript", "React", "Node.js", "Git", "REST APIs"],
-    "DevOps Engineer": ["Linux", "Docker", "Kubernetes", "CI/CD", "AWS", "Terraform"],
-}
-
-# ---- Endpoints ----
+# ---- Health ----
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "service": "campuslink-ai", "version": "1.0.0"}
-
-@app.post("/v1/skill-gap")
-def skill_gap(req: SkillGapRequest):
-    role_skills = ROLE_SKILLS.get(req.target_role, ["Communication", "Problem Solving"])
-    have = {x.lower() for x in req.skills}
-
-    missing = [
-        {
-            "skill": x,
-            "priority": "high" if i < 2 else "medium",
-            "reason": f"{x} is frequently required for {req.target_role} roles and appears in 80%+ of job descriptions.",
-            "resource": f'Search "{x} tutorial" on YouTube or Coursera',
-        }
-        for i, x in enumerate(role_skills) if x.lower() not in have
-    ]
-
-    matched = [x for x in role_skills if x.lower() in have]
-
+    groq_ok = bool(os.getenv("GROQ_API_KEY"))
     return {
-        "targetRole": req.target_role,
-        "missing": missing,
-        "matched": matched,
-        "modelVersion": "rules-v1",
+        "status": "ok",
+        "service": "campuslink-ai",
+        "version": "2.0.0",
+        "models": {
+            "ml_readiness": "scikit-learn GBR (trained)",
+            "ml_ranker": "scikit-learn GBR (trained)",
+            "ml_at_risk": "scikit-learn GBC (trained)",
+            "nlp_embeddings": "all-MiniLM-L6-v2 (lazy-load)",
+            "llm": f"groq/llama-3.3-70b ({'active' if groq_ok else 'no API key — fallback mode'})",
+            "rag": "langchain + FAISS",
+        },
         "timestamp": datetime.now().isoformat(),
     }
 
-@app.post("/v1/resume-match")
-def resume_match(req: ResumeMatchRequest):
-    text = req.job_description.lower()
-    profile_skills = [s.lower() for s in req.student_skills]
 
-    all_keywords = [
-        "sql", "python", "power bi", "tableau", "excel", "communication",
-        "statistics", "machine learning", "javascript", "react", "node.js",
-        "data analysis", "git", "java", "c++", "mongodb", "aws", "docker",
-    ]
-
-    matched = [s for s in profile_skills if s in text]
-    missing = [s for s in all_keywords if s in text and s not in profile_skills]
-    score = max(20, min(96, 45 + len(matched) * 9 - len(missing) * 3))
-
-    return {
-        "score": score,
-        "matched": matched,
-        "missing": missing,
-        "strengths": ["Good keyword overlap"] if len(matched) >= 3 else [],
-        "improvements": [f"Add {s} experience" for s in missing[:5]],
-        "explanation": "Score: skill overlap (40%), project relevance (25%), certification alignment (15%), profile completeness (20%).",
-        "modelVersion": "match-v1",
-        "timestamp": datetime.now().isoformat(),
-    }
-
-@app.post("/v1/interview-feedback")
-def interview_feedback(req: InterviewRequest):
-    answer = req.answer
-    word_count = len(answer.split())
-    has_structure = bool(re.search(r"situation|task|action|result|challenge|approach|outcome", answer, re.I))
-    has_metrics = bool(re.search(r"\d+%|\d+ percent|reduced|increased|improved|saved|built|created", answer, re.I))
-
-    score = 30 + min(30, word_count * 0.7)
-    if has_structure: score += 15
-    if has_metrics: score += 12
-    score = min(95, round(score))
-
-    feedback = []
-    if word_count < 20:
-        feedback.append("Your response is too brief. Aim for 80-150 words.")
-    if not has_structure:
-        feedback.append("Use the STAR method: Situation, Task, Action, Result.")
-    if not has_metrics:
-        feedback.append("Include measurable outcomes (numbers, percentages).")
-    if score >= 70:
-        feedback.append("Strong answer! Add a brief reflection on what you learned.")
-
-    return {
-        "score": score,
-        "feedback": " ".join(feedback),
-        "tip": "STAR: Situation → Task → Action → Result. Keep answers 90-120 seconds.",
-        "modelVersion": "interview-v1",
-        "timestamp": datetime.now().isoformat(),
-    }
+# ---- Feature 1: Placement Readiness (ML) ----
 
 @app.post("/v1/readiness")
-def readiness_score(req: ReadinessRequest):
-    factors = [
-        {"label": "Technical Skills", "value": min(100, len(req.skills) * 14), "weight": 0.30},
-        {"label": "Projects & Portfolio", "value": min(100, req.projects_count * 38), "weight": 0.25},
-        {"label": "Academics (CGPA)", "value": min(100, round((req.cgpa / 10) * 100)), "weight": 0.20},
-        {"label": "Aptitude & Reasoning", "value": req.aptitude_score, "weight": 0.15},
-        {"label": "Profile Completeness", "value": req.profile_completion, "weight": 0.10},
-    ]
+def readiness_endpoint(req: ReadinessRequest):
+    result = predict_readiness(req)
+    return result.model_dump()
 
-    score = round(sum(f["value"] * f["weight"] for f in factors))
 
-    return {
-        "score": score,
-        "factors": [{"label": f["label"], "value": f["value"]} for f in factors],
-        "explanation": "Composite: Skills (30%), Projects (25%), Academics (20%), Aptitude (15%), Profile (10%).",
-        "modelVersion": "readiness-v1",
-        "timestamp": datetime.now().isoformat(),
-    }
+# ---- Feature 2: Skill-Gap Analysis (NLP) ----
+
+@app.post("/v1/skill-gap")
+def skill_gap_endpoint(req: SkillGapRequest):
+    result = analyze_skill_gap(req)
+    return result.model_dump()
+
+
+# ---- Feature 3: Resume ↔ JD Matcher (NLP) ----
+
+@app.post("/v1/resume-match")
+def resume_match_endpoint(req: ResumeMatchRequest):
+    result = match_resume_to_jd(req)
+    return result.model_dump()
+
+
+# ---- Feature 4: AI Mock Interview Coach (LLM) ----
+
+@app.post("/v1/interview-feedback")
+def interview_feedback_endpoint(req: InterviewFeedbackRequest):
+    result = evaluate_answer(req)
+    return result.model_dump()
+
+
+# ---- Feature 5: Adaptive Question Generator (LLM) ----
+
+@app.post("/v1/generate-questions")
+def generate_questions_endpoint(req: QuestionGenRequest):
+    result = generate_questions(req)
+    return result.model_dump()
+
+
+# ---- Feature 7: Personalized Career Roadmap (LLM) ----
+
+@app.post("/v1/generate-roadmap")
+def generate_roadmap_endpoint(req: RoadmapRequest):
+    result = generate_roadmap(req)
+    return result.model_dump()
+
+
+# ---- Feature 8: Recruiter Candidate Ranking (ML) ----
 
 @app.post("/v1/candidate-match")
-def candidate_match(req: CandidateMatchRequest):
-    results = []
-    for candidate in req.candidates:
-        c_skills = {s.lower() for s in candidate.get("skills", [])}
-        matched = [s for s in req.job_skills if s.lower() in c_skills]
-        score = round((len(matched) / max(len(req.job_skills), 1)) * 100)
-        results.append({
-            **candidate,
-            "matchScore": score,
-            "matchedSkills": matched,
-            "explanation": f"Matched {len(matched)}/{len(req.job_skills)} required skills.",
-        })
+def candidate_match_endpoint(req: CandidateMatchRequest):
+    result = rank_candidates(req)
+    return result.model_dump()
 
-    results.sort(key=lambda x: x["matchScore"], reverse=True)
 
-    return {
-        "candidates": results,
-        "modelVersion": "match-v1",
-        "timestamp": datetime.now().isoformat(),
-    }
+# ---- Feature 9: Early Warning At-Risk (ML) ----
+
+@app.post("/v1/at-risk")
+def at_risk_endpoint(req: AtRiskRequest):
+    result = predict_at_risk(req)
+    return result.model_dump()
+
+
+# ---- Feature 10: Placement Policy Q&A (RAG) ----
+
+@app.post("/v1/policy-qa")
+def policy_qa_endpoint(req: PolicyQARequest):
+    result = answer_policy_question(req)
+    return result.model_dump()

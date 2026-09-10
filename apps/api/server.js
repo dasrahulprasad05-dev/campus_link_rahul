@@ -105,6 +105,22 @@ function handleSchedulerCheck(req, res) {
   res.json({ success: true, data: result, ...result });
 }
 
+// AI Service proxy helper
+const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
+async function proxyAI(path, body) {
+  try {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 15000);
+    const r = await fetch(`${AI_SERVICE_URL}${path}`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body), signal: ctrl.signal,
+    });
+    clearTimeout(t);
+    if (r.ok) return await r.json();
+  } catch (_) {}
+  return null;
+}
+
 // Support both /api/v1/analyze/... and /api/analyze/...
 app.post('/api/v1/analyze/resume-match', handleResumeMatch);
 app.post('/api/analyze/resume-match', handleResumeMatch);
@@ -114,6 +130,22 @@ app.post('/api/v1/interviews/feedback', handleInterviewFeedback);
 app.post('/api/interviews/feedback', handleInterviewFeedback);
 app.post('/api/v1/scheduler/check', handleSchedulerCheck);
 app.post('/api/scheduler/check', handleSchedulerCheck);
+
+// New AI feature endpoints (proxy to Python service)
+async function handleAIProxy(aiPath, req, res) {
+  const result = await proxyAI(aiPath, req.body);
+  if (result) return res.json({ success: true, data: result, ...result });
+  res.status(503).json({ success: false, error: { code: 'AI_UNAVAILABLE', message: 'AI service is not running. Start it with: cd apps/ai-service && uvicorn main:app --port 8000' } });
+}
+
+app.post('/api/v1/analyze/generate-questions', (req, res) => handleAIProxy('/v1/generate-questions', req, res));
+app.post('/api/analyze/generate-questions', (req, res) => handleAIProxy('/v1/generate-questions', req, res));
+app.post('/api/v1/analyze/generate-roadmap', (req, res) => handleAIProxy('/v1/generate-roadmap', req, res));
+app.post('/api/analyze/generate-roadmap', (req, res) => handleAIProxy('/v1/generate-roadmap', req, res));
+app.post('/api/v1/analyze/at-risk', (req, res) => handleAIProxy('/v1/at-risk', req, res));
+app.post('/api/analyze/at-risk', (req, res) => handleAIProxy('/v1/at-risk', req, res));
+app.post('/api/v1/analyze/policy-qa', (req, res) => handleAIProxy('/v1/policy-qa', req, res));
+app.post('/api/analyze/policy-qa', (req, res) => handleAIProxy('/v1/policy-qa', req, res));
 
 // Legacy dashboard compatibility route (strictly authenticated)
 app.get('/api/dashboard', authenticate, (req, res) => {

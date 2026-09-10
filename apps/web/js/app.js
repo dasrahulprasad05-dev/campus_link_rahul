@@ -76,6 +76,7 @@ const App = (() => {
     Router.register('student/applications', authPage(StudentApplications.render), { auth: true, roles: ['student'] });
     Router.register('student/resume', authPage(StudentResume.render), { auth: true, roles: ['student'] });
     Router.register('student/interview', authPage(StudentInterview.render), { auth: true, roles: ['student'] });
+    Router.register('student/policy-qa', authPage(StudentPolicyQA.render), { auth: true, roles: ['student'] });
     Router.register('student/roadmap', authPage(StudentRoadmap.render), { auth: true, roles: ['student'] });
 
     // Admin routes

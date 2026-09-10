@@ -10,7 +10,6 @@ const App = (() => {
     const app = document.getElementById('app');
     app.innerHTML = `
       ${Sidebar.render()}
-      <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
       <div class="main-content">
         ${Topbar.render()}
         <main id="main" class="page">
@@ -20,6 +19,7 @@ const App = (() => {
           </div>
         </main>
       </div>
+      <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
     `;
     app.className = 'app-layout';
 

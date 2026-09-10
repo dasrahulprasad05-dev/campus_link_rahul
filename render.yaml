@@ -1,0 +1,43 @@
+# Render Blueprint specification for CAMPUSLINK
+# https://render.com/docs/blueprint-spec
+
+services:
+  # 1. Node.js Backend API + Frontend SPA
+  - type: web
+    name: campuslink-web
+    runtime: node
+    plan: free
+    region: singapore
+    branch: main
+    buildCommand: npm run setup
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: AI_SERVICE_URL
+        fromService:
+          name: campuslink-ai
+          type: web
+          property: host
+
+  # 2. Python AI Microservice (FastAPI + ML + NLP + Groq LLM + RAG)
+  - type: web
+    name: campuslink-ai
+    runtime: python
+    plan: free
+    region: singapore
+    branch: main
+    rootDir: apps/ai-service
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: ENVIRONMENT
+        value: production

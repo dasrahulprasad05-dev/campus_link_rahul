@@ -217,6 +217,20 @@ const API = (() => {
 
     if (path.includes('interview') || path.includes('feedback')) {
       const body = options.body ? (typeof options.body === 'string' ? JSON.parse(options.body) : options.body) : {};
+      // If this is a /start request, return fallback questions instead of feedback
+      if (path.includes('/start')) {
+        return {
+          success: true,
+          sessionId: 'session-offline-' + Date.now(),
+          questions: [
+            { id: 1, text: 'Tell me about a project where you used data to drive a key business decision.', category: 'behavioral', skill: 'Communication', difficulty: 'medium', role: body.targetRole || 'General' },
+            { id: 2, text: 'How would you handle missing or inconsistent data in a production dataset?', category: 'technical', skill: 'Data Cleaning', difficulty: 'medium', role: body.targetRole || 'General' },
+            { id: 3, text: 'Walk me through your approach to solving an unfamiliar technical problem under a tight deadline.', category: 'situational', skill: 'Problem Solving', difficulty: 'medium', role: body.targetRole || 'General' },
+          ],
+          targetRole: body.targetRole || 'General',
+          source: 'offline-fallback',
+        };
+      }
       return simulateInterviewFeedback(body.answer || '');
     }
 

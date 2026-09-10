@@ -16,11 +16,11 @@ const StudentInterview = (() => {
   let activeTopics = '';
   let activeDifficulty = 'medium';
 
-  function getSavedApiKey() {
+  function getCustomApiKey() {
     return localStorage.getItem('CAMPUSLINK_CUSTOM_GROQ_KEY') || '';
   }
 
-  function saveApiKey(key) {
+  function setCustomApiKey(key) {
     if (key && key.trim()) {
       localStorage.setItem('CAMPUSLINK_CUSTOM_GROQ_KEY', key.trim());
     } else {
@@ -28,12 +28,18 @@ const StudentInterview = (() => {
     }
   }
 
+  function onKeyOptionChange() {
+    const isCustom = document.getElementById('key-choice-custom')?.checked;
+    const box = document.getElementById('custom-key-input-box');
+    if (box) {
+      box.style.display = isCustom ? 'block' : 'none';
+    }
+  }
+
   async function render() {
     currentQ = 0;
     chatHistory = [];
     questions = [];
-
-    const customKey = getSavedApiKey();
 
     document.getElementById('main').innerHTML = `
       <div class="page-header">
@@ -98,17 +104,24 @@ const StudentInterview = (() => {
               </div>
             </div>
 
-            <!-- Optional Custom API Key Toggle -->
-            <div class="mb-4" style="padding:var(--space-3);background:var(--bg-surface);border-radius:var(--radius-md);border:1px solid var(--border-subtle)">
-              <div class="flex items-center justify-between">
-                <span class="text-xs text-secondary font-bold">🤖 AI Engine: <strong>Groq LLaMA / Qwen</strong> (Active)</span>
-                <button type="button" class="btn btn-sm" style="font-size:11px;padding:2px 8px" onclick="StudentInterview.toggleApiKeyField()">
-                  ${customKey ? '⚙️ Custom Key Set' : '⚙️ Custom Groq Key (Optional)'}
-                </button>
+            <!-- AI Key Provider Selection: Built-in Platform Key (Default) vs Own Key (Optional) -->
+            <div class="mb-5" style="padding:var(--space-3) var(--space-4);background:var(--bg-surface);border-radius:var(--radius-md);border:1px solid var(--border-subtle)">
+              <div class="text-xs font-bold text-secondary mb-2 uppercase" style="letter-spacing:0.05em">AI Key Provider</div>
+              <div class="flex flex-col gap-2">
+                <label class="flex items-center gap-2 text-xs cursor-pointer" style="user-select:none">
+                  <input type="radio" name="key-choice" value="platform" id="key-choice-platform" ${getCustomApiKey() ? '' : 'checked'} onchange="StudentInterview.onKeyOptionChange()">
+                  <span><strong style="color:var(--text-primary)">⚡ CampusLink Free AI (Default)</strong> — Uses our uploaded server key. Students do not need to buy or enter any key.</span>
+                </label>
+                <label class="flex items-center gap-2 text-xs cursor-pointer" style="user-select:none">
+                  <input type="radio" name="key-choice" value="custom" id="key-choice-custom" ${getCustomApiKey() ? 'checked' : ''} onchange="StudentInterview.onKeyOptionChange()">
+                  <span class="text-muted"><strong style="color:var(--text-secondary)">🔑 Use My Own Groq API Key (Optional)</strong> — Only if you have your own personal Groq key.</span>
+                </label>
               </div>
-              <div id="custom-api-key-box" style="${customKey ? 'display:block' : 'display:none'};margin-top:var(--space-2)">
-                <input class="form-input text-xs" type="password" id="custom-groq-key" placeholder="Enter your personal Groq API key (gsk_...)" value="${customKey}">
-                <span class="text-xs text-muted mt-1" style="display:block">Using CampusLink AI Cloud by default. You can paste your own Groq key if preferred.</span>
+
+              <div id="custom-key-input-box" class="mt-3" style="${getCustomApiKey() ? 'display:block' : 'display:none'};padding-top:var(--space-2);border-top:1px dashed var(--border-subtle)">
+                <label class="form-label text-xs mb-1" for="custom-groq-key-input">Your Personal Groq API Key (starts with <code>gsk_...</code>):</label>
+                <input class="form-input text-xs" type="password" id="custom-groq-key-input" placeholder="gsk_..." value="${getCustomApiKey()}">
+                <span class="text-xs text-muted mt-1" style="display:block">Your personal key is stored in your browser session only.</span>
               </div>
             </div>
 
@@ -150,13 +163,6 @@ const StudentInterview = (() => {
     }
   }
 
-  function toggleApiKeyField() {
-    const box = document.getElementById('custom-api-key-box');
-    if (box) {
-      box.style.display = box.style.display === 'none' ? 'block' : 'none';
-    }
-  }
-
   async function startSession() {
     const roleSelect = document.getElementById('interview-role')?.value || 'Data Analyst';
     const customRole = document.getElementById('custom-role-input')?.value?.trim();
@@ -166,9 +172,11 @@ const StudentInterview = (() => {
     activeDifficulty = document.getElementById('interview-difficulty')?.value || 'medium';
     const count = parseInt(document.getElementById('interview-count')?.value || '5', 10);
 
-    const customKeyInput = document.getElementById('custom-groq-key')?.value?.trim();
-    if (customKeyInput) {
-      saveApiKey(customKeyInput);
+    const isCustom = document.getElementById('key-choice-custom')?.checked;
+    let customApiKey = '';
+    if (isCustom) {
+      customApiKey = document.getElementById('custom-groq-key-input')?.value?.trim() || '';
+      setCustomApiKey(customApiKey);
     }
 
     const btn = document.getElementById('start-session-btn');
@@ -181,7 +189,7 @@ const StudentInterview = (() => {
         topics: activeTopics,
         difficulty: activeDifficulty,
         count: count,
-        apiKey: getSavedApiKey(),
+        apiKey: customApiKey,
       });
 
       if (!result.success || !result.data?.questions?.length) {
@@ -356,11 +364,14 @@ const StudentInterview = (() => {
     `;
 
     try {
+      const isCustom = document.getElementById('key-choice-custom')?.checked;
+      const apiKey = isCustom ? getCustomApiKey() : '';
+
       const res = await API.post('/interviews/final-evaluation', {
         targetRole: activeRole,
         topics: activeTopics,
         history: chatHistory,
-        apiKey: getSavedApiKey(),
+        apiKey: apiKey,
       });
 
       if (!res.success || !res.data) {
@@ -544,5 +555,5 @@ const StudentInterview = (() => {
     `;
   }
 
-  return { render, onRoleChange, toggleApiKeyField, startSession, submitAnswer, skipQuestion, finishEarly };
+  return { render, onRoleChange, onKeyOptionChange, getCustomApiKey, startSession, submitAnswer, skipQuestion, finishEarly };
 })();

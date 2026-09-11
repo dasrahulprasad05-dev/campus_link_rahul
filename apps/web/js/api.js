@@ -428,15 +428,8 @@ const API = (() => {
     }
 
     if (path.includes('generate-roadmap')) {
-      return {
-        milestones: [
-          { title: 'Master Core Skills', description: 'Focus on the top 3 skills for your target role.', week: 1, priority: 'critical', category: 'skill', resources: ['Coursera', 'YouTube'], success_criteria: 'Complete 1 online course' },
-          { title: 'Build a Project', description: 'Create a portfolio project demonstrating your skills.', week: 3, priority: 'high', category: 'project', resources: ['GitHub'], success_criteria: 'Deploy 1 project' },
-          { title: 'Practice Interviews', description: 'Complete 3 mock interviews with 70+ score.', week: 5, priority: 'high', category: 'practice', resources: ['CAMPUSLINK'], success_criteria: 'Average score 70+' },
-        ],
-        summary: 'Template roadmap (AI service offline).',
-        source: 'offline-fallback',
-      };
+      const body = options.body ? (typeof options.body === 'string' ? JSON.parse(options.body) : options.body) : {};
+      return simulateGenerateRoadmap(body.targetRole || body.target_role || 'Data Analyst');
     }
 
     if (path.includes('at-risk')) {
@@ -498,6 +491,40 @@ const API = (() => {
       })),
       matched: target.filter(s => have.has(s.toLowerCase())),
       engineVersion: 'rules-v1',
+    };
+  }
+
+  function simulateGenerateRoadmap(targetRole = 'Data Analyst') {
+    const templates = {
+      'Data Analyst': [
+        { title: 'Master SQL Fundamentals', description: 'Joins, subqueries, aggregations, window functions.', week: 1, priority: 'critical', category: 'skill', resources: ['SQLBolt.com', 'LeetCode SQL track'], success_criteria: 'Solve 30 SQL problems' },
+        { title: 'Python for Data Analysis', description: 'Pandas, NumPy, and Matplotlib data visualization.', week: 2, priority: 'critical', category: 'skill', resources: ['Kaggle Learn', 'Automate the Boring Stuff'], success_criteria: 'Complete 3 dataset notebooks' },
+        { title: 'Build BI Portfolio Dashboard', description: 'Interactive dashboard using Power BI or Tableau.', week: 4, priority: 'high', category: 'project', resources: ['Power BI Learn', 'Makeover Monday'], success_criteria: 'Publish 1 live dashboard' },
+        { title: 'Statistics & Probability', description: 'Hypothesis testing, distributions, and A/B testing.', week: 5, priority: 'high', category: 'skill', resources: ['Khan Academy', 'StatQuest'], success_criteria: 'Pass mock stats quiz 80%+' },
+        { title: 'Timed Aptitude Prep', description: 'Mock tests to build speed and quantitative accuracy.', week: 7, priority: 'high', category: 'practice', resources: ['IndiaBIX'], success_criteria: 'Score 80%+ in 3 mock tests' },
+        { title: 'Mock Interviews x3', description: 'AI practice on case questions and STAR behavioral answers.', week: 9, priority: 'critical', category: 'practice', resources: ['CAMPUSLINK Mock'], success_criteria: 'Complete 3 mock sessions' },
+      ],
+      'Software Engineer': [
+        { title: 'DSA Mastery (Part 1)', description: 'Arrays, Strings, HashMaps, and Linked Lists.', week: 1, priority: 'critical', category: 'skill', resources: ['NeetCode 150', 'Abdul Bari'], success_criteria: 'Solve 50 easy/medium problems' },
+        { title: 'DSA Mastery (Part 2)', description: 'Trees, Graphs, and Dynamic Programming fundamentals.', week: 3, priority: 'critical', category: 'skill', resources: ['LeetCode 75'], success_criteria: 'Solve 40 tree & graph problems' },
+        { title: 'System Design Fundamentals', description: 'Load balancing, caching, databases, and microservices.', week: 5, priority: 'high', category: 'skill', resources: ['System Design Primer', 'Gaurav Sen'], success_criteria: 'Design 3 architectural diagrams' },
+        { title: 'Full-Stack Portfolio Project', description: 'Full-stack application with auth, DB, and live deployment.', week: 7, priority: 'critical', category: 'project', resources: ['Vercel', 'Render', 'GitHub'], success_criteria: 'Deploy production URL' },
+        { title: 'Coding Mock Interviews', description: 'Timed problem-solving under real interview conditions.', week: 9, priority: 'critical', category: 'practice', resources: ['CAMPUSLINK Mock'], success_criteria: 'Complete 5 coding mocks' },
+      ],
+      'Web Developer': [
+        { title: 'Modern JavaScript & TypeScript', description: 'ES6+, async/await, closures, TypeScript types.', week: 1, priority: 'critical', category: 'skill', resources: ['JavaScript.info'], success_criteria: 'Build a typed mini-app' },
+        { title: 'Frontend Mastery (React)', description: 'Hooks, router, state management, and Tailwind CSS.', week: 3, priority: 'critical', category: 'skill', resources: ['React.dev'], success_criteria: 'Build responsive SaaS UI' },
+        { title: 'Backend APIs & Databases', description: 'Node.js/Express REST APIs with PostgreSQL.', week: 5, priority: 'high', category: 'skill', resources: ['Node Docs', 'Prisma'], success_criteria: 'Deploy authenticated CRUD API' },
+        { title: 'Capstone Full-Stack Project', description: 'Production full-stack web app with Lighthouse 90+ score.', week: 7, priority: 'critical', category: 'project', resources: ['GitHub', 'Vercel'], success_criteria: 'Live production URL' },
+        { title: 'Web Developer Mock Interviews', description: 'Frontend fundamentals, DOM, web performance.', week: 9, priority: 'high', category: 'practice', resources: ['CAMPUSLINK Mock'], success_criteria: 'Score 75%+ in mock' },
+      ],
+    };
+
+    const milestones = templates[targetRole] || templates['Data Analyst'];
+    return {
+      milestones,
+      summary: `Tailored preparation plan for ${targetRole} campus placements.`,
+      source: 'offline-fallback',
     };
   }
 

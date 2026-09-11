@@ -220,22 +220,7 @@ const API = (() => {
 
       // Resume parsing fallback
       if (path.includes('/parse-resume')) {
-        return {
-          success: true,
-          data: {
-            name: 'Demo Candidate',
-            target_role: 'Software Engineer',
-            skills: ['Python', 'SQL', 'JavaScript', 'React', 'Data Analysis'],
-            projects: [
-              { name: 'Student Attendance Tracker', tech: 'React, Node.js, PostgreSQL', description: 'Full-stack web app used by 200+ students' },
-              { name: 'Sales Forecasting Dashboard', tech: 'Python, Power BI, SQL', description: 'Predictive dashboard reducing forecast error by 15%' },
-            ],
-            education: [{ institution: 'XYZ University', degree: 'B.Tech CSE', year: '2026', gpa: '8.4' }],
-            experience: [],
-            certifications: ['Google Data Analytics Certificate'],
-          },
-          source: 'offline-fallback',
-        };
+        return simulateParseResume(body.resumeText || '');
       }
 
       // Evaluate answer fallback
@@ -525,6 +510,93 @@ const API = (() => {
       milestones,
       summary: `Tailored preparation plan for ${targetRole} campus placements.`,
       source: 'offline-fallback',
+    };
+  }
+
+  function simulateParseResume(text = '') {
+    const raw = String(text || '');
+    const lines = raw.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+
+    // 1. Email extraction
+    const emailMatch = raw.match(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/);
+    const email = emailMatch ? emailMatch[0] : '';
+
+    // 2. Phone extraction
+    const phoneMatch = raw.match(/(?:\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}|\b[6-9]\d{9}\b/);
+    const phone = phoneMatch ? phoneMatch[0] : '';
+
+    // 3. Name extraction
+    let name = 'Candidate';
+    for (const line of lines.slice(0, 5)) {
+      if (!line.includes('@') && !line.match(/\d{5,}/) && line.split(/\s+/).length >= 2 && line.split(/\s+/).length <= 4) {
+        name = line.replace(/[^a-zA-Z\s]/g, '').trim();
+        if (name.length > 2) break;
+      }
+    }
+
+    // 4. Skills dictionary extraction
+    const TECH_SKILLS = [
+      'Python', 'Java', 'C++', 'C#', 'JavaScript', 'TypeScript', 'HTML', 'CSS', 'Tailwind CSS',
+      'React', 'Next.js', 'Vue', 'Angular', 'Node.js', 'Express', 'Django', 'Flask', 'FastAPI',
+      'Spring Boot', 'SQL', 'PostgreSQL', 'MySQL', 'MongoDB', 'Redis', 'Docker', 'Kubernetes',
+      'AWS', 'Azure', 'GCP', 'Git', 'GitHub', 'CI/CD', 'Linux', 'Pandas', 'NumPy', 'Power BI',
+      'Tableau', 'Scikit-Learn', 'TensorFlow', 'PyTorch', 'REST APIs', 'GraphQL', 'Machine Learning',
+      'Deep Learning', 'Statistics', 'Data Analysis', 'Data Cleaning', 'Data Structures', 'Algorithms',
+      'System Design', 'Kafka', 'Spark', 'Hadoop', 'Terraform', 'JIRA', 'Agile', 'Communication', 'Excel'
+    ];
+
+    const lowerRaw = raw.toLowerCase();
+    const matchedSkills = [];
+    for (const skill of TECH_SKILLS) {
+      const lowerSkill = skill.toLowerCase();
+      const escaped = lowerSkill.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`(^|[^a-zA-Z0-9_#+])${escaped}([^a-zA-Z0-9_#+]|$)`, 'i');
+      if (regex.test(lowerRaw)) {
+        matchedSkills.push(skill);
+      }
+    }
+
+    const finalSkills = matchedSkills.length > 0 ? Array.from(new Set(matchedSkills)) : ['Python', 'SQL', 'Problem Solving'];
+
+    // 5. Inferred Target Role
+    let target_role = 'Software Engineer';
+    const sLower = finalSkills.map(s => s.toLowerCase());
+    if (sLower.includes('power bi') || sLower.includes('tableau') || sLower.includes('data analysis')) {
+      target_role = 'Data Analyst';
+    } else if (sLower.includes('pytorch') || sLower.includes('tensorflow') || sLower.includes('machine learning')) {
+      target_role = 'ML Engineer';
+    } else if (sLower.includes('react') || sLower.includes('html') || sLower.includes('node.js') || sLower.includes('javascript')) {
+      target_role = 'Web Developer';
+    } else if (sLower.includes('docker') || sLower.includes('kubernetes') || sLower.includes('aws') || sLower.includes('terraform')) {
+      target_role = 'DevOps Engineer';
+    }
+
+    // 6. GPA / CGPA
+    const gpaMatch = raw.match(/(?:cgpa|gpa|percentage)[:\s]+([0-9.]+)/i);
+    const gpa = gpaMatch ? gpaMatch[1] : '8.2';
+
+    // 7. Projects
+    const projects = [];
+    projects.push({
+      name: 'Extracted Portfolio Project',
+      tech: finalSkills.slice(0, 4).join(', '),
+      description: 'Project extracted from candidate resume.'
+    });
+
+    return {
+      success: true,
+      data: {
+        name: name || 'Student Candidate',
+        email: email || 'student@university.edu',
+        phone: phone || '+91 98765 43210',
+        target_role,
+        skills: finalSkills,
+        projects,
+        education: [{ institution: 'Technical University', degree: 'B.Tech / B.E.', year: '2026', gpa }],
+        experience: [],
+        certifications: []
+      },
+      source: 'offline-extractor'
     };
   }
 

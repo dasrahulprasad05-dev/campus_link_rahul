@@ -185,6 +185,8 @@ router.post('/parse-resume', async (req, res) => {
   const userMsg = `Extract structured information from this resume text. Return a JSON object matching this exact schema:
 {
   "name": "Candidate full name",
+  "email": "Candidate email address if found",
+  "phone": "Candidate phone number if found",
   "target_role": "Best-fit role based on their background",
   "skills": ["skill1", "skill2"],
   "projects": [{"name": "Project Name", "tech": "Technologies used", "description": "Brief description"}],
@@ -210,6 +212,8 @@ ${resumeText.slice(0, 6000)}`;
     // Normalize / validate fields
     const resumeData = {
       name: parsed.name || 'Candidate',
+      email: parsed.email || '',
+      phone: parsed.phone || '',
       target_role: parsed.target_role || 'Software Engineer',
       skills: Array.isArray(parsed.skills) ? parsed.skills : [],
       projects: Array.isArray(parsed.projects) ? parsed.projects : [],

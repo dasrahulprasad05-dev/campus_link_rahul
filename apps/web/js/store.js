@@ -11,6 +11,7 @@ const Store = (() => {
     role: 'student',  // current active role view
     sidebarOpen: false,
     theme: 'dark',
+    student_profile: null,
   };
 
   // State container
@@ -40,6 +41,7 @@ const Store = (() => {
         token: _state.token,
         role: _state.role,
         theme: _state.theme,
+        student_profile: _state.student_profile,
       };
       localStorage.setItem('campuslink_state', JSON.stringify(toSave));
     } catch (e) {
@@ -116,6 +118,43 @@ const Store = (() => {
     return _state.user.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
   }
 
+  // Get student profile (reactive with fallback)
+  function getProfile() {
+    if (_state.student_profile && typeof _state.student_profile === 'object') {
+      return _state.student_profile;
+    }
+    const user = _state.user || {};
+    return {
+      name: user.name || 'Candidate Student',
+      email: user.email || 'student@university.edu',
+      phone: '+91 98765 43210',
+      branch: 'Computer Science & Engineering',
+      year: '2026',
+      regNo: 'REG-2022-CSE-042',
+      cgpa: 8.4,
+      targetRole: 'Data Analyst',
+      skills: ['Python', 'SQL', 'Excel', 'Data Analysis', 'Communication', 'Statistics'],
+      projects: [
+        { name: 'Placement Analytics Dashboard', tech: 'Python · Streamlit · Pandas', desc: 'Predictive dashboard analyzing past placement records.' }
+      ],
+      education: [
+        { institution: 'State Technical University', degree: 'B.Tech in Computer Science', year: '2022-2026', gpa: '8.4' }
+      ],
+      experience: [],
+      certifications: ['Google Data Analytics Certificate'],
+      linkedin: 'linkedin.com/in/student',
+      github: 'github.com/student'
+    };
+  }
+
+  // Update student profile and persist
+  function updateProfile(updates) {
+    const current = getProfile();
+    const merged = { ...current, ...updates };
+    set('student_profile', merged);
+    return merged;
+  }
+
   // Reset state (logout)
   function reset() {
     _state = { ..._defaults };
@@ -127,5 +166,5 @@ const Store = (() => {
   // Initialize
   _hydrate();
 
-  return { get, set, setMany, subscribe, isAuthenticated, getRole, getUserInitials, reset };
+  return { get, set, setMany, subscribe, isAuthenticated, getRole, getUserInitials, getProfile, updateProfile, reset };
 })();

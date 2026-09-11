@@ -56,7 +56,7 @@ const StudentRoadmap = (() => {
   };
 
   function init() {
-    const profileRole = API.DEMO?.student?.profile?.targetRole || 'Data Analyst';
+    const profileRole = Store.getProfile()?.targetRole || 'Data Analyst';
     state.targetRole = profileRole;
     // Load from template for initial role
     state.milestones = JSON.parse(JSON.stringify(ROLE_TEMPLATES[profileRole] || ROLE_TEMPLATES['Data Analyst']));
@@ -251,7 +251,7 @@ const StudentRoadmap = (() => {
       btn.disabled = true;
     }
 
-    const profile = API.DEMO?.student?.profile || { cgpa: 7.5, skills: ['Python', 'SQL'] };
+    const profile = Store.getProfile();
     const targetRole = state.targetRole || profile.targetRole || 'Data Analyst';
 
     let result = null;

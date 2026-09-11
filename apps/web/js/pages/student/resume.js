@@ -3,6 +3,7 @@
    ============================================================ */
 const StudentResume = (() => {
   async function render() {
+    const p = Store.getProfile();
     document.getElementById('main').innerHTML = `
       <div class="page-header"><div class="page-header-content"><div class="page-eyebrow">Resume ↔ Job Description Analyzer</div><h1 class="page-title">Analyze Your Fit</h1><p class="page-subtitle">Paste a job description to see how your profile and resume match. Get actionable improvement tips.</p></div></div>
       <div class="grid grid-main">
@@ -17,9 +18,9 @@ const StudentResume = (() => {
         <aside class="stack">
           <article class="card card-accent animate-fade-in-up" style="animation-delay:80ms">
             <h3 class="card-title mb-4">📄 Your Profile Snapshot</h3>
-            <div class="mb-4"><div class="text-xs text-muted">Skills</div>${SkillBadge.render(API.DEMO.student.profile.skills)}</div>
-            <div class="mb-4"><div class="text-xs text-muted">Target Role</div><div class="font-bold">${API.DEMO.student.profile.targetRole}</div></div>
-            <div><div class="text-xs text-muted">CGPA</div><div class="font-bold">${API.DEMO.student.profile.cgpa}</div></div>
+            <div class="mb-4"><div class="text-xs text-muted">Skills</div>${SkillBadge.render(p.skills || [])}</div>
+            <div class="mb-4"><div class="text-xs text-muted">Target Role</div><div class="font-bold text-accent">${p.targetRole || 'Software Engineer'}</div></div>
+            <div><div class="text-xs text-muted">CGPA</div><div class="font-bold">${p.cgpa || '8.0'}</div></div>
           </article>
           <article class="card animate-fade-in-up" style="animation-delay:150ms">
             <div class="card-header"><h2 class="card-title">Tips</h2></div>
@@ -36,7 +37,8 @@ const StudentResume = (() => {
     if (!jd || jd.trim().length < 10) { Toast.warning('Please paste a job description (at least 10 characters)'); return; }
     const btn = document.getElementById('resume-analyze-btn');
     if (btn) { btn.textContent = 'Analyzing...'; btn.disabled = true; }
-    const result = await API.post('/analyze/resume-match', { jobDescription: jd });
+    const p = Store.getProfile();
+    const result = await API.post('/analyze/resume-match', { jobDescription: jd, studentSkills: p.skills || [] });
     if (btn) { btn.textContent = '🔍 Analyze Match'; btn.disabled = false; }
 
     document.getElementById('resume-results').innerHTML = `

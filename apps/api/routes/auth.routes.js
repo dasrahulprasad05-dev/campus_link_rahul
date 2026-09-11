@@ -31,6 +31,20 @@ router.post('/register', async (req, res) => {
     }
 
     const cleanEmail = email.toLowerCase().trim();
+
+    // Strict Role Protection: Staff/Recruiter/TPO emails cannot be registered as student accounts
+    const RESERVED_STAFF_EMAILS = [
+      'rahulprasaddas9@gmail.com',
+      'ommprasadd363@gmail.com',
+      'rahulprsaddas@gmail.com'
+    ];
+    if (RESERVED_STAFF_EMAILS.includes(cleanEmail)) {
+      return res.status(403).json({
+        success: false,
+        error: { code: 'RESERVED_EMAIL', message: 'This email is reserved for institutional/recruiter access and cannot be registered as a student account.' }
+      });
+    }
+
     const existing = await userRepo.findByEmail(cleanEmail);
     if (existing) {
       return res.status(409).json({

@@ -86,14 +86,13 @@ async function query(text, params = []) {
  */
 const memoryDb = (() => {
   const bcrypt = require('bcryptjs');
-  const defaultHash = bcrypt.hashSync('demo123', 10);
+  const defaultHash = bcrypt.hashSync('rahul2005', 10);
 
   const tables = {
     users: [
-      { id: 'u-1', name: 'Ananya Sharma', email: 'student@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-      { id: 'u-2', name: 'Dr. Rajesh Nayak', email: 'admin@campuslink.in', password_hash: defaultHash, role: 'admin', avatar_url: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-      { id: 'u-3', name: 'Sneha Patel', email: 'recruiter@campuslink.in', password_hash: defaultHash, role: 'recruiter', avatar_url: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-      { id: 'u-4', name: 'Prof. Suresh Mishra', email: 'mentor@campuslink.in', password_hash: defaultHash, role: 'mentor', avatar_url: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+      { id: 'u-tpo-abit', name: 'Training & Placement Office ABIT', email: 'rahulprasaddas9@gmail.com', password_hash: defaultHash, role: 'admin', avatar_url: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), email_verified: true },
+      { id: 'u-recruiter-tcs', name: 'TCS BHUBANESWAR', email: 'ommprasadd363@gmail.com', password_hash: defaultHash, role: 'recruiter', avatar_url: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), email_verified: true },
+      { id: 'u-mentor-rahul', name: 'Prof. Rahul Prasad Das', email: 'rahulprsaddas@gmail.com', password_hash: defaultHash, role: 'mentor', avatar_url: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), email_verified: true },
     ],
     student_profiles: [
       {

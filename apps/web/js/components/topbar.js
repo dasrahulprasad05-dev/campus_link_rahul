@@ -11,6 +11,14 @@ const Topbar = (() => {
     const initials = Store.getUserInitials();
     const breadcrumb = _getBreadcrumb();
 
+    const roleLabels = {
+      admin: '🏛️ TPO / Admin',
+      recruiter: '🏢 Recruiter',
+      mentor: '👨‍🏫 Mentor',
+      student: '👩‍🎓 Student',
+    };
+    const roleBadge = roleLabels[role] || (role ? role.toUpperCase() : 'Student');
+
     return `
       <header class="topbar">
         <div class="topbar-left">
@@ -28,13 +36,13 @@ const Topbar = (() => {
             🔔
             <span class="topbar-notification-dot"></span>
           </button>
-          <select class="role-selector" id="role-selector" aria-label="Switch role view">
-            <option value="student" ${role === 'student' ? 'selected' : ''}>👩‍🎓 Student</option>
-            <option value="admin" ${role === 'admin' ? 'selected' : ''}>🏛️ Admin / TPO</option>
-            <option value="recruiter" ${role === 'recruiter' ? 'selected' : ''}>🏢 Recruiter</option>
-            <option value="mentor" ${role === 'mentor' ? 'selected' : ''}>👨‍🏫 Mentor</option>
-          </select>
-          <div class="topbar-avatar" id="avatar-btn" title="${user?.name || 'User'}">${initials}</div>
+          <span class="badge badge-accent topbar-role-badge" title="Authenticated Portal: ${roleBadge}" style="font-size:12px;padding:4px 10px;font-weight:600">
+            ${roleBadge}
+          </span>
+          <div class="topbar-avatar" id="avatar-btn" title="Logged in as ${user?.name || 'User'} (${role}) — Click to Logout">${initials}</div>
+          <button class="btn btn-sm btn-ghost" onclick="Auth.logout()" title="Logout of CAMPUSLINK" style="font-size:12px;padding:var(--space-1) var(--space-2)">
+            🚪 Logout
+          </button>
         </div>
       </header>
     `;
@@ -50,21 +58,6 @@ const Topbar = (() => {
   }
 
   function attachEvents() {
-    // Role switcher
-    const selector = document.getElementById('role-selector');
-    if (selector) {
-      selector.addEventListener('change', async (e) => {
-        const newRole = e.target.value;
-        const res = await Auth.quickLogin(newRole);
-        if (res.success) {
-          Toast.show(`Switched to ${newRole.toUpperCase()} view`, 'info');
-          Router.navigate(newRole + '/dashboard', true);
-        } else {
-          Toast.show('Unable to switch role: ' + (res.error || 'Authentication error'), 'error');
-        }
-      });
-    }
-
     // Mobile toggle
     const toggle = document.getElementById('mobile-toggle');
     if (toggle) {

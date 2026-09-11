@@ -90,14 +90,14 @@ const LandingPage = (() => {
           </div>
           <div class="grid grid-2" style="max-width:900px;margin:0 auto">
             ${_roles().map(r => `
-              <div class="card card-interactive" style="cursor:pointer" onclick="Auth.quickLogin('${r.role}').then(()=>Router.navigate('${r.role}/dashboard'))">
+              <div class="card card-interactive" style="cursor:pointer" onclick="Router.navigate('login')">
                 <div class="flex items-center gap-3 mb-4">
                   <div class="kpi-icon ${r.color}" style="font-size:22px">${r.icon}</div>
                   <h3>${r.title}</h3>
                 </div>
                 <p class="text-sm">${r.desc}</p>
                 <div class="mt-4">
-                  <span class="badge badge-accent">Try ${r.title} Portal →</span>
+                  <span class="badge badge-accent">Access ${r.title} Portal →</span>
                 </div>
               </div>
             `).join('')}

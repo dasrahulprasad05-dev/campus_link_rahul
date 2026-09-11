@@ -43,8 +43,8 @@ const LoginPage = (() => {
             <p class="text-sm text-muted mb-6">Enter your credentials to access your portal.</p>
 
             <form id="login-form" onsubmit="return false">
-              ${Forms.input({ id: 'login-email', label: 'Email', type: 'email', placeholder: 'student@campuslink.in', required: true })}
-              ${Forms.input({ id: 'login-password', label: 'Password', type: 'password', placeholder: '••••••••', required: true, hint: 'Demo password: demo123' })}
+              ${Forms.input({ id: 'login-email', label: 'Email Address', type: 'email', placeholder: 'Enter your registered email', required: true })}
+              ${Forms.input({ id: 'login-password', label: 'Password', type: 'password', placeholder: '••••••••', required: true })}
 
               <div class="flex justify-between items-center mb-4">
                 <label class="form-check">
@@ -58,16 +58,7 @@ const LoginPage = (() => {
               </button>
             </form>
 
-            <div class="auth-divider">or sign in as</div>
-
-            <div class="grid grid-2 gap-2">
-              <button class="btn btn-sm" onclick="LoginPage.quickLogin('student')">👩‍🎓 Student</button>
-              <button class="btn btn-sm" onclick="LoginPage.quickLogin('admin')">🏛️ Admin</button>
-              <button class="btn btn-sm" onclick="LoginPage.quickLogin('recruiter')">🏢 Recruiter</button>
-              <button class="btn btn-sm" onclick="LoginPage.quickLogin('mentor')">👨‍🏫 Mentor</button>
-            </div>
-
-            <div class="auth-link">
+            <div class="auth-link mt-6">
               Don't have an account? <a onclick="Router.navigate('register')">Create one</a>
             </div>
           </div>

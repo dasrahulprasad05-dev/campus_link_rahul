@@ -3,13 +3,12 @@
 -- Populates the database with demo data for testing.
 -- ============================================================
 
--- Users (Password for all demo accounts is: demo123)
-INSERT INTO users (id, name, email, password_hash, role) VALUES
-('a1b2c3d4-0001-0001-0001-000000000001', 'Ananya Sharma', 'student@campuslink.in', '$2a$10$wPDyRSAtzSq0PgxfnHL6oeDMaP3NEdgfJha5h9HWk2GhyJQ2oc0fq', 'student'),
-('a1b2c3d4-0001-0001-0001-000000000002', 'Dr. Rajesh Nayak', 'admin@campuslink.in', '$2a$10$wPDyRSAtzSq0PgxfnHL6oeDMaP3NEdgfJha5h9HWk2GhyJQ2oc0fq', 'admin'),
-('a1b2c3d4-0001-0001-0001-000000000003', 'Sneha Patel', 'recruiter@campuslink.in', '$2a$10$wPDyRSAtzSq0PgxfnHL6oeDMaP3NEdgfJha5h9HWk2GhyJQ2oc0fq', 'recruiter'),
-('a1b2c3d4-0001-0001-0001-000000000004', 'Prof. Suresh Mishra', 'mentor@campuslink.in', '$2a$10$wPDyRSAtzSq0PgxfnHL6oeDMaP3NEdgfJha5h9HWk2GhyJQ2oc0fq', 'mentor')
-ON CONFLICT (email) DO NOTHING;
+-- Permanent Institutional & Corporate Users (Password: rahul2005)
+INSERT INTO users (id, name, email, password_hash, role, email_verified) VALUES
+('a1b2c3d4-0001-0001-0001-000000000002', 'Training & Placement Office ABIT', 'rahulprasaddas9@gmail.com', '$2a$10$fwZNNHQTfgM2kTXYKRrgE.4RRGbB84abxa93aGQUcRp5JJkZwg6F.', 'admin', true),
+('a1b2c3d4-0001-0001-0001-000000000003', 'TCS BHUBANESWAR', 'ommprasadd363@gmail.com', '$2a$10$fwZNNHQTfgM2kTXYKRrgE.4RRGbB84abxa93aGQUcRp5JJkZwg6F.', 'recruiter', true),
+('a1b2c3d4-0001-0001-0001-000000000004', 'Prof. Rahul Prasad Das', 'rahulprsaddas@gmail.com', '$2a$10$fwZNNHQTfgM2kTXYKRrgE.4RRGbB84abxa93aGQUcRp5JJkZwg6F.', 'mentor', true)
+ON CONFLICT (email) DO UPDATE SET password_hash = EXCLUDED.password_hash, role = EXCLUDED.role, name = EXCLUDED.name, email_verified = true;
 
 -- Student Profile
 INSERT INTO student_profiles (user_id, reg_no, branch, year, cgpa, target_role, phone, linkedin, github, skills, certifications, profile_completion, readiness_score) VALUES

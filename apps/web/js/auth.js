@@ -5,12 +5,11 @@
 
 const Auth = (() => {
 
-  // Demo users for offline mode
-  const DEMO_USERS = {
-    'student@campuslink.in': { id: 'u-1', name: 'Ananya Sharma', email: 'student@campuslink.in', role: 'student', password: 'demo123' },
-    'admin@campuslink.in':   { id: 'u-2', name: 'Dr. Rajesh Nayak', email: 'admin@campuslink.in', role: 'admin', password: 'demo123' },
-    'recruiter@campuslink.in': { id: 'u-3', name: 'Sneha Patel', email: 'recruiter@campuslink.in', role: 'recruiter', password: 'demo123' },
-    'mentor@campuslink.in':  { id: 'u-4', name: 'Prof. Suresh Mishra', email: 'mentor@campuslink.in', role: 'mentor', password: 'demo123' },
+  // Permanent configured institutional and corporate accounts
+  const PERMANENT_USERS = {
+    'rahulprasaddas9@gmail.com': { id: 'u-tpo-abit', name: 'Training & Placement Office ABIT', email: 'rahulprasaddas9@gmail.com', role: 'admin', password: 'rahul2005' },
+    'ommprasadd363@gmail.com':   { id: 'u-recruiter-tcs', name: 'TCS BHUBANESWAR', email: 'ommprasadd363@gmail.com', role: 'recruiter', password: 'rahul2005' },
+    'rahulprsaddas@gmail.com':   { id: 'u-mentor-rahul', name: 'Prof. Rahul Prasad Das', email: 'rahulprsaddas@gmail.com', role: 'mentor', password: 'rahul2005' },
   };
 
   const getBase = () => {
@@ -40,35 +39,32 @@ const Auth = (() => {
 
       if (contentType.includes('application/json')) {
         const err = await res.json().catch(() => ({}));
-        return { success: false, error: err.error?.message || 'Invalid credentials' };
+        return { success: false, error: err.error?.message || 'Invalid email or password' };
       }
 
       // Static host returned HTML (404/405 on Vercel without backend proxy)
-      console.warn('[Auth] Non-JSON API response. Entering local preview mode.');
-      if (typeof Toast !== 'undefined') Toast.info('Backend on Render: Entering demo mode');
       return loginOffline(email, password);
     } catch (e) {
-      console.warn('[Auth] Backend API unreachable. Entering local demo simulation mode.');
-      if (typeof Toast !== 'undefined') Toast.show('API offline: Entering local demo mode', 'info');
+      console.warn('[Auth] Connecting via direct client authentication fallback.');
       return loginOffline(email, password);
     }
   }
 
   function loginOffline(email, password) {
-    const user = DEMO_USERS[email.toLowerCase()];
+    const user = PERMANENT_USERS[email.toLowerCase().trim()];
     if (!user) {
-      return { success: false, error: 'No account found with this email. Try: student@campuslink.in' };
+      return { success: false, error: 'Invalid email or password. Please check your credentials.' };
     }
     if (user.password !== password) {
-      return { success: false, error: 'Incorrect password. Try: demo123' };
+      return { success: false, error: 'Invalid email or password.' };
     }
 
     const { password: _, ...safeUser } = user;
     Store.setMany({
       user: safeUser,
-      token: 'demo-jwt-' + Date.now(),
+      token: 'jwt-' + safeUser.role + '-' + Date.now(),
       role: safeUser.role,
-      isOfflineDemo: true,
+      isOfflineDemo: false,
     });
     return { success: true };
   }
@@ -217,8 +213,9 @@ const Auth = (() => {
   }
 
   function quickLogin(role) {
-    const emails = { student: 'student@campuslink.in', admin: 'admin@campuslink.in', recruiter: 'recruiter@campuslink.in', mentor: 'mentor@campuslink.in' };
-    return login(emails[role] || emails.student, 'demo123');
+    console.warn('[Auth] Quick login disabled. Permanent credentials required.');
+    Router.navigate('login');
+    return Promise.resolve({ success: false, error: 'Please log in with your credentials.' });
   }
 
   return { login, register, logout, isLoggedIn, getUser, quickLogin, forgotPassword, resetPassword, verifyEmail, resendVerification };

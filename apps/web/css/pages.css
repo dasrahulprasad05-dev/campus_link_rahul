@@ -273,6 +273,157 @@
   border-bottom-right-radius: var(--radius-sm);
 }
 
+/* ---------- AI Resume Interview ---------- */
+
+/* Resume paste textarea */
+.interview-resume-textarea {
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  background: var(--bg-elevated);
+  border: 1px dashed var(--border-strong);
+  padding: var(--space-4);
+  min-height: 220px;
+  transition: border-color var(--duration-normal) var(--ease-out);
+}
+.interview-resume-textarea:focus {
+  border-style: solid;
+  border-color: var(--accent);
+}
+
+/* Stage indicator bar */
+.interview-stage-indicators {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-top: var(--space-3);
+}
+.interview-stage-indicator {
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+  transition: all var(--duration-normal) var(--ease-out);
+}
+.interview-stage-indicator.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 12px hsla(var(--accent-hue), 91%, 60%, 0.2);
+}
+.interview-stage-indicator.done {
+  background: var(--success-soft);
+  color: var(--success);
+  border-color: transparent;
+}
+
+/* Stage preview pills (sidebar) */
+.interview-stages-preview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.interview-stage-pill {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+.interview-stage-pill .stage-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+/* Rubric score bars */
+.interview-rubric-bars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.rubric-bar-row {
+  display: grid;
+  grid-template-columns: 140px 1fr 40px;
+  align-items: center;
+  gap: var(--space-2);
+}
+.rubric-bar-row.rubric-bar-compact {
+  grid-template-columns: 80px 1fr 30px;
+}
+.rubric-bar-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.rubric-bar-track {
+  height: 8px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+.rubric-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.6s var(--ease-out);
+  min-width: 2px;
+}
+.rubric-bar-value {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: right;
+}
+
+/* Resume extraction items */
+.interview-extraction-item {
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-elevated);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-2);
+  border-left: 3px solid var(--accent);
+}
+.interview-extraction-item strong {
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+/* Question drilldown (expandable) */
+.interview-question-drilldown .interview-drilldown-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s var(--ease-out), padding 0.3s var(--ease-out);
+  padding-top: 0;
+}
+.interview-question-drilldown.expanded .interview-drilldown-content {
+  max-height: 800px;
+  padding-top: var(--space-3);
+}
+
+/* Answer log items (sidebar) */
+.interview-answer-log-item {
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.interview-answer-log-item:last-child {
+  border-bottom: none;
+}
+
 /* ---------- Scheduler ---------- */
 .schedule-timeline {
   position: relative;

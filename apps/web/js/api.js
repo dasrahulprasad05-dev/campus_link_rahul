@@ -217,20 +217,112 @@ const API = (() => {
 
     if (path.includes('interview') || path.includes('feedback')) {
       const body = options.body ? (typeof options.body === 'string' ? JSON.parse(options.body) : options.body) : {};
-      // If this is a /start request, return fallback questions instead of feedback
-      if (path.includes('/start')) {
+
+      // Resume parsing fallback
+      if (path.includes('/parse-resume')) {
         return {
           success: true,
-          sessionId: 'session-offline-' + Date.now(),
-          questions: [
-            { id: 1, text: 'Tell me about a project where you used data to drive a key business decision.', category: 'behavioral', skill: 'Communication', difficulty: 'medium', role: body.targetRole || 'General' },
-            { id: 2, text: 'How would you handle missing or inconsistent data in a production dataset?', category: 'technical', skill: 'Data Cleaning', difficulty: 'medium', role: body.targetRole || 'General' },
-            { id: 3, text: 'Walk me through your approach to solving an unfamiliar technical problem under a tight deadline.', category: 'situational', skill: 'Problem Solving', difficulty: 'medium', role: body.targetRole || 'General' },
-          ],
-          targetRole: body.targetRole || 'General',
+          data: {
+            name: 'Demo Candidate',
+            target_role: 'Software Engineer',
+            skills: ['Python', 'SQL', 'JavaScript', 'React', 'Data Analysis'],
+            projects: [
+              { name: 'Student Attendance Tracker', tech: 'React, Node.js, PostgreSQL', description: 'Full-stack web app used by 200+ students' },
+              { name: 'Sales Forecasting Dashboard', tech: 'Python, Power BI, SQL', description: 'Predictive dashboard reducing forecast error by 15%' },
+            ],
+            education: [{ institution: 'XYZ University', degree: 'B.Tech CSE', year: '2026', gpa: '8.4' }],
+            experience: [],
+            certifications: ['Google Data Analytics Certificate'],
+          },
           source: 'offline-fallback',
         };
       }
+
+      // Evaluate answer fallback
+      if (path.includes('/evaluate-answer')) {
+        const wc = (body.answer || '').split(/\s+/).filter(Boolean).length;
+        const base = Math.min(7, 3 + wc * 0.04);
+        return {
+          success: true,
+          data: {
+            questionIndex: body.questionIndex || 0,
+            question: 'Offline question',
+            answer: body.answer || '[Skipped]',
+            technical_correctness: Math.round(base + 1),
+            relevance: Math.round(base),
+            completeness: Math.round(base - 0.5),
+            communication: Math.round(base + 0.5),
+            missed_concepts: ['Detailed evaluation unavailable offline'],
+            feedback_text: 'Answer recorded. AI evaluation is unavailable offline — connect to the server for full rubric scoring.',
+            should_followup: false,
+            source: 'offline-fallback',
+          },
+        };
+      }
+
+      // Generate follow-up fallback
+      if (path.includes('/generate-followup')) {
+        return {
+          success: true,
+          data: {
+            followup: {
+              id: 99,
+              text: 'Can you elaborate on the technical approach you took and explain any tradeoffs you considered?',
+              stage: 'skills',
+              category: 'technical',
+              skill: 'Follow-up',
+              difficulty: 'medium',
+              is_followup: true,
+              targets_weakness: 'completeness',
+            },
+          },
+        };
+      }
+
+      // Final evaluation fallback
+      if (path.includes('/final-evaluation')) {
+        return {
+          success: true,
+          data: {
+            sessionId: body.sessionId || 'offline',
+            overall_score: 65,
+            verdict: 'Solid Potential',
+            dimensions: { technical_correctness: 6.5, relevance: 7, completeness: 5.5, communication: 7 },
+            stage_breakdown: [{ stage: 'skills', count: 3, avgScore: 65 }],
+            total_questions: 3,
+            answered_count: 3,
+            skipped_count: 0,
+            executive_summary: 'Offline evaluation — connect to the server for a full AI-powered assessment with personalized feedback.',
+            top_strengths: ['Completed the interview'],
+            top_weaknesses: ['Full AI evaluation unavailable offline'],
+            study_roadmap: ['Start the server for a complete evaluation'],
+            question_evaluations: [],
+            targetRole: 'Software Engineer',
+            difficulty: 'medium',
+          },
+        };
+      }
+
+      // Start session fallback
+      if (path.includes('/start')) {
+        const rd = body.resumeData || {};
+        return {
+          success: true,
+          data: {
+            sessionId: 'session-offline-' + Date.now(),
+            questions: [
+              { id: 1, text: 'Tell me about yourself and your background.', stage: 'resume', category: 'behavioral', skill: 'Communication', difficulty: 'medium', is_followup: false },
+              { id: 2, text: 'Describe a challenging project you worked on and your role in it.', stage: 'projects', category: 'technical', skill: rd.skills?.[0] || 'Problem Solving', difficulty: 'medium', is_followup: false },
+              { id: 3, text: 'How would you approach debugging a complex issue in production?', stage: 'situational', category: 'situational', skill: 'Debugging', difficulty: 'medium', is_followup: false },
+            ],
+            targetRole: rd.target_role || 'Software Engineer',
+            difficulty: body.difficulty || 'medium',
+            count: 3,
+            source: 'offline-fallback',
+          },
+        };
+      }
+
       return simulateInterviewFeedback(body.answer || '');
     }
 

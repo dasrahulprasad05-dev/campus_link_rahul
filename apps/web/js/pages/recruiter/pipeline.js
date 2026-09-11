@@ -3,7 +3,7 @@ const RecruiterPipeline = (() => {
   async function render() {
     document.getElementById('main').innerHTML = `
       <div class="page-header"><div class="page-header-content"><div class="page-eyebrow">Recruitment Pipeline</div><h1 class="page-title">Application Pipeline</h1><p class="page-subtitle">Track candidates through your recruitment funnel — from application to offer.</p></div></div>
-      <div class="grid" style="grid-template-columns:repeat(4,1fr)">
+      <div class="grid pipeline-grid">
         ${[
           { stage: 'Applied', count: 198, color: 'blue', candidates: ['Ananya S.', 'Vikram R.', 'Soham D.', '+195'] },
           { stage: 'Shortlisted', count: 42, color: 'orange', candidates: ['Ananya S.', 'Vikram R.', 'Priti M.', '+39'] },

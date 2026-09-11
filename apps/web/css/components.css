@@ -283,6 +283,7 @@
 /* ---------- Data Tables ---------- */
 .table-container {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-subtle);
 }
@@ -429,10 +430,14 @@
   gap: var(--space-3);
   height: 180px;
   padding-top: var(--space-4);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: var(--space-2);
 }
 
 .bar-chart-col {
   flex: 1;
+  min-width: 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -465,9 +470,12 @@
 }
 
 .bar-chart-label {
-  font-size: 11px;
+  font-size: 10.5px;
   color: var(--text-muted);
   text-align: center;
+  max-width: 58px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -546,6 +554,36 @@
   gap: var(--space-3);
   padding-top: var(--space-4);
   border-top: 1px solid var(--border-subtle);
+}
+
+@media (max-width: 480px) {
+  .modal-backdrop {
+    padding: var(--space-2);
+  }
+
+  .modal-dialog {
+    padding: var(--space-4);
+    max-height: 94vh;
+    border-radius: var(--radius-lg);
+  }
+
+  .modal-header {
+    margin-bottom: var(--space-3);
+  }
+
+  .modal-title {
+    font-size: 16px;
+  }
+
+  .modal-footer {
+    flex-direction: column-reverse;
+    gap: var(--space-2);
+  }
+
+  .modal-footer .btn {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 /* ---------- Forms ---------- */
@@ -908,6 +946,14 @@
   gap: 2px;
   border-bottom: 1px solid var(--border-subtle);
   margin-bottom: var(--space-6);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  flex-wrap: nowrap;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
 }
 
 .tab {
@@ -922,6 +968,8 @@
   font-family: var(--font-sans);
   transition: all var(--duration-fast) var(--ease-out);
   margin-bottom: -1px;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .tab:hover {

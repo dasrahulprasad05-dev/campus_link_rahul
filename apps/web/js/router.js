@@ -76,6 +76,9 @@ const Router = (() => {
     }
     _current = path;
 
+    // Ensure mobile sidebar is closed on route navigation
+    document.getElementById('sidebar')?.classList.remove('open');
+
     // Execute route handler
     try {
       await route.handler();

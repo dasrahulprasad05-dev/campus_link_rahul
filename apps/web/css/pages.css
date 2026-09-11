@@ -244,6 +244,7 @@
   gap: var(--space-4);
   max-height: 400px;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   padding: var(--space-4);
   background: var(--bg-surface);
   border-radius: var(--radius-md);
@@ -257,6 +258,8 @@
   font-size: 13px;
   line-height: 1.6;
   animation: fadeInUp var(--duration-normal) var(--ease-out);
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .chat-bubble.ai {
@@ -786,6 +789,19 @@
   color: var(--text-muted);
 }
 
+/* ---------- Recruiter Pipeline & Job Metrics Grids ---------- */
+.pipeline-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+}
+
+.job-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+}
+
 /* ---------- Responsive overrides ---------- */
 @media (max-width: 860px) {
   .landing-hero h1 {
@@ -808,6 +824,10 @@
   .form-row {
     grid-template-columns: 1fr;
   }
+
+  .pipeline-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 640px) {
@@ -827,5 +847,105 @@
 
   .auth-card {
     padding: var(--space-6);
+  }
+
+  .pipeline-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .job-metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+
+  .chat-bubble {
+    max-width: 92%;
+    padding: var(--space-3);
+    font-size: 13px;
+  }
+
+  .interview-chat {
+    padding: var(--space-3);
+    max-height: 380px;
+  }
+
+  .career-question-card {
+    padding: var(--space-4) var(--space-3);
+  }
+
+  .career-option-btn {
+    padding: var(--space-2) var(--space-3);
+    font-size: 13px;
+  }
+
+  .career-dot {
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+  }
+
+  .career-result-bar-wrap {
+    gap: var(--space-2);
+  }
+
+  .schedule-timeline {
+    padding-left: var(--space-5);
+  }
+
+  .schedule-timeline::before {
+    left: 7px;
+  }
+
+  .schedule-event {
+    padding: var(--space-3);
+    padding-left: var(--space-4);
+    margin-bottom: var(--space-3);
+  }
+
+  .schedule-event::before {
+    left: calc(-1 * var(--space-5) + 2px);
+  }
+
+  .interview-stage-indicators {
+    gap: var(--space-1);
+  }
+
+  .interview-stage-indicator {
+    font-size: 10px;
+    padding: 2px 7px;
+  }
+}
+
+@media (max-width: 480px) {
+  .rubric-bar-row {
+    grid-template-columns: 100px 1fr 32px;
+    gap: var(--space-1);
+  }
+
+  .rubric-bar-label {
+    font-size: 10px;
+  }
+
+  .rubric-bar-value {
+    font-size: 10px;
+  }
+
+  .ai-result-header {
+    flex-wrap: wrap;
+  }
+
+  .ai-result-header .match-badge {
+    margin-left: 0 !important;
+    margin-top: var(--space-2);
+  }
+
+  .interview-resume-textarea {
+    min-height: 160px;
+    font-size: 11px;
+    padding: var(--space-3);
+  }
+
+  .career-options-grid {
+    gap: var(--space-2);
   }
 }

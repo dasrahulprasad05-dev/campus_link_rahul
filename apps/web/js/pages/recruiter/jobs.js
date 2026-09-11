@@ -7,7 +7,7 @@ const RecruiterJobs = (() => {
         ${API.DEMO.recruiter.jobs.map((j, i) => `
           <article class="card card-interactive animate-fade-in-up" style="animation-delay:${i * 80}ms">
             <div class="flex justify-between items-center mb-4"><h3>${j.title}</h3><span class="status-badge status-${j.status === 'active' ? 'confirmed' : 'draft'}">${j.status}</span></div>
-            <div class="grid" style="grid-template-columns:repeat(4,1fr);gap:var(--space-4)">
+            <div class="job-metrics-grid">
               <div><div class="text-xs text-muted">Applications</div><div class="font-bold">${j.applications}</div></div>
               <div><div class="text-xs text-muted">Shortlisted</div><div class="font-bold">${j.shortlisted}</div></div>
               <div><div class="text-xs text-muted">Interviewed</div><div class="font-bold">${j.interviewed}</div></div>

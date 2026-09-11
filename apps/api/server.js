@@ -40,6 +40,7 @@ const interviewRoutes = require('./routes/interview.routes');
 const analyticsRoutes = require('./routes/analytics.routes');
 const schedulerRoutes = require('./routes/scheduler.routes');
 const aiRoutes = require('./routes/ai.routes');
+const careerFinderRoutes = require('./routes/career-finder.routes');
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/students', studentRoutes);
@@ -51,6 +52,7 @@ app.use('/api/v1/interviews', interviewRoutes);
 app.use('/api/v1/analytics', analyticsRoutes);
 app.use('/api/v1/scheduler', schedulerRoutes);
 app.use('/api/v1/ai', aiRoutes);
+app.use('/api/v1/career-finder', careerFinderRoutes);
 
 const { authenticate } = require('./middleware/auth');
 

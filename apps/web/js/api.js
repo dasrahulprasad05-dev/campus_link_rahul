@@ -326,6 +326,91 @@ const API = (() => {
       return simulateInterviewFeedback(body.answer || '');
     }
 
+    // Career Path Finder offline fallbacks
+    if (path.includes('career-finder')) {
+      const body = options.body ? (typeof options.body === 'string' ? JSON.parse(options.body) : options.body) : {};
+
+      if (path.includes('/questions')) {
+        return {
+          success: true,
+          data: {
+            questions: [
+              { id: 'q1', text: 'What sounds more interesting to work on?', options: [
+                { id: 'a', text: 'Finding patterns in a large dataset' },
+                { id: 'b', text: 'Building a website or app people use' },
+                { id: 'c', text: 'Understanding how an AI model makes predictions' },
+                { id: 'd', text: 'Finding security weaknesses in a system' },
+                { id: 'e', text: 'Setting up and managing servers/infrastructure' },
+              ]},
+              { id: 'q2', text: "You're handed a messy dataset. What's your first instinct?", options: [
+                { id: 'a', text: 'Clean it and build charts to explain it' },
+                { id: 'b', text: 'Explore it statistically' },
+                { id: 'c', text: 'Wonder what model could be trained on it' },
+                { id: 'd', text: 'Check who has access to it' },
+                { id: 'e', text: "Rather build the app around it" },
+              ]},
+              { id: 'q3', text: 'Building new vs improving existing?', options: [
+                { id: 'a', text: 'Building something new' },
+                { id: 'b', text: 'Analyzing existing things' },
+                { id: 'c', text: 'Making systems faster' },
+                { id: 'd', text: 'Finding flaws' },
+              ]},
+            ],
+            total: 3,
+          },
+        };
+      }
+
+      if (path.includes('/score')) {
+        return {
+          success: true,
+          data: {
+            percentages: { DA: 68, DS: 52, WEB: 45, AI: 40, OPS: 30, SEC: 25 },
+            sorted: [
+              { domain: 'DA', score: 68, name: 'Data Analytics', icon: '📊', color: '#3b82f6' },
+              { domain: 'DS', score: 52, name: 'Data Science', icon: '🔬', color: '#8b5cf6' },
+              { domain: 'WEB', score: 45, name: 'Web Development', icon: '💻', color: '#10b981' },
+              { domain: 'AI', score: 40, name: 'AI / ML Engineer', icon: '🤖', color: '#f59e0b' },
+              { domain: 'OPS', score: 30, name: 'Cloud / DevOps', icon: '☁️', color: '#06b6d4' },
+              { domain: 'SEC', score: 25, name: 'Cybersecurity', icon: '🔐', color: '#ef4444' },
+            ],
+            topDomain: 'DA',
+            topName: 'Data Analytics',
+            topScore: 68,
+          },
+        };
+      }
+
+      if (path.includes('/explain')) {
+        return {
+          success: true,
+          data: {
+            explanation: 'Based on your responses, Data Analytics appears to be your strongest current fit. Your answers showed a natural inclination toward working with data, finding patterns, and building visual explanations. Remember — this reflects your current interests from a short assessment, not a fixed career path.',
+            source: 'offline-fallback',
+          },
+        };
+      }
+
+      if (path.includes('/roadmap/')) {
+        return {
+          success: true,
+          data: {
+            domain: 'DA',
+            name: 'Data Analytics',
+            icon: '📊',
+            color: '#3b82f6',
+            steps: [
+              { step: 1, title: 'Python Basics', desc: 'Learn fundamentals', duration: '2-3 weeks' },
+              { step: 2, title: 'SQL', desc: 'Master queries', duration: '2-3 weeks' },
+              { step: 3, title: 'Power BI / Tableau', desc: 'Build dashboards', duration: '2-3 weeks' },
+              { step: 4, title: 'Statistics', desc: 'Descriptive & inferential', duration: '3-4 weeks' },
+              { step: 5, title: 'Project', desc: 'End-to-end analytics project', duration: '2-3 weeks' },
+            ],
+          },
+        };
+      }
+    }
+
     if (path.includes('scheduler') || path.includes('check')) {
       const body = options.body ? (typeof options.body === 'string' ? JSON.parse(options.body) : options.body) : {};
       return simulateSchedulerCheck(body.events || []);

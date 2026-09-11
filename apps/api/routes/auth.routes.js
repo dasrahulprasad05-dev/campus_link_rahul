@@ -90,13 +90,12 @@ router.post('/register', async (req, res) => {
       email_verified: false,
     };
 
-    const token = generateToken(safeUser);
+    // Do not issue auth token until email is verified!
     res.status(201).json({
       success: true,
       user: safeUser,
-      token,
       requiresVerification: true,
-      message: 'Account created! Please check your email inbox and spam folder to verify your account.'
+      message: 'Account created! Please check your email inbox and spam folder and click the verification link before logging in.'
     });
   } catch (err) {
     console.error('[Auth Register Error]:', err);
@@ -298,6 +297,18 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({
         success: false,
         error: { code: 'INVALID_CREDENTIALS', message: 'Invalid email or password' }
+      });
+    }
+
+    // Architecture & User Rule: Students must click email verification before logging in
+    if (user.role === 'student' && !user.email_verified) {
+      return res.status(403).json({
+        success: false,
+        error: {
+          code: 'EMAIL_NOT_VERIFIED',
+          message: 'Your email address is not verified yet. Please check your inbox (and spam folder) and click the verification link to activate your account.',
+          email: user.email,
+        }
       });
     }
 

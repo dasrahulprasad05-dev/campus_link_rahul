@@ -114,28 +114,35 @@ const RegisterPage = (() => {
         const result = await Auth.register({ name, email, password, role });
 
         if (result.success) {
-          const userObj = result.user || { name, email };
-          const userId = userObj.id || email;
-          const dismissalKey = 'campuslink_verification_notified_' + userId;
-          const alreadyNotified = localStorage.getItem(dismissalKey);
+          const app = document.getElementById('app');
+          app.innerHTML = `
+            <div class="auth-layout" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:var(--space-4)">
+              <div class="card p-8 text-center animate-fade-in-up" style="max-width:540px;width:100%;border:1px solid var(--border-color);background:var(--bg-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-xl)">
+                <div style="font-size:56px;margin-bottom:16px">✉️</div>
+                <h1 class="font-bold mb-2" style="font-size:1.5rem">Check Your Email to Activate</h1>
+                <p class="text-sm text-muted mb-4" style="line-height:1.6">
+                  We have sent an activation link to <strong style="color:var(--text-primary)">${email}</strong>.<br>
+                  You must click the link in your email before you can sign in to CAMPUSLINK.
+                </p>
 
-          if (!alreadyNotified) {
-            // First time signup: prompt to verify email & check spam folder
-            EmailAuthPages.showFirstTimeSignupModal({
-              user: userObj,
-              role,
-              onDismiss: () => {
-                // Save flag: Never ask a second time
-                localStorage.setItem(dismissalKey, 'true');
-                Toast.success('Welcome to CAMPUSLINK 🎉');
-                Router.navigate(role + '/dashboard');
-              }
-            });
-          } else {
-            // Already prompted before: don't ask a second time
-            Toast.success('Welcome back to CAMPUSLINK 🎉');
-            Router.navigate(role + '/dashboard');
-          }
+                <div class="notice mb-6" style="background:rgba(234, 179, 8, 0.1);border:1px solid rgba(234, 179, 8, 0.3);border-radius:var(--radius-md);padding:14px;font-size:13px;color:#fef08a;text-align:left">
+                  <strong>⚠️ Important Note:</strong><br>
+                  • Please check your <strong>Spam / Junk folder</strong> if the email does not appear in your inbox within 1 minute.<br>
+                  • Official Sender: <code>rahulprasadcoding01@gmail.com</code> (CAMPUSLINK Portal).
+                </div>
+
+                <div class="flex gap-3 justify-center" style="flex-wrap:wrap">
+                  <button class="btn btn-primary btn-lg" onclick="Router.navigate('login')">
+                    Go to Sign In →
+                  </button>
+                  <button class="btn btn-secondary btn-lg" onclick="EmailAuthPages.resendVerification('${email}')">
+                    Resend Verification Email
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+          return;
         } else {
           Toast.error(result.error);
           btn.textContent = 'Create Account →';

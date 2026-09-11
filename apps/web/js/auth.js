@@ -39,7 +39,11 @@ const Auth = (() => {
 
       if (contentType.includes('application/json')) {
         const err = await res.json().catch(() => ({}));
-        return { success: false, error: err.error?.message || 'Invalid email or password' };
+        return { 
+          success: false, 
+          error: err.error?.message || 'Invalid email or password',
+          code: err.error?.code 
+        };
       }
 
       // Static host returned HTML (404/405 on Vercel without backend proxy)
@@ -81,12 +85,15 @@ const Auth = (() => {
 
       if (res.ok && contentType.includes('application/json')) {
         const result = await res.json();
-        Store.setMany({
-          user: result.user,
-          token: result.token,
-          role: result.user.role || 'student',
-        });
-        return { success: true, user: result.user, requiresVerification: result.requiresVerification };
+        // Do NOT log in if email verification is required!
+        if (result.token && !result.requiresVerification) {
+          Store.setMany({
+            user: result.user,
+            token: result.token,
+            role: result.user.role || 'student',
+          });
+        }
+        return { success: true, user: result.user, requiresVerification: true };
       }
 
       if (contentType.includes('application/json')) {

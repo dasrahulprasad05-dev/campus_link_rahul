@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const request = require('supertest');
 const app = require('../server');
 
-test('POST /api/v1/auth/register creates a new student user and returns JWT token', async () => {
+test('POST /api/v1/auth/register creates a new student user and requires email verification', async () => {
   const uniqueEmail = `test_student_${Date.now()}@university.edu`;
   const res = await request(app)
     .post('/api/v1/auth/register')
@@ -20,7 +20,8 @@ test('POST /api/v1/auth/register creates a new student user and returns JWT toke
 
   assert.equal(res.status, 201, `Expected 201 Created, got ${res.status}: ${JSON.stringify(res.body)}`);
   assert.equal(res.body.success, true);
-  assert.ok(res.body.token, 'Response must include JWT token');
+  assert.equal(res.body.requiresVerification, true);
+  assert.equal(res.body.token, undefined, 'Must not issue JWT token until email is verified');
   assert.ok(res.body.user, 'Response must include user object');
   assert.equal(res.body.user.email, uniqueEmail);
   assert.equal(res.body.user.role, 'student');
@@ -53,11 +54,11 @@ test('POST /api/v1/auth/register rejects duplicate email with 409 Conflict', asy
   assert.equal(res.body.success, false);
 });
 
-test('POST /api/v1/auth/login succeeds with correct credentials', async () => {
+test('POST /api/v1/auth/login blocks unverified student with 403 EMAIL_NOT_VERIFIED and succeeds after verification', async () => {
   const email = `login_success_${Date.now()}@university.edu`;
   const password = 'CorrectPassword999!';
 
-  await request(app)
+  const regRes = await request(app)
     .post('/api/v1/auth/register')
     .send({
       name: 'Login Test User',
@@ -66,6 +67,19 @@ test('POST /api/v1/auth/login succeeds with correct credentials', async () => {
       role: 'student',
     });
 
+  // 1. Attempt login before email verification -> Must return 403 EMAIL_NOT_VERIFIED
+  const unverifiedLogin = await request(app)
+    .post('/api/v1/auth/login')
+    .send({ email, password });
+
+  assert.equal(unverifiedLogin.status, 403);
+  assert.equal(unverifiedLogin.body.error?.code, 'EMAIL_NOT_VERIFIED');
+
+  // 2. Mark email verified in DB (simulating clicking email link)
+  const userRepo = require('../repositories/user.repository');
+  await userRepo.markEmailVerified(regRes.body.user.id);
+
+  // 3. Attempt login after verification -> Must succeed
   const res = await request(app)
     .post('/api/v1/auth/login')
     .send({ email, password });
@@ -101,16 +115,25 @@ test('POST /api/v1/auth/login rejects invalid password with 401 Unauthorized', a
 
 test('GET /api/v1/auth/me returns current user profile with valid Bearer token', async () => {
   const email = `me_test_${Date.now()}@university.edu`;
+  const password = 'SessionPassword123!';
   const regRes = await request(app)
     .post('/api/v1/auth/register')
     .send({
       name: 'Session User',
       email,
-      password: 'SessionPassword123!',
+      password,
       role: 'student',
     });
 
-  const token = regRes.body.token;
+  // Verify user so they can login and receive a token
+  const userRepo = require('../repositories/user.repository');
+  await userRepo.markEmailVerified(regRes.body.user.id);
+
+  const loginRes = await request(app)
+    .post('/api/v1/auth/login')
+    .send({ email, password });
+
+  const token = loginRes.body.token;
 
   const res = await request(app)
     .get('/api/v1/auth/me')

@@ -95,6 +95,25 @@ const LoginPage = (() => {
           Toast.error(result.error);
           btn.textContent = 'Sign In →';
           btn.disabled = false;
+
+          // If email is not verified, show prominent activation prompt
+          if (result.code === 'EMAIL_NOT_VERIFIED' || (result.error && result.error.toLowerCase().includes('not verified'))) {
+            const existing = document.getElementById('login-unverified-prompt');
+            if (existing) existing.remove();
+
+            const form = document.getElementById('login-form');
+            if (form) {
+              form.insertAdjacentHTML('beforebegin', `
+                <div id="login-unverified-prompt" class="notice mb-4 animate-fade-in-up" style="background:rgba(234, 179, 8, 0.12);border:1px solid rgba(234, 179, 8, 0.35);border-radius:var(--radius-md);padding:14px;font-size:13px;color:#fef08a">
+                  <strong>⚠️ Account Not Activated:</strong><br>
+                  You must verify your email address before signing in. Please check your inbox and <strong>Spam / Junk folder</strong>.<br>
+                  <button type="button" class="btn btn-sm btn-secondary mt-2" style="font-size:12px;padding:6px 12px" onclick="EmailAuthPages.resendVerification('${email}')">
+                    📧 Resend Activation Link
+                  </button>
+                </div>
+              `);
+            }
+          }
         }
       });
     }

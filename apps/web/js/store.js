@@ -152,6 +152,14 @@ const Store = (() => {
     const current = getProfile();
     const merged = { ...current, ...updates };
     set('student_profile', merged);
+
+    // Sync to backend if logged in as student
+    try {
+      if (typeof API !== 'undefined' && API.put && getRole() === 'student' && isAuthenticated()) {
+        API.put('/students/profile', updates).catch(() => {});
+      }
+    } catch (_) {}
+
     return merged;
   }
 

@@ -47,13 +47,14 @@ const MentorStudents = (() => {
         s.isReal || 
         (s.email && !s.email.includes('campuslink.in') && !s.email.includes('@university.edu'))
       );
+      const readiness = Number(s.readiness) || 0;
       return {
         name: s.name,
         email: s.email,
-        score: s.readiness || 75,
-        trend: s.readiness > 70 ? 'up' : 'stable',
-        lastActive: 'Active recently',
-        next: `Review ${s.target_role || 'Software Engineer'} roadmap`,
+        score: readiness,
+        trend: readiness >= 75 ? 'up' : (readiness === 0 ? 'stable' : 'down'),
+        lastActive: readiness > 0 ? 'Active recently' : 'Newly Registered',
+        next: readiness === 0 ? 'Prompt student to complete profile & upload resume' : `Review ${s.target_role || 'Software Engineer'} roadmap`,
         isReal: isActualReal,
       };
     });

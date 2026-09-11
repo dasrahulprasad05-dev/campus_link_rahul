@@ -100,22 +100,28 @@ const AdminStudents = (() => {
         s.isReal || 
         (s.email && !s.email.includes('campuslink.in') && !s.email.includes('@university.edu'))
       );
+      const skills = Array.isArray(s.skills) 
+        ? s.skills 
+        : (typeof s.skills === 'string' && s.skills ? s.skills.split(',').map(x=>x.trim()).filter(Boolean) : []);
+      const cgpa = (s.cgpa !== null && s.cgpa !== undefined && s.cgpa !== '') ? parseFloat(s.cgpa) : null;
+      const readiness = (s.readiness !== undefined && s.readiness !== null) ? parseInt(s.readiness) : 0;
+
       return {
         id: s.id || s.user_id || 's-' + Math.random(),
         name: s.name || 'Student',
         email: s.email || '',
         branch: s.branch || 'CSE',
-        cgpa: s.cgpa ? parseFloat(s.cgpa) : 8.0,
-        readiness: s.readiness ? parseInt(s.readiness) : 75,
-        targetRole: s.target_role || s.targetRole || 'Software Development Engineer',
-        skills: s.skills || ['Python', 'SQL', 'Data Structures', 'Web Development'],
+        cgpa: cgpa,
+        readiness: readiness,
+        targetRole: s.target_role || s.targetRole || 'Software Engineer',
+        skills: skills,
         phone: s.phone || '',
         linkedin: s.linkedin || '',
         github: s.github || '',
         year: s.year || 'Final Year',
         reg_no: s.reg_no || '',
         applications: s.applications ?? 0,
-        status: s.status || (s.readiness < 60 ? 'at-risk' : s.readiness < 70 ? 'needs-support' : 'active'),
+        status: s.status || (readiness === 0 ? 'pending' : readiness < 60 ? 'at-risk' : readiness < 75 ? 'needs-support' : 'active'),
         isReal: isActualReal,
       };
     });
@@ -190,19 +196,38 @@ const AdminStudents = (() => {
             </div>
           `
         },
-        { key: 'cgpa', label: 'CGPA' },
+        {
+          key: 'cgpa',
+          label: 'CGPA',
+          render: (v) => (v !== null && v !== undefined && !isNaN(v)) ? Number(v).toFixed(2) : '<span class="text-muted text-xs">Not Set</span>'
+        },
         {
           key: 'readiness',
           label: 'Readiness',
-          render: (v) => `
-            <div class="flex items-center gap-2">
-              ${ScoreRing.mini(v)}
-              <span class="font-bold">${v}/100</span>
-            </div>
-          `
+          render: (v) => {
+            const num = Number(v) || 0;
+            if (num === 0) {
+              return `<span class="badge" style="background:rgba(255,255,255,0.06);color:var(--text-muted);font-weight:600">⚪ 0/100 (Pending)</span>`;
+            }
+            return `
+              <div class="flex items-center gap-2">
+                ${ScoreRing.mini(num)}
+                <span class="font-bold">${num}/100</span>
+              </div>
+            `;
+          }
         },
         { key: 'applications', label: 'Applications' },
-        { key: 'status', label: 'Status', type: 'status' },
+        {
+          key: 'status',
+          label: 'Status',
+          render: (st, row) => {
+            if (row.readiness === 0 || st === 'pending') {
+              return `<span class="badge" style="background:rgba(255,255,255,0.08);color:var(--text-muted)">pending assessment</span>`;
+            }
+            return `<span class="badge badge-${st === 'active' ? 'success' : st === 'at-risk' ? 'danger' : 'warning'}">${st}</span>`;
+          }
+        },
         {
           key: '_actions',
           label: '',
@@ -228,10 +253,7 @@ const AdminStudents = (() => {
     const existing = document.getElementById(modalId);
     if (existing) existing.remove();
 
-    const skills = Array.isArray(student.skills) && student.skills.length 
-      ? student.skills 
-      : (typeof student.skills === 'string' ? student.skills.split(',').map(s => s.trim()).filter(Boolean) : ['Python', 'SQL', 'Data Structures', 'Git', 'System Design']);
-
+    const skills = Array.isArray(student.skills) ? student.skills : [];
     const initials = (student.name || '??').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
 
     const modalHtml = `
@@ -258,16 +280,16 @@ const AdminStudents = (() => {
             <div class="grid grid-3 gap-3">
               <div class="card p-3 text-center" style="background:var(--bg-elevated);border-radius:var(--radius-md)">
                 <div class="text-xs text-muted font-bold uppercase mb-1">Readiness Score</div>
-                <div class="font-extrabold text-xl text-primary">${student.readiness}/100</div>
-                <div class="text-xs mt-1 ${student.readiness >= 75 ? 'text-success' : student.readiness >= 60 ? 'text-warning' : 'text-danger'}">
-                  ${student.readiness >= 75 ? '🟢 Placement Ready' : student.readiness >= 60 ? '🟡 Needs Support' : '🔴 At-Risk'}
+                <div class="font-extrabold text-xl ${student.readiness === 0 ? 'text-muted' : 'text-primary'}">${student.readiness}/100</div>
+                <div class="text-xs mt-1 ${student.readiness >= 75 ? 'text-success' : student.readiness >= 60 ? 'text-warning' : student.readiness > 0 ? 'text-danger' : 'text-muted'}">
+                  ${student.readiness >= 75 ? '🟢 Placement Ready' : student.readiness >= 60 ? '🟡 Needs Support' : student.readiness > 0 ? '🔴 At-Risk' : '⚪ Not Assessed (0%)'}
                 </div>
               </div>
 
               <div class="card p-3 text-center" style="background:var(--bg-elevated);border-radius:var(--radius-md)">
                 <div class="text-xs text-muted font-bold uppercase mb-1">Academic CGPA</div>
-                <div class="font-extrabold text-xl">${student.cgpa.toFixed(2)}</div>
-                <div class="text-xs text-muted mt-1">Scale 10.0</div>
+                <div class="font-extrabold text-xl">${student.cgpa !== null && !isNaN(student.cgpa) ? student.cgpa.toFixed(2) : '—'}</div>
+                <div class="text-xs text-muted mt-1">${student.cgpa !== null && !isNaN(student.cgpa) ? 'Scale 10.0' : 'Not Added Yet'}</div>
               </div>
 
               <div class="card p-3 text-center" style="background:var(--bg-elevated);border-radius:var(--radius-md)">
@@ -286,7 +308,7 @@ const AdminStudents = (() => {
                 <div><strong class="text-muted">Target Career Role:</strong> ${student.targetRole || 'Software Engineer'}</div>
                 <div><strong class="text-muted">Department / Branch:</strong> ${student.branch}</div>
                 <div><strong class="text-muted">Registered Email:</strong> <a href="mailto:${student.email}" style="color:var(--primary-color)">${student.email || '—'}</a></div>
-                <div><strong class="text-muted">Current Status:</strong> <span class="badge ${student.status === 'active' ? 'badge-success' : 'badge-warning'}">${student.status}</span></div>
+                <div><strong class="text-muted">Current Status:</strong> <span class="badge ${student.status === 'active' ? 'badge-success' : student.status === 'pending' ? '' : 'badge-warning'}">${student.status}</span></div>
                 ${student.reg_no ? `<div><strong class="text-muted">Registration No:</strong> ${student.reg_no}</div>` : ''}
                 ${student.year ? `<div><strong class="text-muted">Academic Year:</strong> ${student.year}</div>` : ''}
               </div>
@@ -294,12 +316,19 @@ const AdminStudents = (() => {
 
             <!-- Skills & Competencies -->
             <div class="card p-4" style="background:var(--bg-elevated);border-radius:var(--radius-md)">
-              <div class="text-sm font-bold mb-2 flex items-center gap-2">
-                <span>🛠️</span> Verified Skills & Competencies
+              <div class="text-sm font-bold mb-2 flex items-center justify-between">
+                <span class="flex items-center gap-2"><span>🛠️</span> Verified Skills & Competencies</span>
+                <span class="text-xs text-muted">${skills.length} skills</span>
               </div>
-              <div class="flex gap-2" style="flex-wrap:wrap">
-                ${skills.map(skill => `<span class="badge badge-secondary" style="font-size:12px;padding:4px 8px">${skill}</span>`).join('')}
-              </div>
+              ${skills.length > 0 ? `
+                <div class="flex gap-2" style="flex-wrap:wrap">
+                  ${skills.map(skill => `<span class="badge badge-secondary" style="font-size:12px;padding:4px 8px">${skill}</span>`).join('')}
+                </div>
+              ` : `
+                <div class="p-3 text-sm text-muted text-center" style="background:rgba(255,255,255,0.02);border:1px dashed var(--border-color);border-radius:var(--radius-sm)">
+                  ℹ️ No verified skills added yet. Student has not updated their profile or uploaded a resume.
+                </div>
+              `}
             </div>
 
             <!-- Readiness Breakdown -->
@@ -307,37 +336,44 @@ const AdminStudents = (() => {
               <div class="text-sm font-bold mb-3 flex items-center gap-2">
                 <span>📊</span> Placement Assessment Breakdown
               </div>
-              <div class="stack gap-3">
-                <div>
-                  <div class="flex justify-between text-xs mb-1">
-                    <span>Technical & Problem Solving</span>
-                    <strong>${Math.min(95, student.readiness + 5)}%</strong>
+              ${student.readiness === 0 && skills.length === 0 && student.cgpa === null ? `
+                <div class="p-3 text-sm text-muted text-center" style="background:rgba(255,255,255,0.02);border:1px dashed var(--border-color);border-radius:var(--radius-sm)">
+                  ⚪ Readiness score is currently 0. As the student uploads their resume, verifies skills, or takes mock interviews, this score will calculate dynamically.
+                </div>
+              ` : `
+                <div class="stack gap-3">
+                  <div>
+                    <div class="flex justify-between text-xs mb-1">
+                      <span>Technical & Problem Solving</span>
+                      <strong>${Math.min(100, skills.length * 15)}%</strong>
+                    </div>
+                    <div style="background:var(--border-color);height:6px;border-radius:3px;overflow:hidden">
+                      <div style="background:var(--primary-color);height:100%;width:${Math.min(100, skills.length * 15)}%"></div>
+                    </div>
                   </div>
-                  <div style="background:var(--border-color);height:6px;border-radius:3px;overflow:hidden">
-                    <div style="background:var(--primary-color);height:100%;width:${Math.min(95, student.readiness + 5)}%"></div>
+                  <div>
+                    <div class="flex justify-between text-xs mb-1">
+                      <span>Academics & Core Fundamentals</span>
+                      <strong>${student.cgpa ? Math.min(100, Math.round(student.cgpa * 10)) : 0}%</strong>
+                    </div>
+                    <div style="background:var(--border-color);height:6px;border-radius:3px;overflow:hidden">
+                      <div style="background:var(--accent-green);height:100%;width:${student.cgpa ? Math.min(100, Math.round(student.cgpa * 10)) : 0}%"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between text-xs mb-1">
+                      <span>Aptitude & Interview Readiness</span>
+                      <strong>${student.readiness}%</strong>
+                    </div>
+                    <div style="background:var(--border-color);height:6px;border-radius:3px;overflow:hidden">
+                      <div style="background:var(--accent-orange);height:100%;width:${student.readiness}%"></div>
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <div class="flex justify-between text-xs mb-1">
-                    <span>Academics & Core Fundamentals</span>
-                    <strong>${Math.min(98, Math.round(student.cgpa * 10))}%</strong>
-                  </div>
-                  <div style="background:var(--border-color);height:6px;border-radius:3px;overflow:hidden">
-                    <div style="background:var(--accent-green);height:100%;width:${Math.min(98, Math.round(student.cgpa * 10))}%"></div>
-                  </div>
-                </div>
-                <div>
-                  <div class="flex justify-between text-xs mb-1">
-                    <span>Aptitude & Interview Readiness</span>
-                    <strong>${student.readiness}%</strong>
-                  </div>
-                  <div style="background:var(--border-color);height:6px;border-radius:3px;overflow:hidden">
-                    <div style="background:var(--accent-orange);height:100%;width:${student.readiness}%"></div>
-                  </div>
-                </div>
-              </div>
+              `}
             </div>
           </div>
+
 
           <div class="modal-footer flex justify-between items-center p-4" style="border-top:1px solid var(--border-color)">
             <div class="flex gap-2">

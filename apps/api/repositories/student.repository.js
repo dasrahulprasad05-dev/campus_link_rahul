@@ -22,17 +22,17 @@ async function createProfile(data) {
       id,
       data.user_id,
       data.reg_no || null,
-      data.branch || 'Engineering',
+      data.branch || 'Computer Science & Engineering',
       data.year || 2026,
-      data.cgpa || 8.0,
+      data.cgpa || null,
       data.target_role || 'Software Engineer',
       data.phone || '',
       data.linkedin || '',
       data.github || '',
       data.skills || [],
       data.certifications || [],
-      data.profile_completion || 60,
-      data.readiness_score || 70,
+      data.profile_completion || 10,
+      data.readiness_score || 0,
     ]
   );
   return res.rows[0];
@@ -44,16 +44,31 @@ async function updateProfile(userId, updates) {
     return createProfile({ user_id: userId, ...updates });
   }
 
+  const skills = updates.skills !== undefined ? updates.skills : current.skills;
+  const skillsArr = Array.isArray(skills) ? skills : [];
+  const cgpa = updates.cgpa !== undefined ? updates.cgpa : current.cgpa;
+  const numCgpa = cgpa ? parseFloat(cgpa) : 0;
+
+  // Calculate readiness dynamically: 0 if no skills and no cgpa
+  let newReadiness = 0;
+  if (skillsArr.length > 0 || numCgpa > 0) {
+    const skillsPts = Math.min(50, skillsArr.length * 10);
+    const academicPts = numCgpa > 0 ? Math.min(30, Math.round((numCgpa / 10) * 30)) : 0;
+    const profilePts = 20;
+    newReadiness = Math.min(100, skillsPts + academicPts + profilePts);
+  }
+
   const res = await query(
     `UPDATE student_profiles
      SET target_role = COALESCE($1, target_role),
          skills = COALESCE($2, skills),
          cgpa = COALESCE($3, cgpa),
          phone = COALESCE($4, phone),
+         readiness_score = $5,
          updated_at = NOW()
-     WHERE user_id = $5
+     WHERE user_id = $6
      RETURNING *`,
-    [updates.target_role, updates.skills, updates.cgpa, updates.phone, userId]
+    [updates.target_role, updates.skills, updates.cgpa, updates.phone, newReadiness, userId]
   );
   return res.rows[0];
 }

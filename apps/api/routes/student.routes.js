@@ -15,22 +15,36 @@ router.get('/', async (req, res) => {
     const students = await studentRepo.listStudents();
     const formatted = (students || []).map(s => {
       const isActualHuman = s.email && !s.email.includes('@university.edu') && !s.email.includes('campuslink.in');
+      const skills = Array.isArray(s.skills) ? s.skills : (typeof s.skills === 'string' && s.skills ? s.skills.split(',').map(x=>x.trim()).filter(Boolean) : []);
+      const cgpa = s.cgpa ? parseFloat(s.cgpa) : null;
+      
+      // Calculate dynamic score: 0 if student has not tried/added anything
+      let readiness = Number(s.readiness) || 0;
+      if (readiness === 0 && (skills.length > 0 || cgpa)) {
+        const skillsPts = Math.min(50, skills.length * 10);
+        const academicPts = cgpa ? Math.min(30, Math.round((cgpa / 10) * 30)) : 0;
+        const profilePts = 20;
+        readiness = Math.min(100, skillsPts + academicPts + profilePts);
+      }
+
+      const status = readiness === 0 ? 'pending' : (readiness < 60 ? 'at-risk' : readiness < 75 ? 'needs-support' : 'active');
+
       return {
         id: s.id,
         name: s.name,
         email: s.email,
         branch: s.branch || 'Computer Science & Engineering',
-        cgpa: s.cgpa ? parseFloat(s.cgpa) : 8.0,
-        readiness: s.readiness ? parseInt(s.readiness) : 75,
+        cgpa: cgpa,
+        readiness: readiness,
         target_role: s.target_role || 'Software Engineer',
-        skills: s.skills || ['Python', 'SQL', 'Data Structures', 'Web Development'],
+        skills: skills,
         phone: s.phone || '',
         linkedin: s.linkedin || '',
         github: s.github || '',
         year: s.year || 'Final Year',
         reg_no: s.reg_no || '',
         applications: 0,
-        status: 'active',
+        status: status,
         isReal: isActualHuman,
       };
     });

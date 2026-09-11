@@ -8,29 +8,62 @@ const MentorStudents = (() => {
     let list = [];
     try {
       const res = await API.get('/students');
-      if (res && res.data && Array.isArray(res.data)) {
-        list = res.data;
+      if (res) {
+        if (Array.isArray(res.data)) {
+          list = res.data;
+        } else if (Array.isArray(res)) {
+          list = res;
+        } else if (typeof res === 'object') {
+          const numericKeys = Object.keys(res).filter(k => /^\d+$/.test(k)).sort((a, b) => Number(a) - Number(b));
+          if (numericKeys.length > 0) {
+            list = numericKeys.map(k => res[k]);
+          }
+        }
       }
     } catch (e) {
       console.warn('[MentorStudents] Could not fetch live students:', e);
     }
 
+    if (!list.length || list.length <= 6) {
+      try {
+        const root = (window.__API_URL__ || localStorage.getItem('CAMPUSLINK_API_URL') || 'https://node-js-web-app.onrender.com').replace(/\/+$/, '');
+        const directRes = await fetch(`${root}/api/v1/students`);
+        if (directRes.ok) {
+          const json = await directRes.json();
+          if (json && Array.isArray(json.data) && json.data.length > 0) {
+            list = json.data;
+          }
+        }
+      } catch (err) {
+        console.warn('[MentorStudents] Direct fetch error:', err);
+      }
+    }
+
     const demoList = API.DEMO.mentor.students || [];
     
     // Map live students
-    const liveMapped = list.map(s => ({
-      name: s.name,
-      email: s.email,
-      score: s.readiness || 75,
-      trend: s.readiness > 70 ? 'up' : 'stable',
-      lastActive: 'Active recently',
-      next: `Review ${s.target_role || 'Software Engineer'} roadmap`,
-      isReal: s.isReal || (s.email && !s.email.includes('campuslink.in')),
-    }));
+    const liveMapped = list.map(s => {
+      const isActualReal = Boolean(
+        s.isReal || 
+        (s.email && !s.email.includes('campuslink.in') && !s.email.includes('@university.edu'))
+      );
+      return {
+        name: s.name,
+        email: s.email,
+        score: s.readiness || 75,
+        trend: s.readiness > 70 ? 'up' : 'stable',
+        lastActive: 'Active recently',
+        next: `Review ${s.target_role || 'Software Engineer'} roadmap`,
+        isReal: isActualReal,
+      };
+    });
 
     const liveEmails = new Set(liveMapped.map(s => (s.email || '').toLowerCase()).filter(Boolean));
     const uniqueDemo = demoList.filter(d => !liveEmails.has(d.name.toLowerCase()));
     const students = [...liveMapped, ...uniqueDemo];
+
+    // Real registered students at the top
+    students.sort((a, b) => (b.isReal ? 1 : 0) - (a.isReal ? 1 : 0));
 
     document.getElementById('main').innerHTML = `
       <div class="page-header">

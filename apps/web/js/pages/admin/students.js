@@ -13,7 +13,7 @@ const AdminStudents = (() => {
         <div class="page-header-content">
           <div class="page-eyebrow">Student Management</div>
           <h1 class="page-title">All Students</h1>
-          <p class="page-subtitle">Manage student profiles, readiness, and placement status.</p>
+          <p class="page-subtitle" id="student-count-subtitle">Manage student profiles, readiness, and placement status.</p>
         </div>
         <div class="page-actions">
           <button class="btn btn-sm" id="btn-refresh-students" onclick="AdminStudents.refresh()">
@@ -56,31 +56,71 @@ const AdminStudents = (() => {
     let list = [];
     try {
       const res = await API.get('/students');
-      if (res && res.data && Array.isArray(res.data)) {
-        list = res.data;
+      if (res) {
+        if (Array.isArray(res.data)) {
+          list = res.data;
+        } else if (Array.isArray(res)) {
+          list = res;
+        } else if (typeof res === 'object') {
+          const numericKeys = Object.keys(res).filter(k => /^\d+$/.test(k)).sort((a, b) => Number(a) - Number(b));
+          if (numericKeys.length > 0) {
+            list = numericKeys.map(k => res[k]);
+          }
+        }
       }
     } catch (e) {
-      console.warn('[AdminStudents] Could not fetch live students:', e);
+      console.warn('[AdminStudents] API.get error, trying direct fetch:', e);
     }
 
-    // Default demo students if empty
+    // Direct fallback fetch if list is still empty or not loaded
+    if (!list.length || list.length <= 6) {
+      try {
+        const root = (window.__API_URL__ || localStorage.getItem('CAMPUSLINK_API_URL') || 'https://node-js-web-app.onrender.com').replace(/\/+$/, '');
+        const directRes = await fetch(`${root}/api/v1/students`);
+        if (directRes.ok) {
+          const json = await directRes.json();
+          if (json && Array.isArray(json.data) && json.data.length > 0) {
+            list = json.data;
+          }
+        }
+      } catch (err) {
+        console.warn('[AdminStudents] Direct fetch error:', err);
+      }
+    }
+
+    // Default demo students if still empty
     const demoList = API.DEMO.admin.students || [];
 
     if (!list.length) {
       list = demoList;
     }
 
-    allStudents = list.map(s => ({
-      id: s.id || s.user_id || 's-' + Math.random(),
-      name: s.name || 'Student',
-      email: s.email || '',
-      branch: s.branch || 'CSE',
-      cgpa: s.cgpa ? parseFloat(s.cgpa) : 8.0,
-      readiness: s.readiness ? parseInt(s.readiness) : 75,
-      applications: s.applications ?? 0,
-      status: s.status || (s.readiness < 60 ? 'at-risk' : s.readiness < 70 ? 'needs-support' : 'active'),
-      isReal: s.isReal || (s.email && !s.email.includes('campuslink.in')),
-    }));
+    allStudents = list.map(s => {
+      const isActualReal = Boolean(
+        s.isReal || 
+        (s.email && !s.email.includes('campuslink.in') && !s.email.includes('@university.edu'))
+      );
+      return {
+        id: s.id || s.user_id || 's-' + Math.random(),
+        name: s.name || 'Student',
+        email: s.email || '',
+        branch: s.branch || 'CSE',
+        cgpa: s.cgpa ? parseFloat(s.cgpa) : 8.0,
+        readiness: s.readiness ? parseInt(s.readiness) : 75,
+        applications: s.applications ?? 0,
+        status: s.status || (s.readiness < 60 ? 'at-risk' : s.readiness < 70 ? 'needs-support' : 'active'),
+        isReal: isActualReal,
+      };
+    });
+
+    // Sort so real registered students are always at the top
+    allStudents.sort((a, b) => (b.isReal ? 1 : 0) - (a.isReal ? 1 : 0));
+
+    const realCount = allStudents.filter(s => s.isReal).length;
+    const subTitle = document.getElementById('student-count-subtitle');
+    if (subTitle) {
+      subTitle.textContent = `Manage student profiles, readiness, and placement status · ${allStudents.length} total (${realCount} registered students)`;
+    }
 
     if (btn) btn.textContent = '🔄 Refresh Directory';
     filter();

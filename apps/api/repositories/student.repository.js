@@ -60,10 +60,16 @@ async function updateProfile(userId, updates) {
 
 async function listStudents() {
   const res = await query(`
-    SELECT u.id, u.name, u.email, sp.branch, sp.cgpa, sp.readiness_score as readiness, sp.target_role
+    SELECT u.id, u.name, u.email, u.created_at, sp.branch, sp.cgpa, sp.readiness_score as readiness, sp.target_role
     FROM users u
     LEFT JOIN student_profiles sp ON u.id = sp.user_id
     WHERE u.role = 'student'
+    ORDER BY 
+      CASE 
+        WHEN u.email LIKE '%@university.edu' THEN 1 
+        ELSE 0 
+      END ASC,
+      u.created_at DESC
   `);
   return res.rows;
 }

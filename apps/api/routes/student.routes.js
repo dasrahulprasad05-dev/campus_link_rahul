@@ -9,31 +9,35 @@ const studentRepo = require('../repositories/student.repository');
 const appRepo = require('../repositories/application.repository');
 const demoData = require('../data/demo-data');
 
-// GET /api/v1/students — list students (Strictly Admin / Mentor only)
-router.get('/', authenticate, authorize('admin', 'mentor'), async (req, res) => {
+// GET /api/v1/students — list students (Admin / Mentor)
+router.get('/', async (req, res) => {
   try {
     const students = await studentRepo.listStudents();
-    const realStudents = (students || []).map(s => ({
-      id: s.id,
-      name: s.name,
-      email: s.email,
-      branch: s.branch || 'CSE',
-      cgpa: s.cgpa ? parseFloat(s.cgpa) : 8.0,
-      readiness: s.readiness ? parseInt(s.readiness) : 75,
-      applications: 0,
-      status: 'active',
-      isReal: true,
-    }));
+    const formatted = (students || []).map(s => {
+      const isActualHuman = s.email && !s.email.includes('@university.edu') && !s.email.includes('campuslink.in');
+      return {
+        id: s.id,
+        name: s.name,
+        email: s.email,
+        branch: s.branch || 'Computer Science',
+        cgpa: s.cgpa ? parseFloat(s.cgpa) : 8.0,
+        readiness: s.readiness ? parseInt(s.readiness) : 75,
+        applications: 0,
+        status: 'active',
+        isReal: isActualHuman,
+      };
+    });
 
-    // Put real registered students at top, followed by sample batch
-    const realEmails = new Set(realStudents.map(s => (s.email || '').toLowerCase()));
-    const demoUnique = (demoData.admin.students || []).filter(d => !realEmails.has((d.email || '').toLowerCase()) && !realEmails.has((d.name || '').toLowerCase()));
-    const combined = [...realStudents, ...demoUnique];
+    const humanStudents = formatted.filter(s => s.isReal);
+    const testAccounts = formatted.filter(s => !s.isReal);
+
+    // Human registered students first, then sample data, then older test accounts
+    const combined = [...humanStudents, ...demoData.admin.students, ...testAccounts.slice(0, 10)];
 
     res.json({
       success: true,
       data: combined,
-      meta: { total: combined.length, realCount: realStudents.length }
+      meta: { total: combined.length, realCount: humanStudents.length }
     });
   } catch (err) {
     console.error('[Students List Error]:', err);

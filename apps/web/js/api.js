@@ -186,6 +186,9 @@ const API = (() => {
       const json = await res.json();
       // If response has a data property, unpack it while keeping success
       if (json && typeof json === 'object') {
+        if (Array.isArray(json.data)) {
+          return { success: json.success !== false, data: json.data, meta: json.meta };
+        }
         if (json.data !== undefined && typeof json.data === 'object' && json.data !== null) {
           return Object.assign({ success: json.success !== false }, json.data);
         }

@@ -60,7 +60,8 @@ async function updateProfile(userId, updates) {
 
 async function listStudents() {
   const res = await query(`
-    SELECT u.id, u.name, u.email, u.created_at, sp.branch, sp.cgpa, sp.readiness_score as readiness, sp.target_role
+    SELECT u.id, u.name, u.email, u.created_at, sp.branch, sp.cgpa, sp.readiness_score as readiness, sp.target_role,
+           sp.skills, sp.phone, sp.linkedin, sp.github, sp.year, sp.reg_no
     FROM users u
     LEFT JOIN student_profiles sp ON u.id = sp.user_id
     WHERE u.role = 'student'

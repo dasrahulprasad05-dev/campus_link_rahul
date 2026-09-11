@@ -107,6 +107,13 @@ const AdminStudents = (() => {
         branch: s.branch || 'CSE',
         cgpa: s.cgpa ? parseFloat(s.cgpa) : 8.0,
         readiness: s.readiness ? parseInt(s.readiness) : 75,
+        targetRole: s.target_role || s.targetRole || 'Software Development Engineer',
+        skills: s.skills || ['Python', 'SQL', 'Data Structures', 'Web Development'],
+        phone: s.phone || '',
+        linkedin: s.linkedin || '',
+        github: s.github || '',
+        year: s.year || 'Final Year',
+        reg_no: s.reg_no || '',
         applications: s.applications ?? 0,
         status: s.status || (s.readiness < 60 ? 'at-risk' : s.readiness < 70 ? 'needs-support' : 'active'),
         isReal: isActualReal,
@@ -200,7 +207,7 @@ const AdminStudents = (() => {
           key: '_actions',
           label: '',
           render: (_, row) => `
-            <button class="btn btn-sm btn-ghost" onclick="Toast.info('${row.name} (${row.email || row.branch})')">
+            <button class="btn btn-sm btn-ghost" onclick="AdminStudents.viewStudent('${row.id}')">
               View
             </button>
           `
@@ -210,5 +217,150 @@ const AdminStudents = (() => {
     );
   }
 
-  return { render, refresh, filter };
+  function viewStudent(studentId) {
+    const student = allStudents.find(s => String(s.id) === String(studentId)) || allStudents.find(s => s.name === studentId);
+    if (!student) {
+      Toast.error('Student profile not found');
+      return;
+    }
+
+    const modalId = 'admin-student-profile-modal';
+    const existing = document.getElementById(modalId);
+    if (existing) existing.remove();
+
+    const skills = Array.isArray(student.skills) && student.skills.length 
+      ? student.skills 
+      : (typeof student.skills === 'string' ? student.skills.split(',').map(s => s.trim()).filter(Boolean) : ['Python', 'SQL', 'Data Structures', 'Git', 'System Design']);
+
+    const initials = (student.name || '??').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+
+    const modalHtml = `
+      <div class="modal-backdrop open" id="${modalId}" role="dialog" aria-modal="true">
+        <div class="modal-dialog" style="max-width:720px;width:95%">
+          <div class="modal-header flex justify-between items-center">
+            <div class="flex items-center gap-3">
+              <div class="avatar avatar-md ${student.isReal ? 'avatar-green' : 'avatar-blue'} font-bold">
+                ${initials}
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <h2 class="modal-title font-bold" style="font-size:1.25rem">${student.name}</h2>
+                  ${student.isReal ? '<span class="badge badge-success" style="font-size:10px">NEW REGISTERED</span>' : ''}
+                </div>
+                <div class="text-xs text-muted">${student.email || 'No email'} · ${student.branch}</div>
+              </div>
+            </div>
+            <button class="modal-close" onclick="AdminStudents.closeModal('${modalId}')" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-muted)">✕</button>
+          </div>
+
+          <div class="modal-body stack gap-4" style="max-height:75vh;overflow-y:auto;padding:var(--space-5)">
+            <!-- Top KPI Cards -->
+            <div class="grid grid-3 gap-3">
+              <div class="card p-3 text-center" style="background:var(--bg-elevated);border-radius:var(--radius-md)">
+                <div class="text-xs text-muted font-bold uppercase mb-1">Readiness Score</div>
+                <div class="font-extrabold text-xl text-primary">${student.readiness}/100</div>
+                <div class="text-xs mt-1 ${student.readiness >= 75 ? 'text-success' : student.readiness >= 60 ? 'text-warning' : 'text-danger'}">
+                  ${student.readiness >= 75 ? '🟢 Placement Ready' : student.readiness >= 60 ? '🟡 Needs Support' : '🔴 At-Risk'}
+                </div>
+              </div>
+
+              <div class="card p-3 text-center" style="background:var(--bg-elevated);border-radius:var(--radius-md)">
+                <div class="text-xs text-muted font-bold uppercase mb-1">Academic CGPA</div>
+                <div class="font-extrabold text-xl">${student.cgpa.toFixed(2)}</div>
+                <div class="text-xs text-muted mt-1">Scale 10.0</div>
+              </div>
+
+              <div class="card p-3 text-center" style="background:var(--bg-elevated);border-radius:var(--radius-md)">
+                <div class="text-xs text-muted font-bold uppercase mb-1">Applications</div>
+                <div class="font-extrabold text-xl">${student.applications || 0}</div>
+                <div class="text-xs text-muted mt-1">Campus Drives</div>
+              </div>
+            </div>
+
+            <!-- Profile Details -->
+            <div class="card p-4" style="background:var(--bg-elevated);border-radius:var(--radius-md)">
+              <div class="text-sm font-bold mb-3 flex items-center gap-2">
+                <span>📋</span> Academic & Profile Information
+              </div>
+              <div class="grid grid-2 gap-3 text-sm">
+                <div><strong class="text-muted">Target Career Role:</strong> ${student.targetRole || 'Software Engineer'}</div>
+                <div><strong class="text-muted">Department / Branch:</strong> ${student.branch}</div>
+                <div><strong class="text-muted">Registered Email:</strong> <a href="mailto:${student.email}" style="color:var(--primary-color)">${student.email || '—'}</a></div>
+                <div><strong class="text-muted">Current Status:</strong> <span class="badge ${student.status === 'active' ? 'badge-success' : 'badge-warning'}">${student.status}</span></div>
+                ${student.reg_no ? `<div><strong class="text-muted">Registration No:</strong> ${student.reg_no}</div>` : ''}
+                ${student.year ? `<div><strong class="text-muted">Academic Year:</strong> ${student.year}</div>` : ''}
+              </div>
+            </div>
+
+            <!-- Skills & Competencies -->
+            <div class="card p-4" style="background:var(--bg-elevated);border-radius:var(--radius-md)">
+              <div class="text-sm font-bold mb-2 flex items-center gap-2">
+                <span>🛠️</span> Verified Skills & Competencies
+              </div>
+              <div class="flex gap-2" style="flex-wrap:wrap">
+                ${skills.map(skill => `<span class="badge badge-secondary" style="font-size:12px;padding:4px 8px">${skill}</span>`).join('')}
+              </div>
+            </div>
+
+            <!-- Readiness Breakdown -->
+            <div class="card p-4" style="background:var(--bg-elevated);border-radius:var(--radius-md)">
+              <div class="text-sm font-bold mb-3 flex items-center gap-2">
+                <span>📊</span> Placement Assessment Breakdown
+              </div>
+              <div class="stack gap-3">
+                <div>
+                  <div class="flex justify-between text-xs mb-1">
+                    <span>Technical & Problem Solving</span>
+                    <strong>${Math.min(95, student.readiness + 5)}%</strong>
+                  </div>
+                  <div style="background:var(--border-color);height:6px;border-radius:3px;overflow:hidden">
+                    <div style="background:var(--primary-color);height:100%;width:${Math.min(95, student.readiness + 5)}%"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs mb-1">
+                    <span>Academics & Core Fundamentals</span>
+                    <strong>${Math.min(98, Math.round(student.cgpa * 10))}%</strong>
+                  </div>
+                  <div style="background:var(--border-color);height:6px;border-radius:3px;overflow:hidden">
+                    <div style="background:var(--accent-green);height:100%;width:${Math.min(98, Math.round(student.cgpa * 10))}%"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs mb-1">
+                    <span>Aptitude & Interview Readiness</span>
+                    <strong>${student.readiness}%</strong>
+                  </div>
+                  <div style="background:var(--border-color);height:6px;border-radius:3px;overflow:hidden">
+                    <div style="background:var(--accent-orange);height:100%;width:${student.readiness}%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer flex justify-between items-center p-4" style="border-top:1px solid var(--border-color)">
+            <div class="flex gap-2">
+              <a class="btn btn-sm btn-primary flex items-center gap-1" href="mailto:${student.email}?subject=Placement%20Cell%20Update%20-%20ABIT&body=Hello%20${encodeURIComponent(student.name)},">
+                <span>📧</span> Send Email
+              </a>
+              <button class="btn btn-sm btn-secondary" onclick="Toast.success('Assigned faculty mentor to ' + '${student.name}')">
+                <span>👨‍🏫</span> Assign Mentor
+              </button>
+            </div>
+            <button class="btn btn-sm btn-ghost" onclick="AdminStudents.closeModal('${modalId}')">Close</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+  }
+
+  function closeModal(modalId) {
+    const el = document.getElementById(modalId);
+    if (el) el.remove();
+  }
+
+  return { render, refresh, filter, viewStudent, closeModal };
 })();

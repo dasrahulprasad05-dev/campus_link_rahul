@@ -1,37 +1,82 @@
-/* CAMPUSLINK — Mentor Students Page */
+/* ============================================================
+   CAMPUSLINK — Mentor Students Page
+   Real-time student monitoring for faculty mentors.
+   ============================================================ */
+
 const MentorStudents = (() => {
   async function render() {
-    const students = API.DEMO.mentor.students;
+    let list = [];
+    try {
+      const res = await API.get('/students');
+      if (res && res.data && Array.isArray(res.data)) {
+        list = res.data;
+      }
+    } catch (e) {
+      console.warn('[MentorStudents] Could not fetch live students:', e);
+    }
+
+    const demoList = API.DEMO.mentor.students || [];
+    
+    // Map live students
+    const liveMapped = list.map(s => ({
+      name: s.name,
+      email: s.email,
+      score: s.readiness || 75,
+      trend: s.readiness > 70 ? 'up' : 'stable',
+      lastActive: 'Active recently',
+      next: `Review ${s.target_role || 'Software Engineer'} roadmap`,
+      isReal: s.isReal || (s.email && !s.email.includes('campuslink.in')),
+    }));
+
+    const liveEmails = new Set(liveMapped.map(s => (s.email || '').toLowerCase()).filter(Boolean));
+    const uniqueDemo = demoList.filter(d => !liveEmails.has(d.name.toLowerCase()));
+    const students = [...liveMapped, ...uniqueDemo];
+
     document.getElementById('main').innerHTML = `
-      <div class="page-header"><div class="page-header-content"><div class="page-eyebrow">My Students</div><h1 class="page-title">Student Monitoring</h1><p class="page-subtitle">Track assigned students' readiness, activity, and upcoming actions.</p></div></div>
+      <div class="page-header">
+        <div class="page-header-content">
+          <div class="page-eyebrow">My Students</div>
+          <h1 class="page-title">Student Monitoring</h1>
+          <p class="page-subtitle">Track assigned students' readiness, activity, and roadmap guidance.</p>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-sm" onclick="MentorStudents.render()">🔄 Refresh</button>
+        </div>
+      </div>
+
       <div class="stack">
         ${students.map((s, i) => `
           <article class="card card-interactive animate-fade-in-up" style="animation-delay:${i * 80}ms">
-            <div class="flex justify-between items-center">
+            <div class="flex justify-between items-center" style="flex-wrap:wrap;gap:var(--space-4)">
               <div class="flex items-center gap-4">
-                <div class="avatar avatar-lg ${s.trend === 'down' ? 'avatar-orange' : 'avatar-blue'}">${s.name.split(' ').map(w=>w[0]).join('')}</div>
+                <div class="avatar avatar-lg ${s.isReal ? 'avatar-green' : s.trend === 'down' ? 'avatar-orange' : 'avatar-blue'}">
+                  ${(s.name || '??').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
+                </div>
                 <div>
-                  <div class="font-bold" style="font-size:16px">${s.name}</div>
-                  <div class="text-sm text-muted">Last active: ${s.lastActive}</div>
+                  <div class="font-bold flex items-center gap-2" style="font-size:16px">
+                    <span>${s.name}</span>
+                    ${s.isReal ? '<span class="badge badge-success" style="font-size:9px;padding:1px 5px">NEW STUDENT</span>' : ''}
+                  </div>
+                  <div class="text-sm text-muted">${s.email ? s.email + ' · ' : ''}Last active: ${s.lastActive}</div>
                   <div class="mt-2"><strong class="text-sm">Next action:</strong> <span class="text-sm text-muted">${s.next}</span></div>
                 </div>
               </div>
               <div class="text-center">
-                ${ScoreRing.render(s.score, { size: 90, label: 'readiness' })}
+                ${ScoreRing.render(s.score, { size: 85, label: 'readiness' })}
                 <div class="text-xs mt-2 ${s.trend === 'up' ? 'text-success' : s.trend === 'down' ? 'text-danger' : 'text-muted'}">
                   ${s.trend === 'up' ? '↑ Improving' : s.trend === 'down' ? '↓ Declining' : '— Stable'}
                 </div>
               </div>
             </div>
-            <div class="flex gap-3 mt-4" style="justify-content:flex-end">
-              <button class="btn btn-sm btn-ghost" onclick="Toast.info('Viewing ${s.name} roadmap')">View Roadmap</button>
-              <button class="btn btn-sm" onclick="Toast.info('Adding feedback for ${s.name}')">Add Feedback</button>
-              ${s.trend === 'down' ? `<button class="btn btn-sm btn-danger" onclick="Toast.info('Scheduling intervention for ${s.name}')">Schedule Intervention</button>` : ''}
+            <div class="flex gap-3 mt-4" style="justify-content:flex-end;flex-wrap:wrap">
+              <button class="btn btn-sm btn-ghost" onclick="Router.navigate('mentor/roadmaps')">View Roadmap</button>
+              <button class="btn btn-sm btn-primary" onclick="Toast.info('Adding mentor guidance for ' + '${s.name}')">Add Feedback</button>
             </div>
           </article>
         `).join('')}
       </div>
     `;
   }
+
   return { render };
 })();

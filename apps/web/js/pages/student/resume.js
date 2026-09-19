@@ -51,10 +51,10 @@ const StudentResume = (() => {
         <div class="divider"></div>
         <h4 class="mb-2">🎯 Skill Comparison</h4>
         ${SkillBadge.comparison(result.matched, result.missing)}
-        ${result.strengths?.length ? `<div class="divider"></div><h4 class="mb-2 text-success">✓ Strengths</h4><ul style="padding-left:var(--space-5);color:var(--text-secondary)">${result.strengths.map(s => `<li class="text-sm mb-2">${s}</li>`).join('')}</ul>` : ''}
-        ${result.improvements?.length ? `<div class="divider"></div><h4 class="mb-2 text-warning">⚡ Improvements</h4><ul style="padding-left:var(--space-5);color:var(--text-secondary)">${result.improvements.map(s => `<li class="text-sm mb-2">${s}</li>`).join('')}</ul>` : ''}
+        ${result.strengths?.length ? `<div class="divider"></div><h4 class="mb-2 text-success">✓ Strengths</h4><ul style="padding-left:var(--space-5);color:var(--text-secondary)">${result.strengths.map(s => `<li class="text-sm mb-2">${AIText.formatInline(s)}</li>`).join('')}</ul>` : ''}
+        ${result.improvements?.length ? `<div class="divider"></div><h4 class="mb-2 text-warning">⚡ Improvements</h4><ul style="padding-left:var(--space-5);color:var(--text-secondary)">${result.improvements.map(s => `<li class="text-sm mb-2">${AIText.formatInline(s)}</li>`).join('')}</ul>` : ''}
         <div class="divider"></div>
-        <div class="insight-card accent"><strong>📝 Scoring Method:</strong> ${result.explanation}</div>
+        <div class="insight-card accent"><strong>📝 Scoring Method:</strong> ${AIText.formatInline(result.explanation)}</div>
       </article>
     `;
   }

@@ -40,7 +40,7 @@ const AdminInterventions = (() => {
               <div class="font-bold" style="font-size:16px">${r.name}</div>
               <div class="text-sm text-muted">${r.branch || ''}</div>
               <div class="text-sm mt-2">${r.reason || ''}</div>
-              ${r.risk_factors ? `<div class="mt-2">${r.risk_factors.map(f => `<div class="text-xs text-muted">• <strong>${f.factor}:</strong> ${f.explanation}</div>`).join('')}</div>` : ''}
+              ${r.risk_factors ? `<div class="mt-2">${r.risk_factors.map(f => `<div class="text-xs text-muted">• <strong>${f.factor}:</strong> ${AIText.formatInline(f.explanation)}</div>`).join('')}</div>` : ''}
               ${r.recommended_actions ? `<div class="mt-2"><div class="text-xs font-bold text-accent">Recommended:</div>${r.recommended_actions.map(a => `<div class="text-xs text-muted">→ ${a}</div>`).join('')}</div>` : ''}
             </div>
           </div>

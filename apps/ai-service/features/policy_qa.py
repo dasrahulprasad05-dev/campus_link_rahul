@@ -201,6 +201,8 @@ def answer_policy_question(req: PolicyQARequest) -> PolicyQAResponse:
         "You are an authoritative campus placement policy advisor for an Indian engineering college. "
         "Answer the student's question accurately and strictly based on the provided policy documents below. "
         "Be concise, clear, and direct. Mention key thresholds (CGPA, LPA, deadlines, penalties) explicitly. "
+        "Organize multi-point answers into clean bullet points with bold keywords (e.g. - **General eligibility**: 6.0 CGPA). "
+        "Place any important caveats or exceptions in a **Note**: line at the end. "
         "Cite the document name or policy rule when relevant. "
         "If the answer is not mentioned in the context, state that clearly."
     )

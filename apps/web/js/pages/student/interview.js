@@ -634,14 +634,14 @@ CERTIFICATIONS: Google Data Analytics Certificate, AWS Cloud Practitioner"></tex
 
         <div class="mb-3 text-sm" style="padding:var(--space-2) var(--space-3);background:var(--bg-surface);border-radius:var(--radius-sm)">
           <strong>💬 Feedback:</strong>
-          <p style="margin:4px 0 0;color:var(--text-secondary);line-height:1.5">${evalData.feedback_text || 'Answer recorded.'}</p>
+          <div id="eval-feedback-text" class="ai-markdown" style="margin-top:4px;color:var(--text-secondary);line-height:1.5"></div>
         </div>
 
         ${(evalData.missed_concepts || []).length ? `
           <div class="mb-3 text-xs" style="padding:var(--space-2) var(--space-3);background:hsla(0, 84%, 60%, 0.08);border-left:3px solid var(--danger);border-radius:0 var(--radius-sm) var(--radius-sm) 0">
             <strong style="color:var(--danger)">⚠️ Missed Concepts:</strong>
             <ul style="margin:4px 0 0;padding-left:var(--space-4)">
-              ${evalData.missed_concepts.map(c => `<li>${c}</li>`).join('')}
+              ${evalData.missed_concepts.map(c => `<li>${AIText.formatInline(c)}</li>`).join('')}
             </ul>
           </div>
         ` : ''}
@@ -660,6 +660,16 @@ CERTIFICATIONS: Google Data Analytics Certificate, AWS Cloud Practitioner"></tex
         </button>
       </article>
     `;
+
+    // Type out coach feedback progressively
+    const fbEl = document.getElementById('eval-feedback-text');
+    if (fbEl) {
+      AIText.typewriter({
+        element: fbEl,
+        text: evalData.feedback_text || 'Answer recorded.',
+        speed: 18,
+      });
+    }
 
     // Hide the answer input section
     const questionCard = document.getElementById('active-question-card');
@@ -918,12 +928,12 @@ CERTIFICATIONS: Google Data Analytics Certificate, AWS Cloud Practitioner"></tex
                       ${qEval.feedback_text ? `
                         <div class="text-xs mb-2" style="padding:var(--space-2) var(--space-3);background:hsla(217, 91%, 60%, 0.08);border-left:3px solid var(--accent);border-radius:0 var(--radius-sm) var(--radius-sm) 0">
                           <strong style="color:var(--accent)">💬 Feedback:</strong>
-                          <p style="margin:4px 0 0;color:var(--text-primary);line-height:1.5">${qEval.feedback_text}</p>
+                          <div class="ai-markdown" style="margin-top:4px;color:var(--text-primary);line-height:1.5">${AIText.format(qEval.feedback_text)}</div>
                         </div>
                       ` : ''}
                       ${(qEval.missed_concepts || []).length ? `
                         <div class="text-xs" style="padding:var(--space-2) var(--space-3);background:hsla(0, 84%, 60%, 0.08);border-left:3px solid var(--danger);border-radius:0 var(--radius-sm) var(--radius-sm) 0">
-                          <strong style="color:var(--danger)">⚠️ Missed:</strong> ${qEval.missed_concepts.join(', ')}
+                          <strong style="color:var(--danger)">⚠️ Missed:</strong> ${qEval.missed_concepts.map(c => AIText.formatInline(c)).join(', ')}
                         </div>
                       ` : ''}
                     </div>
@@ -937,7 +947,7 @@ CERTIFICATIONS: Google Data Analytics Certificate, AWS Cloud Practitioner"></tex
               <div class="card mb-6" style="background:var(--bg-elevated);border:1px solid var(--border-subtle);padding:var(--space-4)">
                 <h4 class="text-sm font-bold text-accent mb-2">🎯 Study Roadmap</h4>
                 <ol style="padding-left:var(--space-5);margin:0" class="text-xs text-secondary">
-                  ${data.study_roadmap.map(step => `<li class="mb-2">${step}</li>`).join('')}
+                  ${data.study_roadmap.map(step => `<li class="mb-2">${AIText.formatInline(step)}</li>`).join('')}
                 </ol>
               </div>
             ` : ''}

@@ -49,7 +49,7 @@ const StudentReadiness = (() => {
             <h3 class="card-title mb-4">🎯 Action Plan</h3>
             ${recommendations.length > 0 ? recommendations.map((r, i) => `
               <div class="insight-card ${r.priority === 'high' ? 'warning' : 'accent'} ${i > 0 ? 'mt-3' : ''}">
-                <strong>${r.priority === 'high' ? '🔴' : '🟡'} ${r.area}:</strong> ${r.action}
+                <strong>${r.priority === 'high' ? '🔴' : '🟡'} ${r.area}:</strong> ${AIText.formatInline(r.action)}
               </div>
             `).join('') : '<p class="text-sm text-muted">Complete your profile to see personalized recommendations.</p>'}
           </article>

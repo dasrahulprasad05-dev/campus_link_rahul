@@ -316,7 +316,7 @@ const StudentRoadmap = (() => {
         <div class="card-header">
           <div>
             <h2 class="card-title">🤖 AI-Generated Roadmap Plan</h2>
-            <div class="text-xs text-muted mt-1">${state.generatedSummary}</div>
+            <div class="text-xs text-muted mt-1">${AIText.formatInline(state.generatedSummary)}</div>
           </div>
           <div class="flex items-center gap-2">
             <span class="badge badge-accent">${sourceLabel}</span>

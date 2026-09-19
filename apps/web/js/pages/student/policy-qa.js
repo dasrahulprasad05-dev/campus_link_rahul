@@ -87,20 +87,49 @@ const StudentPolicyQA = (() => {
     const loading = document.getElementById('policy-loading');
     if (loading) loading.remove();
 
-    // Add AI answer bubble
-    let sourcesHTML = '';
-    if (result.sources && result.sources.length > 0) {
-      sourcesHTML = `<div class="mt-3" style="border-top:1px solid var(--border-default);padding-top:var(--space-2)"><div class="text-xs text-muted mb-1">📄 Sources:</div>${result.sources.map(s => `<span class="badge badge-ghost text-xs" style="margin:2px">${s.document}</span>`).join('')}</div>`;
+    // Add AI answer bubble with progressive typewriter effect
+    const answerText = result.answer || 'I could not find an answer. Please contact the Placement Office.';
+    const answerBubble = document.createElement('div');
+    answerBubble.className = 'chat-bubble ai';
+
+    const contentEl = document.createElement('div');
+    contentEl.className = 'ai-answer-content';
+    answerBubble.appendChild(contentEl);
+
+    let metaEl = null;
+    if ((result.sources && result.sources.length > 0) || result.source) {
+      metaEl = document.createElement('div');
+      metaEl.className = 'ai-meta-fadein hidden';
+      metaEl.style.marginTop = 'var(--space-3)';
+      metaEl.style.borderTop = '1px solid var(--border-default)';
+      metaEl.style.paddingTop = 'var(--space-2)';
+
+      let innerMeta = '';
+      if (result.sources && result.sources.length > 0) {
+        innerMeta += `<div class="text-xs text-muted mb-1 font-bold">📄 Policy Sources:</div><div class="flex flex-wrap gap-1">${result.sources.map(s => `<span class="badge badge-ghost text-xs" style="margin:2px">${AIText.escapeHtml(s.document)}</span>`).join('')}</div>`;
+      }
+      if (result.source) {
+        innerMeta += `<div class="text-xs text-muted mt-2" style="opacity:0.6">Engine: ${AIText.escapeHtml(result.source)}</div>`;
+      }
+      metaEl.innerHTML = innerMeta;
+      answerBubble.appendChild(metaEl);
     }
 
-    chat.innerHTML += `
-      <div class="chat-bubble ai">
-        ${(result.answer || 'I could not find an answer. Please contact the Placement Office.').replace(/\n/g, '<br>')}
-        ${sourcesHTML}
-        ${result.source ? `<div class="text-xs text-muted mt-2" style="opacity:0.5">Engine: ${result.source}</div>` : ''}
-      </div>
-    `;
+    chat.appendChild(answerBubble);
     chat.scrollTop = chat.scrollHeight;
+
+    AIText.typewriter({
+      element: contentEl,
+      text: answerText,
+      speed: 20,
+      onProgress: () => {
+        chat.scrollTop = chat.scrollHeight;
+      },
+      onComplete: () => {
+        if (metaEl) metaEl.classList.remove('hidden');
+        chat.scrollTop = chat.scrollHeight;
+      },
+    });
 
     chatHistory.push({ question, answer: result.answer, sources: result.sources });
   }

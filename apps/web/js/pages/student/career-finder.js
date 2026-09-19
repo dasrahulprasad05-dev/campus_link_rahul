@@ -219,8 +219,12 @@ const StudentCareerFinder = (() => {
       explanation = (res.data || res).explanation || '';
       const el = document.getElementById('career-explanation');
       if (el && explanation) {
-        el.innerHTML = `<p style="margin:0;line-height:1.7">${explanation}</p>`;
         el.style.opacity = '1';
+        AIText.typewriter({
+          element: el,
+          text: explanation,
+          speed: 20,
+        });
       }
     } catch (err) {
       console.warn('[Career explain failed]:', err.message);

@@ -1080,3 +1080,126 @@
 .items-center { align-items: center; }
 .justify-between { justify-content: space-between; }
 .hidden       { display: none !important; }
+
+/* ---------- AI Markdown Typography & Typewriter Animation ---------- */
+.ai-markdown {
+  font-size: 13.5px;
+  line-height: 1.68;
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+.ai-markdown p.ai-p {
+  margin: 0 0 10px 0;
+  line-height: 1.68;
+}
+
+.ai-markdown p.ai-p:last-child {
+  margin-bottom: 0;
+}
+
+.ai-markdown .ai-heading {
+  color: #fff;
+  font-weight: 700;
+  margin: 14px 0 6px 0;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.ai-markdown .ai-heading:first-child {
+  margin-top: 2px;
+}
+
+.ai-markdown h3.ai-heading {
+  font-size: 15px;
+  color: var(--accent);
+}
+
+.ai-markdown h4.ai-heading {
+  font-size: 14px;
+  color: #f1f5f9;
+}
+
+.ai-markdown strong {
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.ai-markdown em {
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+.ai-markdown code {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  padding: 1px 5px;
+  border-radius: var(--radius-sm);
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 12px;
+  color: var(--accent);
+}
+
+.ai-markdown ul.ai-list,
+.ai-markdown ol.ai-list {
+  margin: 6px 0 10px 0;
+  padding-left: 20px;
+}
+
+.ai-markdown ul.ai-list li,
+.ai-markdown ol.ai-list li {
+  margin-bottom: 5px;
+  line-height: 1.58;
+  color: var(--text-secondary);
+}
+
+.ai-markdown ul.ai-list li strong,
+.ai-markdown ol.ai-list li strong {
+  color: var(--text-primary);
+}
+
+.ai-note-box {
+  background: hsla(217, 91%, 60%, 0.08);
+  border: 1px solid hsla(217, 91%, 60%, 0.22);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  margin: 10px 0 8px 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.ai-note-label {
+  color: var(--accent);
+  font-weight: 700;
+  margin-right: 4px;
+}
+
+.ai-cursor {
+  display: inline-block;
+  width: 6px;
+  height: 14px;
+  background-color: var(--accent);
+  margin-left: 2px;
+  vertical-align: -1px;
+  border-radius: 1px;
+  animation: aiCursorBlink 0.7s infinite ease-in-out;
+  box-shadow: 0 0 8px hsla(var(--accent-hue), 91%, 60%, 0.6);
+}
+
+@keyframes aiCursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.ai-meta-fadein {
+  animation: aiMetaFade 0.4s ease-out forwards;
+}
+
+@keyframes aiMetaFade {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+

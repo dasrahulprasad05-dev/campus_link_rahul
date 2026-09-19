@@ -55,18 +55,121 @@ app.use('/api/v1/ai', aiRoutes);
 app.use('/api/v1/career-finder', careerFinderRoutes);
 
 const { authenticate } = require('./middleware/auth');
+const { query, memoryDb } = require('./db/pool');
 
-// Dashboard endpoint (strictly authenticated; enforces role scoping)
-const demoData = require('./data/demo-data');
-
-app.get('/api/v1/dashboard', authenticate, (req, res) => {
+// Dashboard endpoint (strictly authenticated; returns role-specific aggregated data)
+app.get('/api/v1/dashboard', authenticate, async (req, res) => {
   let role = req.user.role || 'student';
   if (req.user.role === 'admin' && req.query.role) {
     role = req.query.role;
   }
-  const data = demoData[role];
-  if (!data) return res.status(400).json({ success: false, error: { code: 'INVALID_ROLE', message: 'Invalid role' } });
-  res.json(data);
+
+  try {
+    if (role === 'student') {
+      // Student dashboard: readiness + applications + jobs
+      const profile = memoryDb.tables.student_profiles.find(p => p.user_id === req.user.id);
+      const apps = memoryDb.tables.applications.filter(a => a.student_id === (profile?.id || req.user.id));
+      const offers = memoryDb.tables.offers.filter(o => o.student_id === (profile?.id || req.user.id));
+      const allJobs = memoryDb.tables.jobs.filter(j => j.status === 'active');
+
+      const kpis = [
+        { label: 'Readiness Score', value: `${profile?.readiness_score || 0}/100`, delta: '', icon: '📊', color: 'blue' },
+        { label: 'Applications', value: String(apps.length), delta: `${apps.filter(a => a.status !== 'rejected').length} active`, icon: '📝', color: 'green' },
+        { label: 'Offers', value: String(offers.length), delta: offers.filter(o => o.status === 'pending').length ? `${offers.filter(o => o.status === 'pending').length} pending` : '', icon: '🎉', color: 'orange' },
+        { label: 'Open Jobs', value: String(allJobs.length), delta: '', icon: '💼', color: 'purple' },
+      ];
+
+      return res.json({
+        success: true,
+        kpis,
+        readiness: { score: profile?.readiness_score || 0 },
+        applications: apps.slice(0, 5).map(a => {
+          const job = memoryDb.tables.jobs.find(j => j.id === a.job_id);
+          const comp = job ? memoryDb.tables.companies.find(c => c.id === job.company_id) : null;
+          return { id: a.id, job: job?.title || 'Unknown', company: comp?.name || '', status: a.status, round: a.current_round };
+        }),
+        jobs: allJobs.slice(0, 5).map(j => {
+          const comp = memoryDb.tables.companies.find(c => c.id === j.company_id);
+          return { id: j.id, title: j.title, company: comp?.name || '', location: j.location, type: j.type, deadline: j.deadline, skills: j.skills_required || [] };
+        }),
+      });
+    }
+
+    if (role === 'admin') {
+      const students = memoryDb.tables.student_profiles;
+      const jobs = memoryDb.tables.jobs;
+      const drives = memoryDb.tables.drives;
+      const offers = memoryDb.tables.offers;
+      const apps = memoryDb.tables.applications;
+      const acceptedOffers = offers.filter(o => o.status === 'accepted');
+      const avgCTC = acceptedOffers.length > 0 ? (acceptedOffers.reduce((s, o) => s + parseFloat(o.ctc_lpa || 0), 0) / acceptedOffers.length).toFixed(2) : 0;
+
+      return res.json({
+        success: true,
+        kpis: [
+          { label: 'Total Students', value: String(students.length), icon: '👨‍🎓', color: 'blue' },
+          { label: 'Active Jobs', value: String(jobs.filter(j => j.status === 'active').length), icon: '💼', color: 'green' },
+          { label: 'Offers Made', value: String(offers.length), icon: '📋', color: 'orange' },
+          { label: 'Placement Rate', value: `${students.length ? ((acceptedOffers.length / students.length) * 100).toFixed(0) : 0}%`, icon: '📊', color: 'purple' },
+          { label: 'Avg CTC', value: `₹${avgCTC}L`, icon: '💰', color: 'emerald' },
+          { label: 'Upcoming Drives', value: String(drives.filter(d => d.status !== 'completed').length), icon: '🏢', color: 'red' },
+        ],
+        students: students.slice(0, 10).map(s => {
+          const user = memoryDb.tables.users.find(u => u.id === s.user_id);
+          return { id: s.id, name: user?.name || '', branch: s.branch, cgpa: s.cgpa, readiness: s.readiness_score, target_role: s.target_role };
+        }),
+        drives: drives.map(dr => {
+          const comp = memoryDb.tables.companies.find(c => c.id === dr.company_id);
+          return { id: dr.id, company: comp?.name || '', role: dr.role, date: dr.drive_date, venue: dr.venue, status: dr.status };
+        }),
+      });
+    }
+
+    if (role === 'recruiter') {
+      const jobs = memoryDb.tables.jobs.filter(j => j.recruiter_id === req.user.id || j.recruiter_id === 'u-recruiter-tcs');
+      const apps = memoryDb.tables.applications;
+
+      return res.json({
+        success: true,
+        kpis: [
+          { label: 'Active Jobs', value: String(jobs.filter(j => j.status === 'active').length), icon: '💼', color: 'blue' },
+          { label: 'Total Applications', value: String(apps.filter(a => jobs.some(j => j.id === a.job_id)).length), icon: '📝', color: 'green' },
+          { label: 'Shortlisted', value: String(apps.filter(a => a.status === 'shortlisted' && jobs.some(j => j.id === a.job_id)).length), icon: '✅', color: 'orange' },
+          { label: 'Interviewing', value: String(apps.filter(a => a.status === 'interview' && jobs.some(j => j.id === a.job_id)).length), icon: '🎤', color: 'purple' },
+        ],
+        jobs: jobs.map(j => {
+          const comp = memoryDb.tables.companies.find(c => c.id === j.company_id);
+          const jobApps = apps.filter(a => a.job_id === j.id);
+          return { id: j.id, title: j.title, company: comp?.name || '', applicants: jobApps.length, shortlisted: jobApps.filter(a => a.status !== 'applied').length, status: j.status };
+        }),
+      });
+    }
+
+    if (role === 'mentor') {
+      const assignments = memoryDb.tables.mentor_assignments.filter(a => a.mentor_id === req.user.id || a.mentor_id === 'u-mentor-rahul');
+      const menteeIds = assignments.map(a => a.student_id);
+      const mentees = memoryDb.tables.student_profiles.filter(s => menteeIds.includes(s.id));
+      const atRisk = mentees.filter(s => (s.readiness_score || 0) < 60);
+
+      return res.json({
+        success: true,
+        kpis: [
+          { label: 'Mentees', value: String(mentees.length), icon: '👥', color: 'blue' },
+          { label: 'At Risk', value: String(atRisk.length), icon: '⚠️', color: 'red' },
+          { label: 'Avg Readiness', value: `${mentees.length ? Math.round(mentees.reduce((s, m) => s + (m.readiness_score || 0), 0) / mentees.length) : 0}`, icon: '📊', color: 'green' },
+        ],
+        students: mentees.map(s => {
+          const user = memoryDb.tables.users.find(u => u.id === s.user_id);
+          return { id: s.id, name: user?.name || '', branch: s.branch, readiness: s.readiness_score, target_role: s.target_role, status: (s.readiness_score || 0) < 60 ? 'at-risk' : 'on-track' };
+        }),
+      });
+    }
+
+    return res.status(400).json({ success: false, error: { code: 'INVALID_ROLE', message: 'Invalid role' } });
+  } catch (err) {
+    console.error('[Dashboard Error]:', err);
+    res.status(500).json({ success: false, error: { code: 'DASHBOARD_ERROR', message: err.message } });
+  }
 });
 
 // Direct AI and analysis endpoints (supports both /api/v1/ and /api/)
@@ -149,13 +252,9 @@ app.post('/api/analyze/at-risk', (req, res) => handleAIProxy('/v1/at-risk', req,
 app.post('/api/v1/analyze/policy-qa', (req, res) => handleAIProxy('/v1/policy-qa', req, res));
 app.post('/api/analyze/policy-qa', (req, res) => handleAIProxy('/v1/policy-qa', req, res));
 
-// Legacy dashboard compatibility route (strictly authenticated)
+// Legacy dashboard compatibility route (redirects to authenticated dashboard)
 app.get('/api/dashboard', authenticate, (req, res) => {
-  let role = req.user.role || 'student';
-  if (req.user.role === 'admin' && req.query.role) {
-    role = req.query.role;
-  }
-  res.json(demoData[role] || demoData.student);
+  res.redirect('/api/v1/dashboard' + (req.query.role ? `?role=${req.query.role}` : ''));
 });
 
 /* ---------- Health Check ---------- */

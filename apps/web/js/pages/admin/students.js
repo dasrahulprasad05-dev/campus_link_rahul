@@ -88,11 +88,10 @@ const AdminStudents = (() => {
       }
     }
 
-    // Default demo students if still empty
-    const demoList = API.DEMO.admin.students || [];
+    // No demo data fallback — data comes from real DB
 
     if (!list.length) {
-      list = demoList;
+      list = [];
     }
 
     allStudents = list.map(s => {

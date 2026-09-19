@@ -142,10 +142,115 @@ CREATE TABLE IF NOT EXISTS readiness_history (
     recorded_at TIMESTAMPTZ DEFAULT now()
 );
 
+-- ============================================================
+-- Extended Columns on Existing Tables
+-- ============================================================
+
+-- Student Profiles: additional readiness dimensions
+ALTER TABLE student_profiles ADD COLUMN IF NOT EXISTS aptitude_score INTEGER DEFAULT 0;
+ALTER TABLE student_profiles ADD COLUMN IF NOT EXISTS communication_score INTEGER DEFAULT 0;
+ALTER TABLE student_profiles ADD COLUMN IF NOT EXISTS interview_score INTEGER DEFAULT 0;
+ALTER TABLE student_profiles ADD COLUMN IF NOT EXISTS backlogs INTEGER DEFAULT 0;
+ALTER TABLE student_profiles ADD COLUMN IF NOT EXISTS projects_count INTEGER DEFAULT 0;
+
+-- Jobs: eligibility constraints for hard-filter pipeline
+ALTER TABLE jobs ADD COLUMN IF NOT EXISTS eligible_branches TEXT[] DEFAULT '{}';
+ALTER TABLE jobs ADD COLUMN IF NOT EXISTS max_backlogs INTEGER DEFAULT 0;
+
+-- ============================================================
+-- New Tables: Readiness, Scheduling, Offers, Audit
+-- ============================================================
+
+-- Role-Specific Readiness Weight Configurations
+CREATE TABLE IF NOT EXISTS readiness_configs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    role_name VARCHAR(80) UNIQUE NOT NULL,
+    weights JSONB NOT NULL DEFAULT '{}',
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Drive Time Slots (for conflict-free scheduling)
+CREATE TABLE IF NOT EXISTS drive_slots (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    drive_id UUID REFERENCES drives(id) ON DELETE CASCADE,
+    start_time TIMESTAMPTZ NOT NULL,
+    end_time TIMESTAMPTZ NOT NULL,
+    venue VARCHAR(200),
+    panel_name VARCHAR(200),
+    capacity INTEGER DEFAULT 50,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Drive Candidates (which students are shortlisted for which drives)
+CREATE TABLE IF NOT EXISTS drive_candidates (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    drive_id UUID REFERENCES drives(id) ON DELETE CASCADE,
+    student_id UUID REFERENCES student_profiles(id),
+    slot_id UUID REFERENCES drive_slots(id),
+    status VARCHAR(20) DEFAULT 'shortlisted'
+        CHECK (status IN ('shortlisted','scheduled','interviewed','selected','rejected')),
+    created_at TIMESTAMPTZ DEFAULT now(),
+    UNIQUE(drive_id, student_id)
+);
+
+-- Offers (complete lifecycle from selection to joining)
+CREATE TABLE IF NOT EXISTS offers (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    application_id UUID REFERENCES applications(id) UNIQUE,
+    student_id UUID REFERENCES student_profiles(id),
+    job_id UUID REFERENCES jobs(id),
+    company_id UUID REFERENCES companies(id),
+    role VARCHAR(200) NOT NULL,
+    ctc_lpa DECIMAL(6,2),
+    offer_date TIMESTAMPTZ DEFAULT now(),
+    acceptance_deadline TIMESTAMPTZ,
+    status VARCHAR(30) DEFAULT 'pending'
+        CHECK (status IN ('pending','accepted','declined','expired','withdrawn')),
+    joining_date TIMESTAMPTZ,
+    joining_status VARCHAR(20) DEFAULT 'not-joined'
+        CHECK (joining_status IN ('not-joined','joining-pending','joined','no-show')),
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Offer Documents (document checklist per offer)
+CREATE TABLE IF NOT EXISTS offer_documents (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    offer_id UUID REFERENCES offers(id) ON DELETE CASCADE,
+    document_type VARCHAR(50) NOT NULL,
+    status VARCHAR(20) DEFAULT 'pending'
+        CHECK (status IN ('pending','submitted','verified','rejected')),
+    submitted_at TIMESTAMPTZ,
+    verified_at TIMESTAMPTZ,
+    deadline TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Audit Log (who did what, when)
+CREATE TABLE IF NOT EXISTS audit_log (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users(id),
+    user_role VARCHAR(20),
+    action VARCHAR(100) NOT NULL,
+    entity_type VARCHAR(50),
+    entity_id UUID,
+    old_value JSONB,
+    new_value JSONB,
+    timestamp TIMESTAMPTZ DEFAULT now()
+);
+
+-- ============================================================
 -- Indexes
-CREATE INDEX idx_student_profiles_user ON student_profiles(user_id);
-CREATE INDEX idx_applications_student ON applications(student_id);
-CREATE INDEX idx_applications_job ON applications(job_id);
-CREATE INDEX idx_jobs_company ON jobs(company_id);
-CREATE INDEX idx_readiness_history_student ON readiness_history(student_id);
-CREATE INDEX idx_mentor_assignments_mentor ON mentor_assignments(mentor_id);
+-- ============================================================
+CREATE INDEX IF NOT EXISTS idx_student_profiles_user ON student_profiles(user_id);
+CREATE INDEX IF NOT EXISTS idx_applications_student ON applications(student_id);
+CREATE INDEX IF NOT EXISTS idx_applications_job ON applications(job_id);
+CREATE INDEX IF NOT EXISTS idx_jobs_company ON jobs(company_id);
+CREATE INDEX IF NOT EXISTS idx_readiness_history_student ON readiness_history(student_id);
+CREATE INDEX IF NOT EXISTS idx_mentor_assignments_mentor ON mentor_assignments(mentor_id);
+CREATE INDEX IF NOT EXISTS idx_offers_student ON offers(student_id);
+CREATE INDEX IF NOT EXISTS idx_offers_status ON offers(status);
+CREATE INDEX IF NOT EXISTS idx_drive_slots_drive ON drive_slots(drive_id);
+CREATE INDEX IF NOT EXISTS idx_drive_candidates_drive ON drive_candidates(drive_id);
+CREATE INDEX IF NOT EXISTS idx_drive_candidates_student ON drive_candidates(student_id);
+CREATE INDEX IF NOT EXISTS idx_audit_log_entity ON audit_log(entity_type, entity_id);

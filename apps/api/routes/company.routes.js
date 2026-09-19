@@ -6,7 +6,7 @@
 const router = require('express').Router();
 const { authenticate, authorize } = require('../middleware/auth');
 const companyRepo = require('../repositories/company.repository');
-const demoData = require('../data/demo-data');
+
 
 // GET /api/v1/companies — list companies
 router.get('/', async (req, res) => {
@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
     const companies = await companyRepo.listCompanies();
     res.json({
       success: true,
-      data: companies.length ? companies : demoData.admin.companies
+      data: companies || []
     });
   } catch (err) {
     res.status(500).json({ success: false, error: { code: 'DB_ERROR', message: err.message } });

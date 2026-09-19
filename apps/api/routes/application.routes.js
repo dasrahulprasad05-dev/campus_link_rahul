@@ -1,12 +1,12 @@
 /* ============================================================
    CAMPUSLINK — Application Routes
    Track and update student job applications with RBAC.
+   All data comes from the database — no demo data fallbacks.
    ============================================================ */
 
 const router = require('express').Router();
 const { authenticate, authorize } = require('../middleware/auth');
 const appRepo = require('../repositories/application.repository');
-const demoData = require('../data/demo-data');
 
 // GET /api/v1/applications — list applications (filtered by student or all for admin/recruiter)
 router.get('/', authenticate, async (req, res) => {
@@ -25,8 +25,8 @@ router.get('/', authenticate, async (req, res) => {
 
     res.json({
       success: true,
-      data: apps.length ? apps : demoData.student.applications,
-      meta: { total: apps.length || demoData.student.applications.length }
+      data: apps || [],
+      meta: { total: (apps || []).length }
     });
   } catch (err) {
     res.status(500).json({ success: false, error: { code: 'DB_ERROR', message: err.message } });

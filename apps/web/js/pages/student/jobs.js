@@ -1,10 +1,17 @@
 /* ============================================================
-   CAMPUSLINK — Jobs Discovery Page
+   CAMPUSLINK — Jobs Discovery Page (Real Data)
    ============================================================ */
 const StudentJobs = (() => {
+  let _allJobs = [];
+
   async function render() {
-    const jobs = API.DEMO.student.jobs;
-    document.getElementById('main').innerHTML = `
+    const main = document.getElementById('main');
+    main.innerHTML = `<div class="page-header"><div class="page-header-content"><div class="page-eyebrow">Loading jobs...</div></div></div>`;
+
+    const result = await API.get('/jobs');
+    _allJobs = Array.isArray(result?.data) ? result.data : (Array.isArray(result) ? result : []);
+
+    main.innerHTML = `
       <div class="page-header"><div class="page-header-content"><div class="page-eyebrow">Job Discovery</div><h1 class="page-title">Explore Opportunities</h1><p class="page-subtitle">AI-matched jobs ranked by fit with your profile, skills, and target role.</p></div></div>
       <div class="flex gap-3 mb-6">
         <div class="topbar-search" style="flex:1"><span class="topbar-search-icon">🔍</span><input class="form-input" placeholder="Search by role, company, or skill..." style="padding-left:var(--space-8)" id="job-search"></div>
@@ -13,7 +20,7 @@ const StudentJobs = (() => {
         </select>
       </div>
       <div class="stack" id="jobs-list">
-        ${jobs.map(j => _jobCard(j)).join('')}
+        ${_allJobs.length ? _allJobs.map(j => _jobCard(j)).join('') : '<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-title">No jobs available</div><p class="empty-state-text">Check back later for new opportunities.</p></div>'}
       </div>
     `;
     document.getElementById('job-search')?.addEventListener('input', _filter);
@@ -21,20 +28,23 @@ const StudentJobs = (() => {
   }
 
   function _jobCard(j) {
+    const skills = j.skills_required || j.skills || [];
+    const deadline = j.deadline ? new Date(j.deadline).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Open';
+    const company = j.company_name || j.company || '';
     return `
       <article class="card card-interactive animate-fade-in-up">
         <div class="job-card-top">
           <div>
             <div class="job-card-title">${j.title}</div>
-            <div class="job-card-company">${j.company}</div>
+            <div class="job-card-company">${company}</div>
           </div>
-          <span class="match-badge">${j.match}% match</span>
+          ${j.match ? `<span class="match-badge">${j.match}% match</span>` : `<span class="badge badge-default">${j.type || 'Full-time'}</span>`}
         </div>
-        <div class="job-card-meta"><span>📍 ${j.location}</span><span>💼 ${j.type}</span><span>⏰ ${j.deadline}</span></div>
+        <div class="job-card-meta"><span>📍 ${j.location || 'Remote'}</span><span>💼 ${j.type || 'Full-time'}</span><span>⏰ ${deadline}</span>${j.min_cgpa ? `<span>📊 Min CGPA: ${j.min_cgpa}</span>` : ''}</div>
         <div class="flex justify-between items-center mt-4">
-          ${SkillBadge.render(j.skills)}
+          ${SkillBadge.render(skills)}
           <div class="flex gap-2">
-            <button class="btn btn-sm" onclick="StudentResume.openAnalyzer('${j.title}', '${j.skills.join(', ')}')">Analyze Fit</button>
+            <button class="btn btn-sm" onclick="StudentResume.openAnalyzer('${j.title}', '${skills.join(', ')}')">Analyze Fit</button>
             <button class="btn btn-sm btn-primary" onclick="Toast.success('Application submitted for ${j.title}!')">Apply →</button>
           </div>
         </div>
@@ -45,8 +55,10 @@ const StudentJobs = (() => {
   function _filter() {
     const search = (document.getElementById('job-search')?.value || '').toLowerCase();
     const type = document.getElementById('job-type-filter')?.value || '';
-    const filtered = API.DEMO.student.jobs.filter(j => {
-      const matchesSearch = !search || j.title.toLowerCase().includes(search) || j.company.toLowerCase().includes(search) || j.skills.some(s => s.toLowerCase().includes(search));
+    const filtered = _allJobs.filter(j => {
+      const skills = j.skills_required || j.skills || [];
+      const company = j.company_name || j.company || '';
+      const matchesSearch = !search || j.title.toLowerCase().includes(search) || company.toLowerCase().includes(search) || skills.some(s => s.toLowerCase().includes(search));
       const matchesType = !type || j.type === type;
       return matchesSearch && matchesType;
     });

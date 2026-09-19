@@ -1,12 +1,12 @@
 /* ============================================================
    CAMPUSLINK — Placement Drive Routes
    Manage recruitment drives with drive repository and RBAC.
+   All data comes from the database — no demo data fallbacks.
    ============================================================ */
 
 const router = require('express').Router();
 const { authenticate, authorize } = require('../middleware/auth');
 const driveRepo = require('../repositories/drive.repository');
-const demoData = require('../data/demo-data');
 
 // GET /api/v1/drives — list placement drives
 router.get('/', async (req, res) => {
@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
     const drives = await driveRepo.listDrives();
     res.json({
       success: true,
-      data: drives.length ? drives : demoData.admin.drives
+      data: drives || []
     });
   } catch (err) {
     res.status(500).json({ success: false, error: { code: 'DB_ERROR', message: err.message } });
@@ -37,7 +37,6 @@ router.post('/', authenticate, authorize('admin'), async (req, res) => {
     if (rawDate && !isNaN(new Date(rawDate).getTime())) {
       validDriveDate = new Date(rawDate).toISOString();
     } else {
-      // Default to 14 days from now as a valid PostgreSQL TIMESTAMPTZ
       validDriveDate = new Date(Date.now() + 14 * 86400000).toISOString();
     }
 

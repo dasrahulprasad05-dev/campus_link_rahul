@@ -1,6 +1,9 @@
-/* CAMPUSLINK — Admin Scheduler Page */
+/* CAMPUSLINK — Admin Scheduler Page — Real Data */
 const AdminScheduler = (() => {
   async function render() {
+    const result = await API.get('/drives');
+    const drives = Array.isArray(result?.data) ? result.data : (Array.isArray(result) ? result : []);
+
     document.getElementById('main').innerHTML = `
       <div class="page-header"><div class="page-header-content"><div class="page-eyebrow">Conflict-Free Scheduler</div><h1 class="page-title">Drive Scheduler</h1><p class="page-subtitle">Create schedules while checking venue, time, and participant conflicts. Override suggestions manually if needed.</p></div></div>
       <div class="grid grid-main">
@@ -22,12 +25,12 @@ const AdminScheduler = (() => {
           <article class="card animate-fade-in-up" style="animation-delay:100ms">
             <div class="card-header"><h2 class="card-title">Scheduled Events</h2></div>
             <div class="schedule-timeline">
-              ${API.DEMO.admin.drives.map((d, i) => `
+              ${drives.length ? drives.map(d => `
                 <div class="schedule-event">
-                  <div class="flex justify-between items-center"><div class="font-bold">${d.company} — ${d.role}</div><span class="status-badge status-${d.status}">${d.status}</span></div>
-                  <div class="text-sm text-muted mt-2">📅 ${d.date} · 📍 ${d.venue} · 👥 ${d.eligible} eligible</div>
+                  <div class="flex justify-between items-center"><div class="font-bold">${d.company_name || d.company || ''} — ${d.role}</div><span class="status-badge status-${d.status}">${d.status}</span></div>
+                  <div class="text-sm text-muted mt-2">📅 ${d.drive_date ? new Date(d.drive_date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'TBD'} · 📍 ${d.venue} · Branches: ${(d.branches || []).join(', ')}</div>
                 </div>
-              `).join('')}
+              `).join('') : '<p class="text-sm text-muted p-4">No scheduled events.</p>'}
             </div>
           </article>
         </div>

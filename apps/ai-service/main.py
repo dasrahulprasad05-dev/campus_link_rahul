@@ -2,10 +2,22 @@
 CAMPUSLINK — AI Service (FastAPI)
 Production AI/ML service with 9 real AI features:
 
-  ML:  scikit-learn     → Features 1 (Readiness), 8 (Ranking), 9 (At-Risk)
-  NLP: sentence-transformers → Features 2 (Skill-Gap), 3 (Resume Match)
-  LLM: Groq (Llama 3.3) → Features 4 (Interview), 5 (Questions), 7 (Roadmap)
-  RAG: LangChain + FAISS → Feature 10 (Policy Q&A)
+  ML:  Custom NumPy models, trained on labeled/synthetic data at startup
+       → Feature 1 (Readiness): Ridge regression with non-linear feature expansion
+       → Feature 8 (Ranking): Ridge regression ranking model
+       → Feature 9 (At-Risk): Logistic regression classifier (gradient descent)
+  NLP: Custom hashing-trick vector embeddings (char n-grams + word tokens,
+       cosine similarity) over a hardcoded role/skill ontology
+       → Features 2 (Skill-Gap), 3 (Resume Match)
+  LLM: Groq API (model auto-discovered per account, e.g. Llama 3.3 / GPT-OSS / Qwen)
+       → Features 4 (Interview), 5 (Questions), 7 (Roadmap)
+  RAG: Custom BM25 retrieval over markdown policy docs + Groq LLM synthesis
+       → Feature 10 (Policy Q&A)
+
+  All ML/NLP features run with zero external API calls (no network, no key
+  required). LLM features require GROQ_API_KEY and fall back to a clearly
+  labeled rule-based/templated path (source: "rule-engine") if the key is
+  missing or the API call fails.
 """
 
 import os
@@ -64,18 +76,18 @@ async def lifespan(app: FastAPI):
     print("  CAMPUSLINK AI Service -- Loading Models")
     print("  ==========================================\n")
 
-    # Phase 1: Train scikit-learn models (fast, no network)
+    # Phase 1: Train custom NumPy ML models (fast, no network)
     print("  [Phase 1] Training ML models...")
-    train_readiness()     # Feature 1
-    train_ranker()        # Feature 8
-    train_at_risk()       # Feature 9
+    train_readiness()     # Feature 1 — Ridge regression
+    train_ranker()        # Feature 8 — Ridge regression ranking model
+    train_at_risk()       # Feature 9 — Logistic regression classifier
 
-    # Phase 2: Initialize RAG pipeline (loads embeddings + documents)
-    print("\n  [Phase 2] Initializing RAG pipeline...")
+    # Phase 2: Initialize RAG pipeline (loads and indexes policy documents)
+    print("\n  [Phase 2] Initializing RAG pipeline (BM25 index)...")
     rag_ok = initialize_rag()  # Feature 10
 
-    # Phase 3: NLP models are lazy-loaded on first request (Features 2, 3)
-    print("\n  [Phase 3] NLP models will lazy-load on first request")
+    # Phase 3: NLP hashing-embedding features need no training/loading step
+    print("\n  [Phase 3] Skill-gap / resume-match NLP features ready (no training needed)")
 
     # Phase 4: LLM (Groq) is initialized on first request (Features 4, 5, 7)
     groq_key = os.getenv("GROQ_API_KEY", "")
@@ -126,12 +138,12 @@ def health():
         "service": "campuslink-ai",
         "version": "2.0.0",
         "models": {
-            "ml_readiness": "scikit-learn GBR (trained)",
-            "ml_ranker": "scikit-learn GBR (trained)",
-            "ml_at_risk": "scikit-learn GBC (trained)",
-            "nlp_embeddings": "all-MiniLM-L6-v2 (lazy-load)",
-            "llm": f"groq/llama-3.3-70b ({'active' if groq_ok else 'no API key — fallback mode'})",
-            "rag": "langchain + FAISS",
+            "ml_readiness": "custom NumPy Ridge regression, non-linear feature expansion (trained)",
+            "ml_ranker": "custom NumPy Ridge regression ranking model (trained)",
+            "ml_at_risk": "custom NumPy logistic regression, gradient descent (trained)",
+            "nlp_embeddings": "custom hashing-trick vector embeddings (char n-grams + word tokens, cosine similarity)",
+            "llm": f"groq API, model auto-discovered ({'active' if groq_ok else 'no API key — fallback mode'})",
+            "rag": "custom BM25 retrieval over markdown policy docs + Groq LLM synthesis",
         },
         "timestamp": datetime.now().isoformat(),
     }

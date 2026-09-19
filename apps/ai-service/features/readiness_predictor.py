@@ -230,13 +230,13 @@ def predict_readiness(req: ReadinessRequest) -> ReadinessResponse:
     recommendations = []
     if skills_count < 4:
         recommendations.append("Add more verified technical skills to strengthen your profile.")
-    if req.projects_count < 2:
+    if projects_cnt < 2:
         recommendations.append("Build at least 2 portfolio projects with demonstrable outcomes.")
     if req.cgpa < 7.0:
         recommendations.append("Focus on academics — many campus recruiters have a strict 7.0 CGPA cutoff.")
-    if req.aptitude_score < 65:
+    if aptitude_sc < 65:
         recommendations.append("Practice aptitude & problem solving regularly — target 70+ in mock tests.")
-    if req.profile_completion < 80:
+    if profile_comp < 80:
         recommendations.append("Complete your profile (resume, certifications, GitHub/LinkedIn) for recruiter visibility.")
 
     return ReadinessResponse(

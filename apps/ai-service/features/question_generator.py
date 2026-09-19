@@ -14,9 +14,11 @@ from datetime import datetime
 # ---- Schema ----
 
 class QuestionGenRequest(BaseModel):
-    target_role: str = "Data Analyst"
+    target_role: Optional[str] = None
+    role: Optional[str] = None
     skill_gaps: List[str] = []
     current_skills: List[str] = []
+    skills: List[str] = []
     difficulty: str = "medium"  # easy, medium, hard
     count: int = 5
 
@@ -47,13 +49,13 @@ def _get_client():
     if _client is None:
         api_key = os.getenv("GROQ_API_KEY", "")
         if not api_key:
-            print("  [Feature 5] GROQ_API_KEY not set — using curated question bank")
+            print("  [Feature 5] GROQ_API_KEY not set -- using curated question bank")
             _client = "fallback"
             return _client
         try:
             from groq import Groq
             _client = Groq(api_key=api_key)
-            print("  [Feature 5] Question Generator — Groq client initialized")
+            print("  [Feature 5] Question Generator -- Groq client initialized")
         except Exception as e:
             print(f"  [Feature 5] Could not initialize Groq: {e}")
             _client = "fallback"
@@ -132,10 +134,14 @@ from features.llm_client import call_groq_json
 
 def generate_questions(req: QuestionGenRequest) -> QuestionGenResponse:
     """Generate adaptive interview questions using Groq LLM."""
+    target_role = req.target_role or req.role or "Data Analyst"
+    skill_gaps = req.skill_gaps if req.skill_gaps else req.skills
+    current_skills = req.current_skills
+
     user_prompt = (
-        f"Target Role: {req.target_role}\n"
-        f"Candidate's Skill Gaps: {', '.join(req.skill_gaps) if req.skill_gaps else 'None specified'}\n"
-        f"Candidate's Current Skills: {', '.join(req.current_skills) if req.current_skills else 'None specified'}\n"
+        f"Target Role: {target_role}\n"
+        f"Candidate's Skill Gaps: {', '.join(skill_gaps) if skill_gaps else 'None specified'}\n"
+        f"Candidate's Current Skills: {', '.join(current_skills) if current_skills else 'None specified'}\n"
         f"Difficulty Level: {req.difficulty}\n"
         f"Number of Questions: {req.count}\n\n"
         f"Generate {req.count} interview questions. Focus on the skill gaps. "
@@ -159,7 +165,7 @@ def generate_questions(req: QuestionGenRequest) -> QuestionGenResponse:
 
     return QuestionGenResponse(
         questions=questions,
-        session_context=f"Adaptive session for {req.target_role} — focusing on: {', '.join(req.skill_gaps[:3]) if req.skill_gaps else 'general assessment'}",
+        session_context=f"Adaptive session for {target_role} — focusing on: {', '.join(skill_gaps[:3]) if skill_gaps else 'general assessment'}",
         source="groq-llm",
         modelVersion="qgen-llm-v1",
         timestamp=datetime.now().isoformat(),
@@ -168,7 +174,7 @@ def generate_questions(req: QuestionGenRequest) -> QuestionGenResponse:
 
 def _fallback_questions(req: QuestionGenRequest) -> QuestionGenResponse:
     """Fallback: curated question bank."""
-    role = req.target_role
+    role = req.target_role or req.role or "Data Analyst"
     bank = QUESTION_BANK.get(role, QUESTION_BANK["General"])
 
     # Filter by difficulty if possible

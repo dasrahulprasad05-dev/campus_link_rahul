@@ -15,9 +15,12 @@ from datetime import datetime
 # ---- Schema ----
 
 class ResumeMatchRequest(BaseModel):
-    job_description: str = ""
-    student_skills: List[str] = ["SQL", "Python", "Excel", "Communication"]
-    resume_text: str = ""
+    job_description: Optional[str] = None
+    jobDescription: Optional[str] = None
+    student_skills: Optional[List[str]] = None
+    studentSkills: Optional[List[str]] = None
+    resume_text: Optional[str] = None
+    resumeText: Optional[str] = None
 
 
 class ResumeMatchResponse(BaseModel):
@@ -100,9 +103,9 @@ def _extract_jd_skills(jd_text: str) -> List[str]:
 
 def match_resume_to_jd(req: ResumeMatchRequest) -> ResumeMatchResponse:
     """Match resume and student skills to job description using vector embeddings."""
-    jd = req.job_description or ""
-    student_skills = req.student_skills or []
-    resume = req.resume_text or ""
+    jd = req.job_description or req.jobDescription or ""
+    student_skills = req.student_skills if req.student_skills is not None else (req.studentSkills or ["SQL", "Python", "Excel", "Communication"])
+    resume = req.resume_text or req.resumeText or ""
 
     # Combine resume text and student skills
     combined_cand_text = " ".join(student_skills) + " " + resume

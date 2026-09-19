@@ -73,7 +73,7 @@ function ruleBasedEvaluateAnswer(answer = '', question = '') {
 async function evaluateAnswer(answer = '', question = '', targetRole = 'General') {
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 1200);
+    const timeout = setTimeout(() => controller.abort(), 12000);
 
     const res = await fetch(`${AI_SERVICE_URL}/v1/interview-feedback`, {
       method: 'POST',

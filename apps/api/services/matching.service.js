@@ -46,7 +46,7 @@ function ruleBasedMatch(jobDescription = '', studentSkills = ['sql', 'python', '
 async function matchResumeToJD(jobDescription = '', studentSkills = ['sql', 'python', 'excel', 'data analysis', 'communication', 'statistics']) {
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 1200);
+    const timeout = setTimeout(() => controller.abort(), 12000);
 
     const res = await fetch(`${AI_SERVICE_URL}/v1/resume-match`, {
       method: 'POST',
@@ -87,7 +87,7 @@ async function matchResumeToJD(jobDescription = '', studentSkills = ['sql', 'pyt
 async function rankCandidates(jobSkills = [], candidates = []) {
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 1200);
+    const timeout = setTimeout(() => controller.abort(), 12000);
 
     const res = await fetch(`${AI_SERVICE_URL}/v1/candidate-match`, {
       method: 'POST',

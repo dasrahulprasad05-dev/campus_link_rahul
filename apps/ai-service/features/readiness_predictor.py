@@ -15,10 +15,15 @@ from datetime import datetime
 
 class ReadinessRequest(BaseModel):
     skills: List[str] = []
-    projects_count: int = 0
+    projects_count: Optional[int] = None
+    projectsCount: Optional[int] = None
     cgpa: float = 7.0
-    aptitude_score: int = 65
-    profile_completion: int = 70
+    aptitude_score: Optional[int] = None
+    aptitudeScore: Optional[int] = None
+    profile_completion: Optional[int] = None
+    profileCompletion: Optional[int] = None
+    interview_score: Optional[int] = None
+    interviewScore: Optional[int] = None
 
 
 class ReadinessFactor(BaseModel):
@@ -168,7 +173,7 @@ def train_model() -> RidgeRegressionModel:
     X, y = _generate_training_data()
     _model = RidgeRegressionModel(alpha=2.5)
     _model.fit(X, y)
-    print(f"  [Feature 1] Readiness ML Model trained — R²: {_model.r2_score:.3f}, MAE: {_model.mae:.2f}")
+    print(f"  [Feature 1] Readiness ML Model trained -- R^2: {_model.r2_score:.3f}, MAE: {_model.mae:.2f}")
     return _model
 
 
@@ -179,12 +184,16 @@ def predict_readiness(req: ReadinessRequest) -> ReadinessResponse:
         train_model()
 
     skills_count = len(req.skills)
+    projects_cnt = req.projects_count if req.projects_count is not None else (req.projectsCount or 0)
+    aptitude_sc = req.aptitude_score if req.aptitude_score is not None else (req.aptitudeScore if req.aptitudeScore is not None else 65)
+    profile_comp = req.profile_completion if req.profile_completion is not None else (req.profileCompletion if req.profileCompletion is not None else 70)
+
     x = np.array([
         skills_count,
-        req.projects_count,
+        projects_cnt,
         req.cgpa,
-        req.aptitude_score,
-        req.profile_completion,
+        aptitude_sc,
+        profile_comp,
     ], dtype=float)
 
     score, ci_low, ci_high = _model.predict_single(x)
@@ -199,10 +208,10 @@ def predict_readiness(req: ReadinessRequest) -> ReadinessResponse:
     ]
     factor_values = [
         min(100, skills_count * 14),
-        min(100, req.projects_count * 38),
+        min(100, projects_cnt * 38),
         min(100, round((req.cgpa / 10.0) * 100)),
-        req.aptitude_score,
-        req.profile_completion,
+        aptitude_sc,
+        profile_comp,
     ]
 
     factors = [

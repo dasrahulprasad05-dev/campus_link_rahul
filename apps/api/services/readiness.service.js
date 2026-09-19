@@ -48,7 +48,7 @@ function ruleBasedSkillGap(targetRole = 'Data Analyst', currentSkills = []) {
 async function analyzeSkillGap(targetRole = 'Data Analyst', currentSkills = []) {
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 1200);
+    const timeout = setTimeout(() => controller.abort(), 12000);
 
     const res = await fetch(`${AI_SERVICE_URL}/v1/skill-gap`, {
       method: 'POST',
@@ -114,7 +114,7 @@ function ruleBasedReadiness(profile = {}) {
 async function calculateReadiness(profile = {}) {
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 1200);
+    const timeout = setTimeout(() => controller.abort(), 12000);
 
     const res = await fetch(`${AI_SERVICE_URL}/v1/readiness`, {
       method: 'POST',

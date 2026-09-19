@@ -15,9 +15,11 @@ from datetime import datetime
 # ---- Schema ----
 
 class SkillGapRequest(BaseModel):
-    target_role: str = "Data Analyst"
+    target_role: Optional[str] = None
+    targetRole: Optional[str] = None
     skills: List[str] = []
-    job_description: str = ""
+    job_description: Optional[str] = None
+    jobDescription: Optional[str] = None
 
 
 class SkillGapItem(BaseModel):
@@ -157,12 +159,13 @@ def _compute_similarity(a_text: str, b_text: str) -> float:
 
 def analyze_skill_gap(req: SkillGapRequest) -> SkillGapResponse:
     """Analyze student skills against target role or extracted JD requirements."""
-    role = req.target_role or "Data Analyst"
+    role = req.target_role or req.targetRole or "Data Analyst"
     required_skills = ROLE_SKILLS.get(role, ROLE_SKILLS["Data Analyst"])
+    jd = req.job_description or req.jobDescription or ""
 
     # If job description is provided, extract additional skill keywords
-    if req.job_description:
-        jd_lower = req.job_description.lower()
+    if jd:
+        jd_lower = jd.lower()
         extracted = []
         for r_skills in ROLE_SKILLS.values():
             for s in r_skills:

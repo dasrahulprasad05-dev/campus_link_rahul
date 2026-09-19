@@ -110,7 +110,7 @@ def initialize_rag() -> bool:
         _idf = {t: math.log(1 + (N / df)) for t, df in doc_freq.items()}
 
     _initialized = True
-    print(f"  [Feature 10] RAG initialized — {len(_chunks)} policy chunks indexed from {len(md_files)} documents")
+    print(f"  [Feature 10] RAG initialized -- {len(_chunks)} policy chunks indexed from {len(md_files)} documents")
     return True
 
 

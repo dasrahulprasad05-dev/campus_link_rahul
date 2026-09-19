@@ -17,7 +17,11 @@ from datetime import datetime
 class InterviewFeedbackRequest(BaseModel):
     answer: str = ""
     question: str = ""
-    target_role: str = "General"
+    target_role: Optional[str] = None
+    targetRole: Optional[str] = None
+    role: Optional[str] = None
+    rubric_category: Optional[str] = None
+    category: Optional[str] = None
 
 
 class InterviewFeedbackResponse(BaseModel):
@@ -44,13 +48,13 @@ def _get_client():
     if _client is None:
         api_key = os.getenv("GROQ_API_KEY", "")
         if not api_key:
-            print("  [Feature 4] GROQ_API_KEY not set — using rule-based fallback")
+            print("  [Feature 4] GROQ_API_KEY not set -- using rule-based fallback")
             _client = "fallback"
             return _client
         try:
             from groq import Groq
             _client = Groq(api_key=api_key)
-            print("  [Feature 4] Interview Coach — Groq client initialized")
+            print("  [Feature 4] Interview Coach -- Groq client initialized")
         except Exception as e:
             print(f"  [Feature 4] Could not initialize Groq: {e}")
             _client = "fallback"
@@ -85,8 +89,9 @@ def evaluate_answer(req: InterviewFeedbackRequest) -> InterviewFeedbackResponse:
     if not req.answer.strip():
         return _rule_based_evaluate(req)
 
+    role = req.target_role or req.targetRole or req.role or "General"
     user_prompt = (
-        f"Role: {req.target_role}\n"
+        f"Role: {role}\n"
         f"Question: {req.question}\n"
         f"Candidate's Answer: {req.answer}\n\n"
         f"Evaluate this answer. Respond with ONLY the JSON object."

@@ -9,6 +9,14 @@ Production AI/ML service with 9 real AI features:
 """
 
 import os
+import sys
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -52,9 +60,9 @@ from datetime import datetime
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Train ML models and initialize RAG on startup."""
-    print("\n  ╔══════════════════════════════════════════╗")
-    print("  ║  CAMPUSLINK AI Service — Loading Models  ║")
-    print("  ╚══════════════════════════════════════════╝\n")
+    print("\n  ==========================================")
+    print("  CAMPUSLINK AI Service -- Loading Models")
+    print("  ==========================================\n")
 
     # Phase 1: Train scikit-learn models (fast, no network)
     print("  [Phase 1] Training ML models...")
@@ -72,11 +80,11 @@ async def lifespan(app: FastAPI):
     # Phase 4: LLM (Groq) is initialized on first request (Features 4, 5, 7)
     groq_key = os.getenv("GROQ_API_KEY", "")
     if groq_key:
-        print(f"  [Phase 4] Groq API key detected — LLM features enabled")
+        print("  [Phase 4] Groq API key detected -- LLM features enabled")
     else:
-        print(f"  [Phase 4] No GROQ_API_KEY — LLM features will use fallbacks")
+        print("  [Phase 4] No GROQ_API_KEY -- LLM features will use fallbacks")
 
-    print("\n  ✅ AI Service ready!\n")
+    print("\n  [READY] AI Service ready!\n")
 
     yield
 
@@ -132,6 +140,7 @@ def health():
 # ---- Feature 1: Placement Readiness (ML) ----
 
 @app.post("/v1/readiness")
+@app.post("/v1/readiness-score")
 def readiness_endpoint(req: ReadinessRequest):
     result = predict_readiness(req)
     return result.model_dump()

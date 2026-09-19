@@ -13,12 +13,17 @@ from datetime import datetime
 # ---- Schema ----
 
 class RoadmapRequest(BaseModel):
-    target_role: str = "Data Analyst"
+    target_role: Optional[str] = None
+    targetRole: Optional[str] = None
     current_skills: List[str] = []
+    currentSkills: List[str] = []
     skill_gaps: List[str] = []
+    skillGaps: List[str] = []
     cgpa: float = 7.0
-    projects_count: int = 0
-    weeks_until_placement: int = 12
+    projects_count: Optional[int] = None
+    projectsCount: Optional[int] = None
+    weeks_until_placement: Optional[int] = None
+    weeksUntilPlacement: Optional[int] = None
 
 
 class RoadmapMilestone(BaseModel):
@@ -49,13 +54,13 @@ def _get_client():
     if _client is None:
         api_key = os.getenv("GROQ_API_KEY", "")
         if not api_key:
-            print("  [Feature 7] GROQ_API_KEY not set — using template roadmaps")
+            print("  [Feature 7] GROQ_API_KEY not set -- using template roadmaps")
             _client = "fallback"
             return _client
         try:
             from groq import Groq
             _client = Groq(api_key=api_key)
-            print("  [Feature 7] Roadmap Generator — Groq client initialized")
+            print("  [Feature 7] Roadmap Generator -- Groq client initialized")
         except Exception as e:
             print(f"  [Feature 7] Could not initialize Groq: {e}")
             _client = "fallback"
@@ -94,15 +99,21 @@ from features.llm_client import call_groq_json
 
 def generate_roadmap(req: RoadmapRequest) -> RoadmapResponse:
     """Generate a personalized career roadmap using Groq LLM."""
+    target_role = req.target_role or req.targetRole or "Data Analyst"
+    current_skills = req.current_skills if req.current_skills else req.currentSkills
+    skill_gaps = req.skill_gaps if req.skill_gaps else req.skillGaps
+    projects_count = req.projects_count if req.projects_count is not None else (req.projectsCount or 0)
+    weeks = req.weeks_until_placement if req.weeks_until_placement is not None else (req.weeksUntilPlacement or 12)
+
     user_prompt = (
         f"Student Profile:\n"
-        f"- Target Role: {req.target_role}\n"
-        f"- Current Skills: {', '.join(req.current_skills) if req.current_skills else 'None listed'}\n"
-        f"- Skill Gaps: {', '.join(req.skill_gaps) if req.skill_gaps else 'Not analyzed yet'}\n"
+        f"- Target Role: {target_role}\n"
+        f"- Current Skills: {', '.join(current_skills) if current_skills else 'None listed'}\n"
+        f"- Skill Gaps: {', '.join(skill_gaps) if skill_gaps else 'Not analyzed yet'}\n"
         f"- CGPA: {req.cgpa}\n"
-        f"- Projects: {req.projects_count}\n"
-        f"- Weeks Until Placement Season: {req.weeks_until_placement}\n\n"
-        f"Generate a personalized {req.weeks_until_placement}-week roadmap. "
+        f"- Projects: {projects_count}\n"
+        f"- Weeks Until Placement Season: {weeks}\n\n"
+        f"Generate a personalized {weeks}-week roadmap. "
         f"Respond with ONLY the JSON object."
     )
 
@@ -125,7 +136,7 @@ def generate_roadmap(req: RoadmapRequest) -> RoadmapResponse:
 
     return RoadmapResponse(
         milestones=milestones,
-        summary=data.get("summary", f"Personalized {req.weeks_until_placement}-week roadmap for {req.target_role}"),
+        summary=data.get("summary", f"Personalized {weeks}-week roadmap for {target_role}"),
         source="groq-llm",
         modelVersion="roadmap-llm-v1",
         timestamp=datetime.now().isoformat(),
@@ -134,6 +145,7 @@ def generate_roadmap(req: RoadmapRequest) -> RoadmapResponse:
 
 def _template_roadmap(req: RoadmapRequest) -> RoadmapResponse:
     """Fallback: role-based template milestones."""
+    target_role = req.target_role or req.targetRole or "Data Analyst"
     templates = {
         "Data Analyst": [
             RoadmapMilestone(title="Master SQL Fundamentals", description="Complete joins, subqueries, window functions, and aggregation exercises.", week=1, priority="critical", category="skill", resources=["SQLBolt.com", "LeetCode SQL track"], success_criteria="Solve 30 SQL problems on LeetCode"),
@@ -152,11 +164,11 @@ def _template_roadmap(req: RoadmapRequest) -> RoadmapResponse:
         ],
     }
 
-    milestones = templates.get(req.target_role, templates.get("Data Analyst", []))
+    milestones = templates.get(target_role, templates.get("Data Analyst", []))
 
     return RoadmapResponse(
         milestones=milestones,
-        summary=f"Template-based {req.target_role} preparation roadmap. Personalization requires LLM integration.",
+        summary=f"Template-based {target_role} preparation roadmap. Personalization requires LLM integration.",
         source="rule-engine",
         modelVersion="roadmap-template-v1",
         timestamp=datetime.now().isoformat(),

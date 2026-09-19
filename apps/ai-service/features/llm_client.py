@@ -43,13 +43,10 @@ def get_active_model(client) -> str:
 
     # 2. Preferred models ordered by preference
     preferred = [
-        "qwen/qwen3.8-27b",
-        "qwen/qwen3.6-27b",
-        "openai/gpt-oss-120b",
         "openai/gpt-oss-20b",
-        "groq/compound",
+        "openai/gpt-oss-120b",
+        "qwen/qwen3.8-27b",
         "llama-3.3-70b-versatile",
-        "llama-3.1-70b-versatile",
         "llama-3.1-8b-instant",
     ]
 
@@ -69,17 +66,18 @@ def get_active_model(client) -> str:
     except Exception as e:
         print(f"  [LLM] Model auto-discovery warning: {e}")
 
-    _selected_model = "qwen/qwen3.8-27b"
+    _selected_model = "openai/gpt-oss-20b"
     return _selected_model
 
 
-def call_groq_json(system_prompt: str, user_prompt: str, temperature: float = 0.5, max_tokens: int = 1200) -> Optional[Dict[str, Any]]:
+def call_groq_json(system_prompt: str, user_prompt: str, temperature: float = 0.5, max_tokens: int = 800) -> Optional[Dict[str, Any]]:
     """Execute completion and parse JSON result."""
     client = get_groq_client()
     if not client:
         return None
 
     model = get_active_model(client)
+    capped_tokens = min(max_tokens, 800)
     try:
         response = client.chat.completions.create(
             model=model,
@@ -88,23 +86,42 @@ def call_groq_json(system_prompt: str, user_prompt: str, temperature: float = 0.
                 {"role": "user", "content": user_prompt},
             ],
             temperature=temperature,
-            max_tokens=max_tokens,
+            max_tokens=capped_tokens,
             response_format={"type": "json_object"},
         )
         content = response.choices[0].message.content.strip()
         return json.loads(content)
     except Exception as e:
         print(f"  [LLM] Groq API call failed ({model}): {e}")
+        # Try fallback to openai/gpt-oss-20b if different
+        if model != "openai/gpt-oss-20b":
+            try:
+                print("  [LLM] Retrying with fallback model openai/gpt-oss-20b...")
+                response = client.chat.completions.create(
+                    model="openai/gpt-oss-20b",
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt},
+                    ],
+                    temperature=temperature,
+                    max_tokens=capped_tokens,
+                    response_format={"type": "json_object"},
+                )
+                content = response.choices[0].message.content.strip()
+                return json.loads(content)
+            except Exception as e2:
+                print(f"  [LLM] Fallback model failed: {e2}")
         return None
 
 
-def call_groq_text(system_prompt: str, user_prompt: str, temperature: float = 0.3, max_tokens: int = 800) -> Optional[str]:
+def call_groq_text(system_prompt: str, user_prompt: str, temperature: float = 0.3, max_tokens: int = 600) -> Optional[str]:
     """Execute completion and return raw text."""
     client = get_groq_client()
     if not client:
         return None
 
     model = get_active_model(client)
+    capped_tokens = min(max_tokens, 600)
     try:
         response = client.chat.completions.create(
             model=model,
@@ -113,9 +130,23 @@ def call_groq_text(system_prompt: str, user_prompt: str, temperature: float = 0.
                 {"role": "user", "content": user_prompt},
             ],
             temperature=temperature,
-            max_tokens=max_tokens,
+            max_tokens=capped_tokens,
         )
         return response.choices[0].message.content.strip()
     except Exception as e:
         print(f"  [LLM] Groq API call failed ({model}): {e}")
+        if model != "openai/gpt-oss-20b":
+            try:
+                response = client.chat.completions.create(
+                    model="openai/gpt-oss-20b",
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt},
+                    ],
+                    temperature=temperature,
+                    max_tokens=capped_tokens,
+                )
+                return response.choices[0].message.content.strip()
+            except Exception as e2:
+                print(f"  [LLM] Fallback text model failed: {e2}")
         return None

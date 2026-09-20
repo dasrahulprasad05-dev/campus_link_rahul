@@ -268,8 +268,12 @@ Experience: Summer Intern at Tech Corp..."></textarea>
     closeModal('paste-resume-modal');
     Toast.success(`Successfully extracted ${extractedSkills.length} skills and updated your profile!`);
     
-    // Re-render if on Profile page
-    render();
+    // Re-render current page
+    if (window.location.hash.includes('readiness') && typeof StudentReadiness !== 'undefined') {
+      StudentReadiness.render();
+    } else {
+      render();
+    }
   }
 
   // ─── Modal 2: Edit Profile ──────────────────────────────────
@@ -457,7 +461,11 @@ Experience: Summer Intern at Tech Corp..."></textarea>
     Store.updateProfile(updates);
     closeModal('edit-profile-modal');
     Toast.success('Profile updated successfully!');
-    render();
+    if (window.location.hash.includes('readiness') && typeof StudentReadiness !== 'undefined') {
+      StudentReadiness.render();
+    } else {
+      render();
+    }
   }
 
   function closeModal(id) {

@@ -70,6 +70,11 @@ const API = (() => {
       return simulateSkillGap(body.targetRole, body.skills);
     }
 
+    if (path.includes('readiness')) {
+      const p = (typeof Store !== 'undefined' && Store.getProfile) ? Store.getProfile() : {};
+      return simulateReadiness(p);
+    }
+
     if (path.includes('interview') || path.includes('feedback')) {
       const body = options.body ? (typeof options.body === 'string' ? JSON.parse(options.body) : options.body) : {};
 
@@ -295,17 +300,24 @@ const API = (() => {
 
   // ---- Offline AI simulations ----
   function simulateResumeMatch(jd) {
-    const profileSkills = ['sql', 'python', 'excel', 'data analysis', 'communication', 'statistics'];
+    const p = (typeof Store !== 'undefined' && Store.getProfile) ? Store.getProfile() : {};
+    const profileSkills = (Array.isArray(p.skills) && p.skills.length > 0)
+      ? p.skills.map(s => s.toLowerCase())
+      : [];
     const text = jd.toLowerCase();
-    const allKeywords = ['sql', 'python', 'power bi', 'tableau', 'excel', 'communication', 'statistics', 'machine learning', 'javascript', 'react', 'node.js', 'data analysis', 'git'];
+    const allKeywords = ['sql', 'python', 'power bi', 'tableau', 'excel', 'communication', 'statistics', 'machine learning', 'javascript', 'react', 'node.js', 'data analysis', 'git', 'docker', 'aws', 'java', 'c++', 'typescript', 'mongodb', 'postgresql'];
     const matched = profileSkills.filter(s => text.includes(s));
     const missing = allKeywords.filter(s => text.includes(s) && !profileSkills.includes(s));
-    const score = Math.min(96, 45 + matched.length * 9 - missing.length * 3);
+    const score = profileSkills.length === 0
+      ? 15
+      : Math.min(96, 45 + matched.length * 9 - missing.length * 3);
     return {
-      score: Math.max(20, score),
+      score: Math.max(10, score),
       matched,
       missing,
-      strengths: ['Strong SQL fundamentals', 'Data analysis project experience', 'Relevant certifications'],
+      strengths: matched.length > 0
+        ? matched.slice(0, 3).map(s => `Demonstrated ${s} proficiency`)
+        : ['Resume submitted for analysis'],
       improvements: missing.map(s => `Add ${s} experience to your profile`),
       explanation: 'Score is based on: skill keyword overlap (40%), project relevance (25%), certification alignment (15%), and profile completeness (20%). Eligibility constraints are evaluated separately by deterministic rules.',
     };
@@ -317,9 +329,17 @@ const API = (() => {
       'Software Engineer': ['DSA', 'Git', 'REST APIs', 'Databases', 'Testing', 'System Design', 'JavaScript'],
       'ML Engineer': ['Python', 'PyTorch', 'Statistics', 'Linear Algebra', 'MLOps', 'SQL'],
       'Web Developer': ['HTML/CSS', 'JavaScript', 'React', 'Node.js', 'Git', 'REST APIs'],
+      'DevOps Engineer': ['Linux', 'Docker', 'Kubernetes', 'CI/CD', 'AWS', 'Terraform'],
     };
     const target = roleSkills[targetRole] || roleSkills['Data Analyst'];
-    const have = new Set((currentSkills.length ? currentSkills : Store.get('user')?.skills || ['SQL', 'Python', 'Excel', 'Communication']).map(s => s.toLowerCase()));
+
+    // Use passed-in skills, or fall back to Store profile (no hardcoded defaults)
+    let skills = currentSkills;
+    if (!skills || skills.length === 0) {
+      const p = (typeof Store !== 'undefined' && Store.getProfile) ? Store.getProfile() : {};
+      skills = Array.isArray(p.skills) ? p.skills : [];
+    }
+    const have = new Set(skills.map(s => s.toLowerCase()));
 
     return {
       targetRole,
@@ -491,6 +511,54 @@ const API = (() => {
       }
     }
     return { valid: conflicts.length === 0, conflicts };
+  }
+
+  function simulateReadiness(p = {}) {
+    const skillCount = Array.isArray(p.skills) ? p.skills.length : 0;
+    const certCount = Array.isArray(p.certifications) ? p.certifications.length : 0;
+    const cgpa = parseFloat(p.cgpa) || 0;
+    const projectCount = Array.isArray(p.projects) ? p.projects.length : (p.projects_count || 0);
+
+    const weights = { technical: 0.25, projects: 0.15, academics: 0.15, aptitude: 0.15, certifications: 0.10, communication: 0.10, interview: 0.10 };
+    const factors = [
+      { label: 'Technical Skills', value: Math.min(100, skillCount * 12), weight: weights.technical },
+      { label: 'Projects & Portfolio', value: Math.min(100, projectCount * 25), weight: weights.projects },
+      { label: 'Academics (CGPA)', value: Math.min(100, Math.round((cgpa / 10) * 100)), weight: weights.academics },
+      { label: 'Aptitude & Reasoning', value: p.aptitude_score || (skillCount > 0 ? 65 : 0), weight: weights.aptitude },
+      { label: 'Certifications', value: Math.min(100, certCount * 35), weight: weights.certifications },
+      { label: 'Communication', value: p.communication_score || (skillCount > 0 ? 70 : 0), weight: weights.communication },
+      { label: 'Interview Performance', value: p.interview_score || (skillCount > 0 ? 60 : 0), weight: weights.interview },
+    ];
+
+    const score = Math.round(factors.reduce((sum, f) => sum + (f.value * f.weight), 0));
+    let statusBand;
+    if (score >= 80) statusBand = { label: 'Highly Employable', color: 'success', emoji: '🟢' };
+    else if (score >= 60) statusBand = { label: 'Ready', color: 'accent', emoji: '🔵' };
+    else if (score >= 40) statusBand = { label: 'Developing', color: 'warning', emoji: '🟡' };
+    else if (score > 0) statusBand = { label: 'Needs Improvement', color: 'danger', emoji: '🔴' };
+    else statusBand = { label: 'Profile Pending', color: 'muted', emoji: '⏳' };
+
+    const sortedFactors = [...factors].sort((a, b) => a.value - b.value);
+    const recommendations = score === 0 ? [] : sortedFactors.slice(0, 3).map(f => ({
+      area: f.label,
+      score: f.value,
+      action: f.value < 40 ? `Urgently improve ${f.label} — currently at ${f.value}%` : `Continue building ${f.label} (currently ${f.value}%)`,
+      priority: f.value < 40 ? 'high' : f.value < 60 ? 'medium' : 'low',
+    }));
+
+    return {
+      success: true,
+      data: {
+        score,
+        statusBand,
+        factors: factors.map(f => ({ label: f.label, value: f.value })),
+        weights,
+        targetRole: p.targetRole || 'Software Engineer',
+        recommendations,
+        updated_at: new Date().toISOString(),
+        source: 'client-profile-calculation'
+      }
+    };
   }
 
   // ---- Convenience methods ----

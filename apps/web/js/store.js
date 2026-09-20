@@ -119,6 +119,8 @@ const Store = (() => {
   }
 
   // Get student profile (reactive with fallback)
+  // Returns empty arrays for skills/projects/certifications so that
+  // each student starts blank and sees onboarding prompts, not fake data.
   function getProfile() {
     if (_state.student_profile && typeof _state.student_profile === 'object') {
       return _state.student_profile;
@@ -127,23 +129,19 @@ const Store = (() => {
     return {
       name: user.name || 'Candidate Student',
       email: user.email || 'student@university.edu',
-      phone: '+91 98765 43210',
-      branch: 'Computer Science & Engineering',
+      phone: '',
+      branch: '',
       year: '2026',
-      regNo: 'REG-2022-CSE-042',
-      cgpa: 8.4,
-      targetRole: 'Data Analyst',
-      skills: ['Python', 'SQL', 'Excel', 'Data Analysis', 'Communication', 'Statistics'],
-      projects: [
-        { name: 'Placement Analytics Dashboard', tech: 'Python · Streamlit · Pandas', desc: 'Predictive dashboard analyzing past placement records.' }
-      ],
-      education: [
-        { institution: 'State Technical University', degree: 'B.Tech in Computer Science', year: '2022-2026', gpa: '8.4' }
-      ],
+      regNo: '',
+      cgpa: 0,
+      targetRole: '',
+      skills: [],
+      projects: [],
+      education: [],
       experience: [],
-      certifications: ['Google Data Analytics Certificate'],
-      linkedin: 'linkedin.com/in/student',
-      github: 'github.com/student'
+      certifications: [],
+      linkedin: '',
+      github: ''
     };
   }
 

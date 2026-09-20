@@ -8,9 +8,7 @@ const StudentSkillGap = (() => {
 
   function getSkills() {
     const profile = Store.getProfile();
-    return (profile && Array.isArray(profile.skills) && profile.skills.length > 0)
-      ? profile.skills
-      : ['Python', 'SQL', 'Excel', 'Data Analysis', 'Communication', 'Statistics'];
+    return (profile && Array.isArray(profile.skills)) ? profile.skills : [];
   }
 
   async function render() {
@@ -54,6 +52,17 @@ const StudentSkillGap = (() => {
             </div>
           </article>
 
+          ${skills.length === 0 ? `
+            <div class="notice animate-fade-in-up" style="background:rgba(59, 130, 246, 0.08); border:1px solid rgba(59, 130, 246, 0.25); border-radius:var(--radius-lg); padding:20px;">
+              <h3 style="font-size:16px; margin-bottom:6px; color:var(--text-primary);">🚀 Add Your Skills First</h3>
+              <p class="text-sm text-muted" style="margin:0 0 12px 0;">To get a personalized skill-gap analysis, paste your resume or manually add your technical skills. Without your skills, the analyzer cannot identify what you already know vs. what's missing.</p>
+              <div class="flex gap-2">
+                <button class="btn btn-primary btn-sm" onclick="StudentSkillGap.openResumeModal()">📄 Paste Resume</button>
+                <button class="btn btn-secondary btn-sm" onclick="StudentSkillGap.openEditSkillsModal()">✏️ Add Skills Manually</button>
+              </div>
+            </div>
+          ` : ''}
+
           <!-- Gap Results Container -->
           <div id="gap-results"></div>
         </div>
@@ -67,7 +76,10 @@ const StudentSkillGap = (() => {
             </div>
 
             <div id="skill-gap-badges" class="flex flex-wrap gap-2 mb-4">
-              ${skills.map(s => `<span class="badge badge-primary" style="font-size:12px;padding:4px 8px">${s}</span>`).join('')}
+              ${skills.length > 0
+                ? skills.map(s => `<span class="badge badge-primary" style="font-size:12px;padding:4px 8px">${s}</span>`).join('')
+                : '<p class="text-sm text-muted" style="margin:0;">No skills added yet. Paste your resume or edit your profile to add skills.</p>'
+              }
             </div>
 
             <div class="flex gap-2">
@@ -124,8 +136,10 @@ const StudentSkillGap = (() => {
       select.value = targetRole;
     }
 
-    // Auto-run analysis on load
-    setTimeout(() => StudentSkillGap.analyze(), 200);
+    // Auto-run analysis on load only if student has skills
+    if (skills.length > 0) {
+      setTimeout(() => StudentSkillGap.analyze(), 200);
+    }
   }
 
   async function analyze() {

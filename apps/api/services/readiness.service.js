@@ -12,6 +12,16 @@ const ROLE_SKILLS = {
   'ML Engineer': ['Python', 'PyTorch', 'Statistics', 'Linear Algebra', 'MLOps', 'SQL'],
   'Web Developer': ['HTML/CSS', 'JavaScript', 'React', 'Node.js', 'Git', 'REST APIs'],
   'DevOps Engineer': ['Linux', 'Docker', 'Kubernetes', 'CI/CD', 'AWS', 'Terraform'],
+  'Frontend Developer': ['HTML/CSS', 'JavaScript', 'TypeScript', 'React', 'Responsive Design', 'Git', 'Web Performance'],
+  'Backend Developer': ['Node.js', 'Python', 'REST APIs', 'SQL', 'PostgreSQL', 'Authentication', 'System Design', 'Docker'],
+  'Data Engineer': ['Python', 'SQL', 'Apache Spark', 'ETL Pipelines', 'Airflow', 'Data Warehousing', 'AWS', 'Kafka'],
+  'Business Analyst': ['SQL', 'Excel', 'Power BI', 'Requirements Gathering', 'Communication', 'JIRA', 'Data Visualization'],
+  'Database Administrator': ['SQL', 'PostgreSQL', 'MySQL', 'Database Tuning', 'Backup & Recovery', 'Indexing', 'MongoDB', 'Linux'],
+  'Agentic AI Engineer': ['Python', 'LLM APIs', 'LangChain', 'Prompt Engineering', 'RAG', 'Vector Databases', 'API Integration', 'Agent Orchestration'],
+  'Cybersecurity Analyst': ['Network Security', 'Linux', 'OWASP', 'Penetration Testing', 'SIEM', 'Cryptography', 'Python', 'Incident Response'],
+  'Mobile App Developer': ['React Native', 'JavaScript', 'Flutter', 'REST APIs', 'Git', 'UI/UX Design', 'Firebase'],
+  'Cloud Architect': ['AWS', 'Azure', 'Terraform', 'Networking', 'Microservices', 'Docker', 'Kubernetes', 'Security'],
+  'Product Manager': ['Product Strategy', 'User Research', 'SQL', 'Agile', 'JIRA', 'Wireframing', 'Communication', 'Data Analysis'],
 };
 
 /**

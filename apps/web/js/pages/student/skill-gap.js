@@ -39,8 +39,18 @@ const StudentSkillGap = (() => {
               { value: 'Data Analyst', label: '📊 Data Analyst' },
               { value: 'Software Engineer', label: '💻 Software Engineer (SDE)' },
               { value: 'Web Developer', label: '🌐 Full-Stack Web Developer' },
+              { value: 'Frontend Developer', label: '🎨 Frontend Developer' },
+              { value: 'Backend Developer', label: '⚙️ Backend Developer' },
               { value: 'ML Engineer', label: '🤖 ML / AI Engineer' },
+              { value: 'Agentic AI Engineer', label: '🧠 Agentic AI Engineer' },
               { value: 'DevOps Engineer', label: '☁️ Cloud & DevOps Engineer' },
+              { value: 'Data Engineer', label: '🔧 Data Engineer' },
+              { value: 'Business Analyst', label: '📈 Business Analyst' },
+              { value: 'Database Administrator', label: '🗄️ Database Administrator' },
+              { value: 'Cybersecurity Analyst', label: '🔐 Cybersecurity Analyst' },
+              { value: 'Mobile App Developer', label: '📱 Mobile App Developer' },
+              { value: 'Cloud Architect', label: '🏗️ Cloud Architect' },
+              { value: 'Product Manager', label: '🎯 Product Manager' },
             ]})}
             <div class="flex gap-2 mt-4">
               <button class="btn btn-primary flex-1" id="run-gap-btn" onclick="StudentSkillGap.analyze()">

@@ -1,5 +1,5 @@
 /* ============================================================
-   CAMPUSLINK — API Client
+   CAMPUSLINK â€” API Client
    Fetch wrapper with JWT injection, error handling,
    and offline fallback to demo data.
    ============================================================ */
@@ -10,7 +10,7 @@ const API = (() => {
     return `${root}/api/v1`;
   };
 
-  // No DEMO data — all data comes from the real API / in-memory DB.
+  // No DEMO data â€” all data comes from the real API / in-memory DB.
 
   // ---- Core fetch wrapper ----
   async function request(path, options = {}) {
@@ -52,7 +52,7 @@ const API = (() => {
     }
   }
 
-  // ---- Offline handler (returns minimal empty data — no hardcoded demo) ----
+  // ---- Offline handler (returns minimal empty data â€” no hardcoded demo) ----
   function handleOffline(path, options = {}) {
     const role = Store.getRole();
 
@@ -98,7 +98,7 @@ const API = (() => {
             completeness: Math.round(base - 0.5),
             communication: Math.round(base + 0.5),
             missed_concepts: ['Detailed evaluation unavailable offline'],
-            feedback_text: 'Answer recorded. AI evaluation is unavailable offline — connect to the server for full rubric scoring.',
+            feedback_text: 'Answer recorded. AI evaluation is unavailable offline â€” connect to the server for full rubric scoring.',
             should_followup: false,
             source: 'offline-fallback',
           },
@@ -137,7 +137,7 @@ const API = (() => {
             total_questions: 3,
             answered_count: 3,
             skipped_count: 0,
-            executive_summary: 'Offline evaluation — connect to the server for a full AI-powered assessment with personalized feedback.',
+            executive_summary: 'Offline evaluation â€” connect to the server for a full AI-powered assessment with personalized feedback.',
             top_strengths: ['Completed the interview'],
             top_weaknesses: ['Full AI evaluation unavailable offline'],
             study_roadmap: ['Start the server for a complete evaluation'],
@@ -212,12 +212,12 @@ const API = (() => {
           data: {
             percentages: { DA: 68, DS: 52, WEB: 45, AI: 40, OPS: 30, SEC: 25 },
             sorted: [
-              { domain: 'DA', score: 68, name: 'Data Analytics', icon: '📊', color: '#3b82f6' },
-              { domain: 'DS', score: 52, name: 'Data Science', icon: '🔬', color: '#8b5cf6' },
-              { domain: 'WEB', score: 45, name: 'Web Development', icon: '💻', color: '#10b981' },
-              { domain: 'AI', score: 40, name: 'AI / ML Engineer', icon: '🤖', color: '#f59e0b' },
-              { domain: 'OPS', score: 30, name: 'Cloud / DevOps', icon: '☁️', color: '#06b6d4' },
-              { domain: 'SEC', score: 25, name: 'Cybersecurity', icon: '🔐', color: '#ef4444' },
+              { domain: 'DA', score: 68, name: 'Data Analytics', icon: 'ðŸ“Š', color: '#3b82f6' },
+              { domain: 'DS', score: 52, name: 'Data Science', icon: 'ðŸ”¬', color: '#8b5cf6' },
+              { domain: 'WEB', score: 45, name: 'Web Development', icon: 'ðŸ’»', color: '#10b981' },
+              { domain: 'AI', score: 40, name: 'AI / ML Engineer', icon: 'ðŸ¤–', color: '#f59e0b' },
+              { domain: 'OPS', score: 30, name: 'Cloud / DevOps', icon: 'â˜ï¸', color: '#06b6d4' },
+              { domain: 'SEC', score: 25, name: 'Cybersecurity', icon: 'ðŸ”', color: '#ef4444' },
             ],
             topDomain: 'DA',
             topName: 'Data Analytics',
@@ -230,7 +230,7 @@ const API = (() => {
         return {
           success: true,
           data: {
-            explanation: 'Based on your responses, Data Analytics appears to be your strongest current fit. Your answers showed a natural inclination toward working with data, finding patterns, and building visual explanations. Remember — this reflects your current interests from a short assessment, not a fixed career path.',
+            explanation: 'Based on your responses, Data Analytics appears to be your strongest current fit. Your answers showed a natural inclination toward working with data, finding patterns, and building visual explanations. Remember â€” this reflects your current interests from a short assessment, not a fixed career path.',
             source: 'offline-fallback',
           },
         };
@@ -242,7 +242,7 @@ const API = (() => {
           data: {
             domain: 'DA',
             name: 'Data Analytics',
-            icon: '📊',
+            icon: 'ðŸ“Š',
             color: '#3b82f6',
             steps: [
               { step: 1, title: 'Python Basics', desc: 'Learn fundamentals', duration: '2-3 weeks' },
@@ -365,106 +365,12 @@ const API = (() => {
   }
 
   function simulateGenerateRoadmap(targetRole = 'Data Analyst') {
-    const templates = {
-      'Data Analyst': [
-        { title: 'Master SQL Fundamentals', description: 'Joins, subqueries, aggregations, window functions.', week: 1, priority: 'critical', category: 'skill', resources: ['SQLBolt.com', 'LeetCode SQL track'], success_criteria: 'Solve 30 SQL problems' },
-        { title: 'Python for Data Analysis', description: 'Pandas, NumPy, and Matplotlib data visualization.', week: 2, priority: 'critical', category: 'skill', resources: ['Kaggle Learn', 'Automate the Boring Stuff'], success_criteria: 'Complete 3 dataset notebooks' },
-        { title: 'Build BI Portfolio Dashboard', description: 'Interactive dashboard using Power BI or Tableau.', week: 4, priority: 'high', category: 'project', resources: ['Power BI Learn', 'Makeover Monday'], success_criteria: 'Publish 1 live dashboard' },
-        { title: 'Statistics & Probability', description: 'Hypothesis testing, distributions, and A/B testing.', week: 5, priority: 'high', category: 'skill', resources: ['Khan Academy', 'StatQuest'], success_criteria: 'Pass mock stats quiz 80%+' },
-        { title: 'Timed Aptitude Prep', description: 'Mock tests to build speed and quantitative accuracy.', week: 7, priority: 'high', category: 'practice', resources: ['IndiaBIX'], success_criteria: 'Score 80%+ in 3 mock tests' },
-        { title: 'Mock Interviews x3', description: 'AI practice on case questions and STAR behavioral answers.', week: 9, priority: 'critical', category: 'practice', resources: ['CAMPUSLINK Mock'], success_criteria: 'Complete 3 mock sessions' },
-      ],
-      'Software Engineer': [
-        { title: 'DSA Mastery (Part 1)', description: 'Arrays, Strings, HashMaps, and Linked Lists.', week: 1, priority: 'critical', category: 'skill', resources: ['NeetCode 150', 'Abdul Bari'], success_criteria: 'Solve 50 easy/medium problems' },
-        { title: 'DSA Mastery (Part 2)', description: 'Trees, Graphs, and Dynamic Programming fundamentals.', week: 3, priority: 'critical', category: 'skill', resources: ['LeetCode 75'], success_criteria: 'Solve 40 tree & graph problems' },
-        { title: 'System Design Fundamentals', description: 'Load balancing, caching, databases, and microservices.', week: 5, priority: 'high', category: 'skill', resources: ['System Design Primer', 'Gaurav Sen'], success_criteria: 'Design 3 architectural diagrams' },
-        { title: 'Full-Stack Portfolio Project', description: 'Full-stack application with auth, DB, and live deployment.', week: 7, priority: 'critical', category: 'project', resources: ['Vercel', 'Render', 'GitHub'], success_criteria: 'Deploy production URL' },
-        { title: 'Coding Mock Interviews', description: 'Timed problem-solving under real interview conditions.', week: 9, priority: 'critical', category: 'practice', resources: ['CAMPUSLINK Mock'], success_criteria: 'Complete 5 coding mocks' },
-      ],
-      'Web Developer': [
-        { title: 'Modern JavaScript & TypeScript', description: 'ES6+, async/await, closures, TypeScript types.', week: 1, priority: 'critical', category: 'skill', resources: ['JavaScript.info'], success_criteria: 'Build a typed mini-app' },
-        { title: 'Frontend Mastery (React)', description: 'Hooks, router, state management, and Tailwind CSS.', week: 3, priority: 'critical', category: 'skill', resources: ['React.dev'], success_criteria: 'Build responsive SaaS UI' },
-        { title: 'Backend APIs & Databases', description: 'Node.js/Express REST APIs with PostgreSQL.', week: 5, priority: 'high', category: 'skill', resources: ['Node Docs', 'Prisma'], success_criteria: 'Deploy authenticated CRUD API' },
-        { title: 'Capstone Full-Stack Project', description: 'Production full-stack web app with Lighthouse 90+ score.', week: 7, priority: 'critical', category: 'project', resources: ['GitHub', 'Vercel'], success_criteria: 'Live production URL' },
-        { title: 'Web Developer Mock Interviews', description: 'Frontend fundamentals, DOM, web performance.', week: 9, priority: 'high', category: 'practice', resources: ['CAMPUSLINK Mock'], success_criteria: 'Score 75%+ in mock' },
-      ],
-      'Frontend Developer': [
-        { title: 'Advanced HTML & CSS', description: 'Flexbox, Grid, animations, responsive design, a11y.', week: 1, priority: 'critical', category: 'skill', resources: ['web.dev Learn CSS', 'CSS Tricks'], success_criteria: 'Build a pixel-perfect responsive page' },
-        { title: 'JavaScript & TypeScript', description: 'ES6+, closures, async, DOM, TypeScript types.', week: 2, priority: 'critical', category: 'skill', resources: ['JavaScript.info', 'TypeScript Handbook'], success_criteria: 'Refactor a project to TypeScript' },
-        { title: 'React Mastery', description: 'Hooks, context, routing, state management, patterns.', week: 4, priority: 'critical', category: 'skill', resources: ['React.dev', 'Epic React'], success_criteria: 'Build a SaaS dashboard UI' },
-        { title: 'Web Performance & Testing', description: 'Lighthouse, lazy loading, code splitting, Jest/Cypress.', week: 6, priority: 'high', category: 'skill', resources: ['web.dev Performance'], success_criteria: 'Lighthouse score > 90' },
-        { title: 'Portfolio & Interviews', description: '3 frontend projects, DOM & CSS interview questions.', week: 8, priority: 'critical', category: 'practice', resources: ['Frontend Mentor', 'CAMPUSLINK Mock'], success_criteria: '3 live projects + 2 mock interviews' },
-      ],
-      'Backend Developer': [
-        { title: 'Node.js & Express', description: 'HTTP lifecycle, middleware, routing, error handling.', week: 1, priority: 'critical', category: 'skill', resources: ['Node.js Docs', 'Express Guide'], success_criteria: 'Build REST API with 5+ endpoints' },
-        { title: 'Database Design & SQL', description: 'Relational modeling, joins, indexing, PostgreSQL.', week: 2, priority: 'critical', category: 'skill', resources: ['PostgreSQL Tutorial', 'SQLBolt'], success_criteria: 'Design a normalized DB schema' },
-        { title: 'Authentication & Security', description: 'JWT, OAuth2, bcrypt, CORS, rate limiting.', week: 4, priority: 'high', category: 'skill', resources: ['OWASP Top 10', 'Auth0 Docs'], success_criteria: 'Secure API with JWT + RBAC' },
-        { title: 'System Design & Caching', description: 'Load balancing, Redis, message queues, microservices.', week: 6, priority: 'high', category: 'skill', resources: ['System Design Primer'], success_criteria: 'Design a scalable architecture' },
-        { title: 'Docker & Deployment', description: 'Containerize APIs, CI/CD pipelines, monitoring.', week: 8, priority: 'critical', category: 'project', resources: ['Docker Docs', 'Railway'], success_criteria: 'Deploy production API with CI/CD' },
-      ],
-      'Data Engineer': [
-        { title: 'Python & SQL for Pipelines', description: 'Advanced SQL, Python scripting, pandas.', week: 1, priority: 'critical', category: 'skill', resources: ['Mode SQL', 'Kaggle Python'], success_criteria: 'Build 3 ETL scripts' },
-        { title: 'ETL & Data Warehousing', description: 'ETL pipelines, star schemas, dbt.', week: 3, priority: 'critical', category: 'skill', resources: ['Kimball Group', 'dbt Docs'], success_criteria: 'Build a data warehouse with dbt' },
-        { title: 'Apache Spark & Big Data', description: 'PySpark, batch & stream processing.', week: 5, priority: 'critical', category: 'skill', resources: ['Spark Docs', 'Databricks'], success_criteria: 'Process 1M+ row dataset' },
-        { title: 'Orchestration (Airflow)', description: 'DAGs, scheduling, monitoring, error handling.', week: 7, priority: 'high', category: 'skill', resources: ['Airflow Docs'], success_criteria: 'Build a scheduled DAG' },
-        { title: 'Cloud Data Platform', description: 'End-to-end pipeline: ingest → transform → warehouse.', week: 9, priority: 'critical', category: 'project', resources: ['AWS Data Analytics'], success_criteria: 'Live cloud pipeline' },
-      ],
-      'Business Analyst': [
-        { title: 'Advanced Excel & SQL', description: 'Pivot tables, VLOOKUP, macros, complex queries.', week: 1, priority: 'critical', category: 'skill', resources: ['ExcelJet', 'W3Schools SQL'], success_criteria: 'Build 5 complex reports' },
-        { title: 'BI Tools (Power BI/Tableau)', description: 'Dashboards, DAX measures, data modeling.', week: 3, priority: 'critical', category: 'skill', resources: ['Power BI Learning', 'Tableau Public'], success_criteria: 'Publish 2 dashboards' },
-        { title: 'Requirements Analysis', description: 'BPMN, user stories, stakeholder management.', week: 5, priority: 'high', category: 'skill', resources: ['BABOK Guide', 'Lucidchart'], success_criteria: 'Document 2 case studies' },
-        { title: 'Agile & JIRA', description: 'Scrum, sprint planning, backlog management.', week: 7, priority: 'medium', category: 'skill', resources: ['Atlassian Agile Coach'], success_criteria: 'Set up a JIRA board' },
-        { title: 'Case Study Interviews', description: 'Business cases, guesstimates, STAR answers.', week: 9, priority: 'critical', category: 'practice', resources: ['PrepLounge', 'CAMPUSLINK Mock'], success_criteria: '5 case studies + 3 mocks' },
-      ],
-      'Database Administrator': [
-        { title: 'SQL & Query Optimization', description: 'Advanced joins, window functions, EXPLAIN ANALYZE.', week: 1, priority: 'critical', category: 'skill', resources: ['Use the Index Luke', 'PostgreSQL Docs'], success_criteria: 'Optimize 10 slow queries' },
-        { title: 'PostgreSQL & MySQL Admin', description: 'Configuration, user management, replication.', week: 3, priority: 'critical', category: 'skill', resources: ['PostgreSQL Admin Guide'], success_criteria: 'Set up replication' },
-        { title: 'Backup & Recovery', description: 'pg_dump, PITR, encryption, audit logging.', week: 5, priority: 'critical', category: 'skill', resources: ['PostgreSQL Backup Docs'], success_criteria: 'Automated backup + recovery drill' },
-        { title: 'NoSQL & MongoDB', description: 'Document modeling, aggregation, indexing.', week: 7, priority: 'high', category: 'skill', resources: ['MongoDB University'], success_criteria: 'Build an aggregation project' },
-        { title: 'Performance Monitoring', description: 'Index strategies, connection pooling, pg_stat.', week: 9, priority: 'high', category: 'project', resources: ['pgHero', 'Datadog'], success_criteria: 'DB monitoring with alerting' },
-      ],
-      'Agentic AI Engineer': [
-        { title: 'Python & LLM APIs', description: 'OpenAI/Gemini APIs, prompt engineering, function calling.', week: 1, priority: 'critical', category: 'skill', resources: ['OpenAI Docs', 'DeepLearning.AI'], success_criteria: 'Build 3 LLM-powered scripts' },
-        { title: 'LangChain & Agent Frameworks', description: 'Chains, agents, tools, memory, LangGraph.', week: 3, priority: 'critical', category: 'skill', resources: ['LangChain Docs'], success_criteria: 'Build a ReAct agent' },
-        { title: 'RAG & Vector Databases', description: 'Embeddings, Pinecone/ChromaDB, retrieval pipelines.', week: 5, priority: 'critical', category: 'skill', resources: ['Pinecone Learning', 'LlamaIndex'], success_criteria: 'Build a RAG chatbot' },
-        { title: 'Multi-Agent Orchestration', description: 'Agent communication, task delegation, CrewAI.', week: 7, priority: 'high', category: 'skill', resources: ['CrewAI Docs', 'AutoGen Docs'], success_criteria: 'Build a multi-agent system' },
-        { title: 'Production AI Agent', description: 'Deploy with guardrails, eval metrics, monitoring.', week: 9, priority: 'critical', category: 'project', resources: ['LangSmith', 'W&B'], success_criteria: 'Deployed agent with eval' },
-      ],
-      'Cybersecurity Analyst': [
-        { title: 'Networking & Linux', description: 'TCP/IP, DNS, firewalls, Linux CLI, permissions.', week: 1, priority: 'critical', category: 'skill', resources: ['TryHackMe', 'Linux Journey'], success_criteria: 'Complete Pre-Security path' },
-        { title: 'OWASP & Web Security', description: 'SQL injection, XSS, CSRF, vulnerability scanning.', week: 3, priority: 'critical', category: 'skill', resources: ['OWASP Top 10', 'PortSwigger'], success_criteria: 'Complete 20 PortSwigger labs' },
-        { title: 'Penetration Testing', description: 'Nmap, Burp Suite, Metasploit, privilege escalation.', week: 5, priority: 'high', category: 'skill', resources: ['Hack The Box', 'TryHackMe'], success_criteria: 'Root 5 HTB machines' },
-        { title: 'SIEM & Incident Response', description: 'Log analysis, Splunk, threat detection.', week: 7, priority: 'high', category: 'skill', resources: ['Splunk Fundamentals'], success_criteria: 'Analyze 3 incidents' },
-        { title: 'Security Cert Prep', description: 'CompTIA Security+ / CEH prep.', week: 9, priority: 'critical', category: 'practice', resources: ['CompTIA CertMaster'], success_criteria: 'Score 80%+ on practice exam' },
-      ],
-      'Mobile App Developer': [
-        { title: 'JavaScript & React', description: 'ES6+, hooks, component lifecycle, state.', week: 1, priority: 'critical', category: 'skill', resources: ['React.dev', 'JavaScript.info'], success_criteria: 'Build a responsive web app' },
-        { title: 'React Native Core', description: 'Navigation, native components, debugging.', week: 3, priority: 'critical', category: 'skill', resources: ['React Native Docs', 'Expo'], success_criteria: 'Build a 5-screen mobile app' },
-        { title: 'Flutter & Cross-Platform', description: 'Dart, widgets, state management.', week: 5, priority: 'high', category: 'skill', resources: ['Flutter Docs', 'Codelabs'], success_criteria: 'Build Flutter app with API' },
-        { title: 'Firebase & Backend', description: 'Auth, Firestore, push notifications.', week: 7, priority: 'high', category: 'skill', resources: ['Firebase Docs', 'Supabase'], success_criteria: 'Integrate auth + realtime DB' },
-        { title: 'App Store Deployment', description: 'Build, sign, publish to Play Store.', week: 9, priority: 'critical', category: 'project', resources: ['Play Console'], success_criteria: 'Publish 1 app' },
-      ],
-      'Cloud Architect': [
-        { title: 'AWS Core Services', description: 'EC2, S3, RDS, IAM, VPC, Lambda.', week: 1, priority: 'critical', category: 'skill', resources: ['AWS Skill Builder', 'A Cloud Guru'], success_criteria: 'Deploy 3-tier app on AWS' },
-        { title: 'Infrastructure as Code', description: 'Terraform, CloudFormation, state management.', week: 3, priority: 'critical', category: 'skill', resources: ['HashiCorp Learn'], success_criteria: 'Provision infra via Terraform' },
-        { title: 'Microservices & Containers', description: 'Docker, ECS/EKS, service mesh, API gateway.', week: 5, priority: 'critical', category: 'skill', resources: ['Docker Docs', 'K8s Docs'], success_criteria: 'Deploy microservices on EKS' },
-        { title: 'Cloud Security', description: 'IAM, encryption, WAF, compliance.', week: 7, priority: 'high', category: 'skill', resources: ['AWS Well-Architected'], success_criteria: 'Implement least-privilege IAM' },
-        { title: 'Multi-Cloud Project', description: 'Fault-tolerant, multi-region architecture.', week: 9, priority: 'critical', category: 'project', resources: ['AWS Architecture Center'], success_criteria: 'Architecture diagram + deployment' },
-      ],
-      'Product Manager': [
-        { title: 'Product Strategy', description: 'Value proposition, market sizing, competitive analysis.', week: 1, priority: 'critical', category: 'skill', resources: ['Inspired by Marty Cagan'], success_criteria: 'Write a PRD' },
-        { title: 'User Research & Design', description: 'Interviews, personas, journey maps, Figma wireframes.', week: 3, priority: 'critical', category: 'skill', resources: ['Figma Tutorials', 'NNGroup'], success_criteria: '5 user interviews + wireframes' },
-        { title: 'Data-Driven Decisions', description: 'SQL analytics, A/B testing, product metrics.', week: 5, priority: 'high', category: 'skill', resources: ['Mode SQL', 'Amplitude'], success_criteria: 'Analyze a product dataset' },
-        { title: 'Agile Execution', description: 'Sprint planning, RICE scoring, stakeholder comms.', week: 7, priority: 'high', category: 'skill', resources: ['Scrum Guide'], success_criteria: 'Run a mock sprint' },
-        { title: 'PM Case Study Interviews', description: 'Product sense, estimation, behavioral.', week: 9, priority: 'critical', category: 'practice', resources: ['Exponent PM', 'CAMPUSLINK Mock'], success_criteria: '5 case studies + 3 mocks' },
-      ],
-    };
-
-    const milestones = templates[targetRole] || templates['Data Analyst'];
+    // Ready-made templates are completely removed — roadmap is AI-generated only
     return {
-      milestones,
-      summary: `Tailored preparation plan for ${targetRole} campus placements.`,
-      source: 'offline-fallback',
+      milestones: [],
+      summary: 'AI could not generate roadmap. AI is not fetching ready-made template of roadmap.',
+      source: 'ai-unavailable',
+      error: 'AI could not generate roadmap. AI is not fetching ready-made template of roadmap.',
     };
   }
 
@@ -566,9 +472,9 @@ const API = (() => {
     score = Math.min(95, Math.round(score));
 
     const feedback = [];
-    if (wordCount < 30) feedback.push('Your response is too brief. Aim for 80–150 words with specific details.');
+    if (wordCount < 30) feedback.push('Your response is too brief. Aim for 80â€“150 words with specific details.');
     if (!hasStructure) feedback.push('Structure your answer using the STAR method (Situation, Task, Action, Result).');
-    if (!hasMetrics) feedback.push('Include measurable outcomes — numbers, percentages, or concrete results strengthen your answer.');
+    if (!hasMetrics) feedback.push('Include measurable outcomes â€” numbers, percentages, or concrete results strengthen your answer.');
     if (wordCount > 20 && hasStructure) feedback.push('Good structure! Now add more specific technical details about your contribution.');
     if (score >= 70) feedback.push('Strong answer. Consider adding a brief reflection on what you learned.');
 
@@ -577,7 +483,7 @@ const API = (() => {
       feedback: feedback.join(' '),
       strengths: score >= 60 ? ['Clear communication', 'Relevant example'] : ['Attempted response'],
       improvements: feedback.slice(0, 2),
-      tip: 'Remember STAR: Situation → Task → Action → Result. Keep answers between 90–120 seconds when spoken.',
+      tip: 'Remember STAR: Situation â†’ Task â†’ Action â†’ Result. Keep answers between 90â€“120 seconds when spoken.',
     };
   }
 
@@ -612,17 +518,17 @@ const API = (() => {
 
     const score = Math.round(factors.reduce((sum, f) => sum + (f.value * f.weight), 0));
     let statusBand;
-    if (score >= 80) statusBand = { label: 'Highly Employable', color: 'success', emoji: '🟢' };
-    else if (score >= 60) statusBand = { label: 'Ready', color: 'accent', emoji: '🔵' };
-    else if (score >= 40) statusBand = { label: 'Developing', color: 'warning', emoji: '🟡' };
-    else if (score > 0) statusBand = { label: 'Needs Improvement', color: 'danger', emoji: '🔴' };
-    else statusBand = { label: 'Profile Pending', color: 'muted', emoji: '⏳' };
+    if (score >= 80) statusBand = { label: 'Highly Employable', color: 'success', emoji: 'ðŸŸ¢' };
+    else if (score >= 60) statusBand = { label: 'Ready', color: 'accent', emoji: 'ðŸ”µ' };
+    else if (score >= 40) statusBand = { label: 'Developing', color: 'warning', emoji: 'ðŸŸ¡' };
+    else if (score > 0) statusBand = { label: 'Needs Improvement', color: 'danger', emoji: 'ðŸ”´' };
+    else statusBand = { label: 'Profile Pending', color: 'muted', emoji: 'â³' };
 
     const sortedFactors = [...factors].sort((a, b) => a.value - b.value);
     const recommendations = score === 0 ? [] : sortedFactors.slice(0, 3).map(f => ({
       area: f.label,
       score: f.value,
-      action: f.value < 40 ? `Urgently improve ${f.label} — currently at ${f.value}%` : `Continue building ${f.label} (currently ${f.value}%)`,
+      action: f.value < 40 ? `Urgently improve ${f.label} â€” currently at ${f.value}%` : `Continue building ${f.label} (currently ${f.value}%)`,
       priority: f.value < 40 ? 'high' : f.value < 60 ? 'medium' : 'low',
     }));
 

@@ -1,163 +1,294 @@
 /* ============================================================
-   CAMPUSLINK — Career Roadmap Page (Feature 7: AI Roadmap)
-   Interactive milestones, dynamic role selector, and robust
-   multi-tier fallbacks (Node Groq LLM -> Template -> Client).
+   CAMPUSLINK — Career Roadmap Page (Feature 7: AI-First Dynamic Roadmap)
+   - ALWAYS prioritizes and tries to display live Groq AI-generated roadmap
+   - ONLY falls back to the verified 4-week template when AI generation fails
+   - Interactive checkboxes for both AI plan and fallback template
+   - Real-time animated progress bar updating on every checkbox click
+   - Full persistence via localStorage
    ============================================================ */
 const StudentRoadmap = (() => {
-  // Built-in role milestone templates for instant client resilience
-  const ROLE_TEMPLATES = {
-    'Data Analyst': [
-      { id: 'da-1', title: 'Master SQL Fundamentals', desc: 'Joins, group by, window functions, and subqueries.', due: 'Week 2', status: 'completed', category: 'skill', resources: ['SQLBolt.com', 'LeetCode SQL 50'] },
-      { id: 'da-2', title: 'Python for Data Analysis', desc: 'Pandas, NumPy, and Matplotlib data cleaning & EDA.', due: 'Week 4', status: 'completed', category: 'skill', resources: ['Kaggle Learn Python', 'Automate the Boring Stuff'] },
-      { id: 'da-3', title: 'Interactive BI Dashboard', desc: 'Build an end-to-end dashboard in Power BI or Tableau with real data.', due: 'Week 6', status: 'in-progress', category: 'project', resources: ['Power BI Learn', 'Tableau Public'] },
-      { id: 'da-4', title: 'Statistics & Hypothesis Testing', desc: 'A/B testing, normal distribution, p-values, and regression.', due: 'Week 8', status: 'pending', category: 'skill', resources: ['Khan Academy Stats', 'StatQuest'] },
-      { id: 'da-5', title: 'Timed Aptitude & SQL Mock Mocks', desc: 'Speed tests for company recruitment rounds.', due: 'Week 10', status: 'pending', category: 'practice', resources: ['IndiaBIX', 'CampusLink Mock'] },
-      { id: 'da-6', title: 'AI Mock Interviews x3', desc: 'STAR technique behavioral and analytics case study practice.', due: 'Week 12', status: 'pending', category: 'practice', resources: ['CampusLink AI Interview'] },
-    ],
-    'Software Engineer': [
-      { id: 'swe-1', title: 'Data Structures Foundations', desc: 'Arrays, HashMaps, Strings, and Two Pointers.', due: 'Week 2', status: 'completed', category: 'skill', resources: ['NeetCode 150', 'Abdul Bari DSA'] },
-      { id: 'swe-2', title: 'Trees, Graphs & Dynamic Programming', desc: 'DFS, BFS, recursion, and memoization patterns.', due: 'Week 4', status: 'in-progress', category: 'skill', resources: ['LeetCode 75', 'NeetCode'] },
-      { id: 'swe-3', title: 'Full-Stack Portfolio Project', desc: 'Production-ready web app with authentication and database.', due: 'Week 6', status: 'pending', category: 'project', resources: ['GitHub Actions', 'Vercel / Render'] },
-      { id: 'swe-4', title: 'System Design Basics', desc: 'Caching, horizontal scaling, load balancers, and REST APIs.', due: 'Week 8', status: 'pending', category: 'skill', resources: ['System Design Primer', 'Gaurav Sen'] },
-      { id: 'swe-5', title: 'Aptitude & CS Fundamentals', desc: 'OS, DBMS, Computer Networks, and OOP revision.', due: 'Week 10', status: 'pending', category: 'skill', resources: ['GateSmashers', 'GeeksforGeeks'] },
-      { id: 'swe-6', title: 'Technical Mock Interviews x3', desc: 'Live coding problem solving + behavioral questions.', due: 'Week 12', status: 'pending', category: 'practice', resources: ['CampusLink AI Mock'] },
-    ],
-    'Web Developer': [
-      { id: 'web-1', title: 'Modern JavaScript & TypeScript', desc: 'Closures, Promises, Async/Await, and type definitions.', due: 'Week 2', status: 'completed', category: 'skill', resources: ['JavaScript.info', 'TypeScript Handbook'] },
-      { id: 'web-2', title: 'React Ecosystem & State Management', desc: 'Hooks, routing, Context API, and Tailwind/CSS modularity.', due: 'Week 4', status: 'in-progress', category: 'skill', resources: ['React.dev', 'Epic React'] },
-      { id: 'web-3', title: 'Backend APIs with Node & SQL', desc: 'Express CRUD, JWT auth, input validation, and PostgreSQL.', due: 'Week 6', status: 'pending', category: 'skill', resources: ['Node.js Docs', 'Prisma ORM'] },
-      { id: 'web-4', title: 'Deploy SaaS Capstone', desc: 'Full-stack application deployed live with CI/CD and custom domain.', due: 'Week 8', status: 'pending', category: 'project', resources: ['Vercel', 'Render', 'GitHub'] },
-      { id: 'web-5', title: 'Web Performance & Security Audit', desc: 'Lighthouse 90+ score, CORS, sanitize inputs, SEO setup.', due: 'Week 10', status: 'pending', category: 'skill', resources: ['web.dev', 'OWASP Top 10'] },
-      { id: 'web-6', title: 'Frontend Interview Deep-Dive', desc: 'DOM manipulation, system questions, and portfolio walkthrough.', due: 'Week 12', status: 'pending', category: 'practice', resources: ['CampusLink AI Interview'] },
-    ],
-    'ML Engineer': [
-      { id: 'ml-1', title: 'Math Foundations (Linear Algebra & Calculus)', desc: 'Matrix operations, gradient descent, and probability basics.', due: 'Week 2', status: 'completed', category: 'skill', resources: ['3Blue1Brown', 'StatQuest'] },
-      { id: 'ml-2', title: 'Classical ML Algorithms', desc: 'Linear/Logistic regression, Decision Trees, and Random Forests.', due: 'Week 4', status: 'in-progress', category: 'skill', resources: ['Scikit-Learn Docs', 'Kaggle Courses'] },
-      { id: 'ml-3', title: 'Deep Learning & PyTorch', desc: 'Neural network architectures, CNNs, Transformers, and loss functions.', due: 'Week 7', status: 'pending', category: 'skill', resources: ['fast.ai', 'PyTorch Blitz'] },
-      { id: 'ml-4', title: 'End-to-End ML API Deployment', desc: 'Wrap trained model in FastAPI and Docker; deploy to cloud.', due: 'Week 9', status: 'pending', category: 'project', resources: ['Docker Docs', 'Full Stack Deep Learning'] },
-      { id: 'ml-5', title: 'ML System Design & Case Studies', desc: 'Recommendation systems, feature store, and model evaluation metrics.', due: 'Week 11', status: 'pending', category: 'practice', resources: ['Chip Huyen ML System Design'] },
-    ],
-    'DevOps Engineer': [
-      { id: 'devops-1', title: 'Linux System Administration & Bash', desc: 'SSH, permissions, systemd, process monitoring, and shell scripts.', due: 'Week 2', status: 'completed', category: 'skill', resources: ['Linux Journey', 'OverTheWire'] },
-      { id: 'devops-2', title: 'Docker Containerization', desc: 'Multi-stage builds, networks, volumes, and Docker Compose.', due: 'Week 4', status: 'in-progress', category: 'skill', resources: ['Docker Docs', 'Play with Docker'] },
-      { id: 'devops-3', title: 'Kubernetes Cluster Setup', desc: 'Pods, Deployments, Services, and Ingress on Minikube / K3s.', due: 'Week 6', status: 'pending', category: 'skill', resources: ['KodeKloud', 'Kubernetes Docs'] },
-      { id: 'devops-4', title: 'Automated CI/CD Pipeline', desc: 'GitHub Actions workflow with lint, test, build, and automated deploy.', due: 'Week 8', status: 'pending', category: 'project', resources: ['GitHub Actions', 'AWS Skill Builder'] },
-      { id: 'devops-5', title: 'Infrastructure as Code (Terraform)', desc: 'Provision cloud VPC, subnets, and compute instances reproducibly.', due: 'Week 10', status: 'pending', category: 'skill', resources: ['HashiCorp Learn'] },
-    ],
-  };
+  // All 10 trending roles from docx curriculum + standard aliases
+  const ROLE_OPTIONS = [
+    { value: 'Frontend Developer', label: '🎨 Frontend Developer' },
+    { value: 'Backend Developer', label: '⚙️ Backend Developer' },
+    { value: 'Data Engineer', label: '🗄️ Data Engineer' },
+    { value: 'Data Analyst', label: '📊 Data Analyst' },
+    { value: 'Software Engineer', label: '💻 Software Engineer (SDE)' },
+    { value: 'Business Analyst', label: '📈 Business Analyst' },
+    { value: 'Database Administrator', label: '🗃️ Database Administrator' },
+    { value: 'Agentic AI Engineer', label: '🤖 Agentic AI Engineer' },
+    { value: 'Cybersecurity Analyst', label: '🛡️ Cybersecurity Analyst' },
+    { value: 'Mobile App Developer', label: '📱 Mobile App Developer' },
+    { value: 'Cloud Architect', label: '☁️ Cloud Architect' },
+    { value: 'Product Manager', label: '🚀 Product Manager' },
+  ];
 
-  // State
+  // Component State
   let state = {
-    targetRole: 'Data Analyst',
-    milestones: [],
-    generatedMilestones: null,
-    generatedSummary: '',
-    generatedSource: '',
+    targetRole: 'Frontend Developer',
+    isGenerating: false,
+    aiRoadmap: null,               // { summary, milestones, source, timestamp }
+    aiError: null,                 // Error string when AI generation fails
+    showingFallbackTemplate: false,// Set to TRUE only when AI fails
+    expandedWeeks: { 0: true, 1: true, 2: true, 3: true },
   };
 
-  function init() {
-    const profileRole = Store.getProfile()?.targetRole || 'Data Analyst';
-    state.targetRole = profileRole;
-    // Load from template for initial role
-    state.milestones = JSON.parse(JSON.stringify(ROLE_TEMPLATES[profileRole] || ROLE_TEMPLATES['Data Analyst']));
+  // ─── LocalStorage Checkbox Helpers ───────────────────────────
+  function getAIChecked(role) {
+    try {
+      const raw = localStorage.getItem(`CAMPUSLINK_ROADMAP_AI_CHECKED_${role}`);
+      return raw ? JSON.parse(raw) : {};
+    } catch {
+      return {};
+    }
   }
 
+  function saveAIChecked(role, data) {
+    try {
+      localStorage.setItem(`CAMPUSLINK_ROADMAP_AI_CHECKED_${role}`, JSON.stringify(data));
+    } catch (e) {
+      console.warn('[Roadmap] Failed to save AI checkbox state', e);
+    }
+  }
+
+  function getTemplateChecked(role) {
+    try {
+      const raw = localStorage.getItem(`CAMPUSLINK_ROADMAP_CHECKED_${role}`);
+      return raw ? JSON.parse(raw) : {};
+    } catch {
+      return {};
+    }
+  }
+
+  function saveTemplateChecked(role, data) {
+    try {
+      localStorage.setItem(`CAMPUSLINK_ROADMAP_CHECKED_${role}`, JSON.stringify(data));
+    } catch (e) {
+      console.warn('[Roadmap] Failed to save template checkbox state', e);
+    }
+  }
+
+  // ─── Data Accessor for Fallback Template ─────────────────────
+  function getFallbackRoleData(roleName) {
+    const dataset = window.ROADMAP_FALLBACK_DATA || {};
+    if (dataset[roleName]) return dataset[roleName];
+
+    // Alias fallbacks
+    if (roleName === 'Data Analyst' && dataset['Data Engineer']) return dataset['Data Engineer'];
+    if (roleName === 'Software Engineer' && dataset['Backend Developer']) return dataset['Backend Developer'];
+
+    return dataset['Frontend Developer'] || { role: roleName, weeks: [] };
+  }
+
+  // ─── Initialization ──────────────────────────────────────────
+  function init() {
+    const profile = Store.getProfile();
+    const profileRole = profile?.targetRole || 'Frontend Developer';
+
+    const matched = ROLE_OPTIONS.find(r => r.value.toLowerCase() === profileRole.toLowerCase());
+    state.targetRole = matched ? matched.value : 'Frontend Developer';
+
+    // Check if an AI roadmap was previously generated for this role
+    try {
+      const savedAI = localStorage.getItem(`CAMPUSLINK_ROADMAP_AI_DATA_${state.targetRole}`);
+      if (savedAI) {
+        state.aiRoadmap = JSON.parse(savedAI);
+        state.showingFallbackTemplate = false;
+        state.aiError = null;
+      } else {
+        state.aiRoadmap = null;
+        state.showingFallbackTemplate = false;
+        state.aiError = null;
+      }
+    } catch {
+      state.aiRoadmap = null;
+    }
+  }
+
+  // ─── Main Render ─────────────────────────────────────────────
   async function render() {
-    if (!state.milestones || state.milestones.length === 0) {
-      init();
+    if (!state.targetRole) init();
+
+    const mainEl = document.getElementById('main');
+    if (!mainEl) return;
+
+    // AUTO-FETCH: Always try to generate AI roadmap if not present yet
+    if (!state.aiRoadmap && !state.showingFallbackTemplate && !state.isGenerating && !state.aiError) {
+      generateAIRoadmap(true); // background initial fetch
     }
 
-    const completed = state.milestones.filter(m => m.status === 'completed').length;
-    const total = state.milestones.length;
-    const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+    // Determine current progress depending on whether AI or Fallback is active
+    let currentPct = 0;
+    let currentCompleted = 0;
+    let currentTotal = 0;
 
-    document.getElementById('main').innerHTML = `
+    if (!state.showingFallbackTemplate && state.aiRoadmap) {
+      // AI Roadmap Progress
+      const milestones = state.aiRoadmap.milestones || [];
+      const aiChecked = getAIChecked(state.targetRole);
+      currentTotal = milestones.length;
+      currentCompleted = milestones.filter((_, idx) => aiChecked[`ai-${state.targetRole}-m${idx}`]).length;
+      currentPct = currentTotal > 0 ? Math.round((currentCompleted / currentTotal) * 100) : 0;
+    } else if (state.showingFallbackTemplate) {
+      // Fallback Template Progress
+      const roleData = getFallbackRoleData(state.targetRole);
+      const checkedMap = getTemplateChecked(state.targetRole);
+      (roleData.weeks || []).forEach((w, wIdx) => {
+        currentTotal += 1; // 1 project
+        if (checkedMap[`proj-${state.targetRole}-w${wIdx}`]) currentCompleted += 1;
+        (w.days || []).forEach((_, dIdx) => {
+          currentTotal += 1; // 1 day
+          if (checkedMap[`day-${state.targetRole}-w${wIdx}-d${dIdx}`]) currentCompleted += 1;
+        });
+      });
+      currentPct = currentTotal > 0 ? Math.round((currentCompleted / currentTotal) * 100) : 0;
+    }
+
+    mainEl.innerHTML = `
       <div class="page-header">
         <div class="page-header-content">
-          <div class="page-eyebrow">Career Roadmap</div>
-          <h1 class="page-title">Your Learning Journey</h1>
-          <p class="page-subtitle">A dynamic milestone-based learning plan aligned to your target role. Click any milestone to update your progress.</p>
+          <div class="page-eyebrow">Career Placement Intelligence</div>
+          <h1 class="page-title">Personalized Career Roadmap</h1>
+          <p class="page-subtitle">
+            ${state.showingFallbackTemplate
+              ? 'Showing verified 4-week placement curriculum (AI engine currently offline).'
+              : 'Dynamically personalized preparation plan powered by Groq AI.'}
+          </p>
         </div>
       </div>
 
-      <div class="grid grid-main">
-        <div class="stack">
-          <!-- Active Checklist Card -->
-          <article class="card animate-fade-in-up">
-            <div class="card-header">
-              <div class="flex items-center gap-3">
-                <h2 class="card-title">Roadmap Progress: <span class="text-accent">${state.targetRole}</span></h2>
-              </div>
-              <span class="badge badge-accent" id="milestones-count-badge">${completed}/${total} completed</span>
-            </div>
-
-            <div class="progress-group mb-6">
-              <div class="progress-label">
-                <span class="progress-label-name">Overall Progress</span>
-                <span class="progress-label-value" id="progress-pct-text">${pct}%</span>
-              </div>
-              <div class="progress-bar">
-                <div class="progress-bar-fill" id="progress-bar-fill" style="width:${pct}%"></div>
+      <!-- AI Unavailable Alert: ONLY SHOWN WHEN AI FAILS -->
+      ${state.showingFallbackTemplate ? `
+        <div class="roadmap-alert-box animate-fade-in-up">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span style="font-size:26px">⚠️</span>
+              <div>
+                <strong style="color:var(--danger);font-size:14px">AI Roadmap Generation Unavailable</strong>
+                <p class="text-xs text-muted mt-1">
+                  ${state.aiError || 'Groq AI service is currently unreachable. Displaying the verified 4-week placement curriculum below with full interactive checkbox tracking.'}
+                </p>
               </div>
             </div>
-
-            <div class="schedule-timeline" id="milestones-timeline">
-              ${renderTimeline(state.milestones)}
-            </div>
-          </article>
-
-          <!-- Generated AI Roadmap Container -->
-          <div id="ai-roadmap-results">
-            ${state.generatedMilestones ? renderGeneratedPlan() : ''}
+            <button class="btn btn-sm btn-primary" onclick="StudentRoadmap.generateAIRoadmap()" ${state.isGenerating ? 'disabled' : ''}>
+              ${state.isGenerating ? '🤖 Retrying...' : '🔄 Retry AI Generation'}
+            </button>
           </div>
         </div>
+      ` : ''}
 
+      <div class="grid grid-main">
+        <div class="stack">
+          <!-- Main Progress Card -->
+          <article class="card animate-fade-in-up">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">
+                  Roadmap: <span class="text-accent">${state.targetRole}</span>
+                </h2>
+                <div class="text-xs text-muted mt-1">
+                  ${state.showingFallbackTemplate
+                    ? '<span class="badge badge-warning text-xs">Verified 4-Week Curriculum (Fallback)</span>'
+                    : '<span class="badge badge-accent text-xs">🤖 Live Groq AI Generated</span>'}
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="badge ${currentPct >= 100 ? 'badge-success' : 'badge-accent'}" id="progress-count-badge">
+                  ${currentCompleted} / ${currentTotal} Completed
+                </span>
+                <button class="btn btn-sm btn-ghost text-xs" onclick="StudentRoadmap.resetCheckboxes()" title="Reset progress">
+                  🔄 Reset
+                </button>
+              </div>
+            </div>
+
+            <!-- Dynamic Animated Progress Bar -->
+            <div class="progress-group mb-4">
+              <div class="progress-label">
+                <span class="progress-label-name font-bold">Overall Roadmap Progress</span>
+                <span class="progress-label-value font-bold text-accent" id="progress-pct-label">${currentPct}%</span>
+              </div>
+              <div class="progress-bar" style="height:10px">
+                <div class="progress-bar-fill ${currentPct >= 100 ? 'success' : ''}" id="progress-bar-fill-el" style="width:${currentPct}%"></div>
+              </div>
+            </div>
+
+            <!-- Quick Metrics Grid -->
+            <div class="roadmap-stats-grid">
+              <div class="roadmap-stat-card">
+                <div class="roadmap-stat-val text-accent">${currentCompleted}</div>
+                <div class="roadmap-stat-lbl">Tasks Done</div>
+              </div>
+              <div class="roadmap-stat-card">
+                <div class="roadmap-stat-val">${Math.max(0, currentTotal - currentCompleted)}</div>
+                <div class="roadmap-stat-lbl">Remaining</div>
+              </div>
+              <div class="roadmap-stat-card">
+                <div class="roadmap-stat-val">${state.showingFallbackTemplate ? '4' : (state.aiRoadmap?.milestones?.length || 4)}</div>
+                <div class="roadmap-stat-lbl">${state.showingFallbackTemplate ? 'Projects' : 'Milestones'}</div>
+              </div>
+              <div class="roadmap-stat-card">
+                <div class="roadmap-stat-val">${state.showingFallbackTemplate ? 'Template' : 'Groq AI'}</div>
+                <div class="roadmap-stat-lbl">Source Engine</div>
+              </div>
+            </div>
+
+            <!-- Main Content Area: AI Plan OR Fallback Template -->
+            <div id="roadmap-main-content">
+              ${state.isGenerating ? renderLoadingState() : (
+                state.showingFallbackTemplate ? renderFallbackTemplateView() : renderAIPlanView()
+              )}
+            </div>
+          </article>
+        </div>
+
+        <!-- Sidebar: Role Selector & AI Generator Controls -->
         <aside class="stack">
           <!-- Target Role Selection Card -->
-          <article class="card card-accent animate-fade-in-up" style="animation-delay:80ms">
-            <h3 class="card-title mb-2">🎯 Target Career Path</h3>
-            <p class="text-xs text-muted mb-4">Choose your target placement role to adapt your milestones:</p>
+          <article class="card card-accent animate-fade-in-up" style="animation-delay:60ms">
+            <h3 class="card-title mb-2">🎯 Target Placement Role</h3>
+            <p class="text-xs text-muted mb-4">Change your role to generate a fresh AI roadmap:</p>
 
             <div class="form-group mb-4">
-              <select id="roadmap-role-select" class="form-select" onchange="StudentRoadmap.onRoleChange(this.value)" style="width:100%;padding:8px 12px;border-radius:var(--radius-md);background:var(--bg-primary);color:var(--text-primary);border:1px solid var(--border-default)">
-                <option value="Data Analyst" ${state.targetRole === 'Data Analyst' ? 'selected' : ''}>📊 Data Analyst</option>
-                <option value="Software Engineer" ${state.targetRole === 'Software Engineer' ? 'selected' : ''}>💻 Software Engineer (SDE)</option>
-                <option value="Web Developer" ${state.targetRole === 'Web Developer' ? 'selected' : ''}>🌐 Full-Stack Web Developer</option>
-                <option value="ML Engineer" ${state.targetRole === 'ML Engineer' ? 'selected' : ''}>🤖 ML / AI Engineer</option>
-                <option value="DevOps Engineer" ${state.targetRole === 'DevOps Engineer' ? 'selected' : ''}>☁️ Cloud & DevOps Engineer</option>
+              <select id="roadmap-role-select" class="form-select" onchange="StudentRoadmap.onRoleChange(this.value)" style="width:100%;padding:10px 12px;border-radius:var(--radius-md);background:var(--bg-primary);color:var(--text-primary);border:1px solid var(--border-default);font-weight:600">
+                ${ROLE_OPTIONS.map(r => `
+                  <option value="${r.value}" ${state.targetRole === r.value ? 'selected' : ''}>${r.label}</option>
+                `).join('')}
               </select>
             </div>
 
-            <button class="btn btn-primary" style="width:100%" id="generate-roadmap-btn" onclick="StudentRoadmap.generateAIRoadmap()">
-              🤖 Generate AI Roadmap
+            <button class="btn btn-primary" style="width:100%" id="generate-roadmap-btn" onclick="StudentRoadmap.generateAIRoadmap()" ${state.isGenerating ? 'disabled' : ''}>
+              ${state.isGenerating ? '🤖 Generating Plan...' : '🤖 Regenerate with Groq AI'}
             </button>
-            <p class="text-xs text-muted mt-3">Uses AI to tailor week-by-week goals matching your current profile.</p>
+            <p class="text-xs text-muted mt-3" style="line-height:1.4">
+              ⚡ Always dynamically generated via Groq AI. Ready-made fallback plan is only shown when AI fails.
+            </p>
           </article>
 
-          <!-- Interactive Legend & Tips -->
-          <article class="card animate-fade-in-up" style="animation-delay:120ms">
-            <div class="card-header"><h2 class="card-title">💡 Progress Controls</h2></div>
-            <div class="text-xs text-muted stack" style="gap:var(--space-2)">
-              <div class="flex items-center gap-2">
-                <span class="status-badge status-accepted" style="padding:2px 8px">completed</span>
-                <span>Click to cycle milestone status</span>
+          <!-- Checkbox Instructions Card -->
+          <article class="card animate-fade-in-up" style="animation-delay:100ms">
+            <div class="card-header"><h2 class="card-title">💡 How it Works</h2></div>
+            <div class="text-xs text-muted stack" style="gap:var(--space-3)">
+              <div class="flex items-start gap-2">
+                <span class="text-accent font-bold" style="font-size:16px">🤖</span>
+                <span>The platform always creates and displays an AI-generated roadmap.</span>
               </div>
-              <div class="flex items-center gap-2">
-                <span class="status-badge status-interview" style="padding:2px 8px">in-progress</span>
-                <span>Currently active study task</span>
+              <div class="flex items-start gap-2">
+                <span class="text-success font-bold" style="font-size:16px">☑️</span>
+                <span>Click any checkbox to record completed milestones or daily tasks.</span>
               </div>
-              <div class="flex items-center gap-2">
-                <span class="status-badge status-draft" style="padding:2px 8px">pending</span>
-                <span>Upcoming milestone</span>
+              <div class="flex items-start gap-2">
+                <span class="text-warning font-bold" style="font-size:16px">🛡️</span>
+                <span>If Groq AI is temporarily unreachable, the verified 4-week template takes over seamlessly.</span>
               </div>
             </div>
           </article>
 
-          <!-- Mentor Review -->
-          <article class="card animate-fade-in-up" style="animation-delay:150ms">
+          <!-- Mentor Review Card -->
+          <article class="card animate-fade-in-up" style="animation-delay:140ms">
             <div class="card-header"><h2 class="card-title">Mentor Review</h2></div>
             <div class="insight-card accent">
-              <strong>Pending review</strong> Your assigned faculty mentor can approve, adjust, or verify milestones.
+              <strong>Progress Tracking</strong> Completed roadmap tasks can be submitted to your assigned placement mentor for review.
             </div>
             <button class="btn btn-sm mt-4" style="width:100%" onclick="Toast.info('Roadmap progress submitted to your mentor for review!')">
               Request Mentor Review
@@ -168,91 +299,310 @@ const StudentRoadmap = (() => {
     `;
   }
 
-  function renderTimeline(milestones) {
-    return milestones.map((m, i) => {
-      const isDone = m.status === 'completed';
-      const isInProg = m.status === 'in-progress';
-      const borderColor = isDone ? 'var(--success)' : isInProg ? 'var(--accent)' : 'var(--border-default)';
-      const badgeClass = isDone ? 'status-accepted' : isInProg ? 'status-interview' : 'status-draft';
+  // ─── Render AI Plan View (PRIORITY VIEW) ─────────────────────
+  function renderAIPlanView() {
+    if (!state.aiRoadmap) {
+      return `
+        <div class="empty-state p-6 text-center" style="padding:var(--space-8) var(--space-4)">
+          <div style="font-size:44px;margin-bottom:var(--space-2)">🤖</div>
+          <h3 class="font-bold text-base mb-1">Generating AI Roadmap...</h3>
+          <p class="text-sm text-muted mb-4">Click below to generate a tailored preparation plan with Groq AI.</p>
+          <button class="btn btn-primary" onclick="StudentRoadmap.generateAIRoadmap()">
+            🤖 Generate AI Roadmap Now
+          </button>
+        </div>
+      `;
+    }
+
+    const milestones = state.aiRoadmap.milestones || [];
+    const aiChecked = getAIChecked(state.targetRole);
+
+    return `
+      <div class="stack">
+        <!-- AI Summary Card -->
+        <div class="card card-accent mb-4" style="background:rgba(59,130,246,0.06);border:1px solid var(--accent);padding:var(--space-4)">
+          <div class="flex items-center justify-between mb-2">
+            <span class="badge badge-accent">🤖 Groq AI Personalized Strategy</span>
+            <span class="text-xs text-muted">Target: ${state.targetRole}</span>
+          </div>
+          <p class="text-sm" style="color:var(--text-primary);line-height:1.5;margin:0">
+            ${typeof AIText !== 'undefined' ? AIText.formatInline(state.aiRoadmap.summary) : state.aiRoadmap.summary}
+          </p>
+        </div>
+
+        <!-- AI Milestones Checklist -->
+        <div class="roadmap-day-list">
+          <div class="text-xs font-bold text-muted mb-2">AI-Generated Milestone Checklist:</div>
+          ${milestones.map((m, idx) => {
+            const aiKey = `ai-${state.targetRole}-m${idx}`;
+            const isDone = !!aiChecked[aiKey];
+            const priorityColor = m.priority === 'critical' ? 'var(--danger)' : m.priority === 'high' ? 'var(--warning)' : 'var(--accent)';
+
+            return `
+              <div class="roadmap-day-row ${isDone ? 'is-done' : ''}" style="border-left-color:${isDone ? 'var(--success)' : priorityColor}">
+                <input type="checkbox"
+                       class="roadmap-checkbox-custom"
+                       id="chk-${aiKey}"
+                       ${isDone ? 'checked' : ''}
+                       onchange="StudentRoadmap.toggleAICheck('${state.targetRole}', ${idx}, this.checked)">
+                <div class="roadmap-day-content">
+                  <div class="roadmap-day-header">
+                    <span class="roadmap-day-name ${isDone ? 'done' : ''}">
+                      ${m.week ? `Week ${m.week}: ` : ''}${m.title || `Milestone ${idx + 1}`}
+                    </span>
+                    <div class="flex items-center gap-2">
+                      <span class="badge badge-${m.priority === 'critical' ? 'danger' : m.priority === 'high' ? 'warning' : 'ghost'}" style="font-size:10px">
+                        ${m.priority || 'medium'}
+                      </span>
+                      <span class="badge badge-ghost" style="font-size:10px">${m.category || 'skill'}</span>
+                    </div>
+                  </div>
+
+                  <p class="text-xs text-muted mb-2" style="${isDone ? 'text-decoration:line-through;opacity:0.75' : ''}">${m.description || ''}</p>
+
+                  ${m.tasks && m.tasks.length ? `
+                    <ul class="roadmap-task-list">
+                      ${m.tasks.map(t => `<li style="${isDone ? 'text-decoration:line-through;opacity:0.75' : ''}">${t}</li>`).join('')}
+                    </ul>
+                  ` : ''}
+
+                  ${m.project ? `
+                    <div class="text-xs mt-1 mb-2" style="color:var(--accent)">
+                      📦 <strong>Project Deliverable:</strong> ${m.project}
+                    </div>
+                  ` : ''}
+
+                  <div class="roadmap-meta-row">
+                    ${m.resources && m.resources.length ? `
+                      <span>📚 <strong class="text-accent">${Array.isArray(m.resources) ? m.resources.join(' · ') : m.resources}</strong></span>
+                    ` : ''}
+                    ${m.success_criteria ? `
+                      <span>✅ <em>Done when: ${m.success_criteria}</em></span>
+                    ` : ''}
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  // ─── Render Fallback Template View (ONLY WHEN AI FAILS) ───────
+  function renderFallbackTemplateView() {
+    const roleData = getFallbackRoleData(state.targetRole);
+    const checkedMap = getTemplateChecked(state.targetRole);
+    const weeks = roleData.weeks || [];
+
+    return weeks.map((w, wIdx) => {
+      const isExpanded = state.expandedWeeks[wIdx] !== false;
+      const projKey = `proj-${state.targetRole}-w${wIdx}`;
+      const isProjDone = !!checkedMap[projKey];
+
+      let weekTasksTotal = 1 + (w.days ? w.days.length : 0);
+      let weekTasksDone = isProjDone ? 1 : 0;
+      (w.days || []).forEach((_, dIdx) => {
+        if (checkedMap[`day-${state.targetRole}-w${wIdx}-d${dIdx}`]) weekTasksDone += 1;
+      });
+      const weekPct = Math.round((weekTasksDone / weekTasksTotal) * 100);
 
       return `
-        <div class="schedule-event animate-fade-in-up"
-             style="animation-delay:${i * 40}ms; border-left-color:${borderColor}; cursor:pointer; transition:transform 0.15s ease, background 0.15s ease"
-             onclick="StudentRoadmap.toggleMilestone(${i})"
-             title="Click to toggle status (pending → in-progress → completed)">
-          <div class="flex justify-between items-center mb-2">
-            <div class="flex items-center gap-3">
-              <div class="milestone-number ${isDone ? 'completed' : ''}" style="${isInProg ? 'border-color:var(--accent);color:var(--accent)' : ''}">
-                ${isDone ? '✓' : i + 1}
-              </div>
-              <div>
-                <div class="font-bold text-sm ${isDone ? 'text-muted' : ''}" style="${isDone ? 'text-decoration:line-through;opacity:0.8' : ''}">
-                  ${m.title}
-                </div>
-                ${m.category ? `<span class="badge badge-ghost" style="font-size:10px;padding:1px 6px">${m.category}</span>` : ''}
-              </div>
+        <section class="roadmap-week-card">
+          <!-- Week Header with Accordion Toggle -->
+          <div class="roadmap-week-header" onclick="StudentRoadmap.toggleWeek(${wIdx})">
+            <div class="roadmap-week-title-row">
+              <span class="roadmap-week-pill">Week ${w.week || wIdx + 1}</span>
+              <strong style="font-size:15px;color:var(--text-primary)">${w.title || `Week ${wIdx + 1}`}</strong>
             </div>
-            <span class="status-badge ${badgeClass}" style="cursor:pointer">${m.status}</span>
+            <div class="flex items-center gap-3">
+              <span class="badge ${weekTasksDone === weekTasksTotal ? 'badge-success' : 'badge-accent'}" style="font-size:11px">
+                ${weekTasksDone}/${weekTasksTotal} Done (${weekPct}%)
+              </span>
+              <span style="font-size:12px;color:var(--text-muted)">${isExpanded ? '▲' : '▼'}</span>
+            </div>
           </div>
 
-          <p class="text-sm text-muted mb-2">${m.desc || m.description || ''}</p>
+          ${isExpanded ? `
+            <div class="p-4" style="border-bottom:1px solid var(--border-subtle);background:var(--bg-primary)">
+              <div class="text-xs text-muted"><strong>🎯 Goal:</strong> ${w.goal || 'Complete weekly curriculum'}</div>
+            </div>
 
-          <div class="flex justify-between items-center text-xs text-muted">
-            <span>📅 ${m.due || (m.week ? `Week ${m.week}` : 'Upcoming')}</span>
-            ${m.resources?.length ? `<span class="text-accent">📚 ${Array.isArray(m.resources) ? m.resources.slice(0, 2).join(' · ') : m.resources}</span>` : ''}
-          </div>
-        </div>
+            <!-- Weekly Project -->
+            ${w.project ? `
+              <div class="roadmap-project-box">
+                <div class="roadmap-project-header">
+                  <div class="flex items-start gap-3">
+                    <input type="checkbox"
+                           class="roadmap-checkbox-custom"
+                           id="chk-${projKey}"
+                           ${isProjDone ? 'checked' : ''}
+                           onchange="StudentRoadmap.toggleProjectCheck('${state.targetRole}', ${wIdx}, this.checked)">
+                    <div>
+                      <div class="font-bold text-sm ${isProjDone ? 'text-muted' : ''}" style="${isProjDone ? 'text-decoration:line-through' : ''}">
+                        📦 ${w.project.title || 'Weekly Hands-On Project'}
+                      </div>
+                      <div class="text-xs text-muted mt-1">${w.project.deliverable || ''}</div>
+                      ${w.project.tools ? `<div class="mt-2"><span class="badge badge-accent" style="font-size:10px">Tech: ${w.project.tools}</span></div>` : ''}
+                    </div>
+                  </div>
+                  <span class="badge ${isProjDone ? 'badge-success' : 'badge-ghost'}" style="font-size:10px">
+                    ${isProjDone ? '✓ Shipped' : 'Project Deliverable'}
+                  </span>
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- Day-by-Day Tasks Checklist -->
+            <div class="roadmap-day-list">
+              <div class="text-xs font-bold text-muted mb-1 px-1">Daily Schedule & Tasks:</div>
+              ${(w.days || []).map((d, dIdx) => {
+                const dayKey = `day-${state.targetRole}-w${wIdx}-d${dIdx}`;
+                const isDayDone = !!checkedMap[dayKey];
+
+                return `
+                  <div class="roadmap-day-row ${isDayDone ? 'is-done' : ''}">
+                    <input type="checkbox"
+                           class="roadmap-checkbox-custom"
+                           id="chk-${dayKey}"
+                           ${isDayDone ? 'checked' : ''}
+                           onchange="StudentRoadmap.toggleDayCheck('${state.targetRole}', ${wIdx}, ${dIdx}, this.checked)">
+                    <div class="roadmap-day-content">
+                      <div class="roadmap-day-header">
+                        <span class="roadmap-day-name ${isDayDone ? 'done' : ''}">
+                          ${d.day}: ${d.focus}
+                        </span>
+                        <span class="badge badge-ghost" style="font-size:10px">⏱️ ${d.hours || 2}h</span>
+                      </div>
+
+                      ${d.tasks && d.tasks.length ? `
+                        <ul class="roadmap-task-list">
+                          ${d.tasks.map(t => `<li style="${isDayDone ? 'text-decoration:line-through;opacity:0.75' : ''}">${t}</li>`).join('')}
+                        </ul>
+                      ` : ''}
+
+                      <div class="roadmap-meta-row">
+                        ${d.resources && d.resources !== '-' ? `
+                          <span>📚 <strong class="text-accent">${d.resources}</strong></span>
+                        ` : ''}
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+
+              ${w.successCriteria ? `
+                <div class="text-xs text-muted mt-2 px-2" style="font-style:italic">
+                  ✅ <strong>Success Criteria:</strong> ${w.successCriteria}
+                </div>
+              ` : ''}
+            </div>
+          ` : ''}
+        </section>
       `;
     }).join('');
   }
 
+  // ─── Loading Skeleton View ───────────────────────────────────
+  function renderLoadingState() {
+    return `
+      <div class="p-8 text-center animate-pulse" style="padding:var(--space-8) var(--space-4)">
+        <div style="font-size:48px;margin-bottom:var(--space-3);animation:pulse 1.5s infinite">🤖</div>
+        <h3 class="font-bold text-base mb-2">Generating Personalized AI Roadmap with Groq LLM...</h3>
+        <p class="text-sm text-muted" style="max-width:480px;margin:0 auto">
+          Analyzing role competencies for <strong>${state.targetRole}</strong>, structuring week-by-week sprints, and assembling hands-on project deliverables.
+        </p>
+      </div>
+    `;
+  }
+
+  // ─── Checkbox Event Handlers ─────────────────────────────────
+  function toggleAICheck(role, milestoneIdx, isChecked) {
+    const aiChecked = getAIChecked(role);
+    const key = `ai-${role}-m${milestoneIdx}`;
+    if (isChecked) {
+      aiChecked[key] = true;
+    } else {
+      delete aiChecked[key];
+    }
+    saveAIChecked(role, aiChecked);
+    render();
+    if (isChecked) Toast.success('Milestone marked as complete! 🚀');
+  }
+
+  function toggleDayCheck(role, weekIdx, dayIdx, isChecked) {
+    const checkedMap = getTemplateChecked(role);
+    const key = `day-${role}-w${weekIdx}-d${dayIdx}`;
+    if (isChecked) {
+      checkedMap[key] = true;
+    } else {
+      delete checkedMap[key];
+    }
+    saveTemplateChecked(role, checkedMap);
+    render();
+    if (isChecked) Toast.success('Day marked as completed!');
+  }
+
+  function toggleProjectCheck(role, weekIdx, isChecked) {
+    const checkedMap = getTemplateChecked(role);
+    const key = `proj-${role}-w${weekIdx}`;
+    if (isChecked) {
+      checkedMap[key] = true;
+    } else {
+      delete checkedMap[key];
+    }
+    saveTemplateChecked(role, checkedMap);
+    render();
+    if (isChecked) Toast.success('Weekly Project deliverable marked as shipped! 🎉');
+  }
+
+  function toggleWeek(weekIdx) {
+    state.expandedWeeks[weekIdx] = !state.expandedWeeks[weekIdx];
+    render();
+  }
+
   function onRoleChange(newRole) {
     state.targetRole = newRole;
-    const template = ROLE_TEMPLATES[newRole] || ROLE_TEMPLATES['Data Analyst'];
-    state.milestones = JSON.parse(JSON.stringify(template));
-    state.generatedMilestones = null;
+    state.aiError = null;
+
+    // Check if an AI roadmap is saved for this role
+    try {
+      const savedAI = localStorage.getItem(`CAMPUSLINK_ROADMAP_AI_DATA_${newRole}`);
+      if (savedAI) {
+        state.aiRoadmap = JSON.parse(savedAI);
+        state.showingFallbackTemplate = false;
+      } else {
+        state.aiRoadmap = null;
+        state.showingFallbackTemplate = false;
+        // Auto-generate for the new role!
+        generateAIRoadmap();
+        return;
+      }
+    } catch {
+      state.aiRoadmap = null;
+    }
+
     render();
     Toast.info(`Switched roadmap to ${newRole}`);
   }
 
-  function toggleMilestone(index) {
-    if (!state.milestones[index]) return;
-    const current = state.milestones[index].status;
-    const nextStatus = current === 'completed' ? 'pending' : current === 'in-progress' ? 'completed' : 'in-progress';
-    state.milestones[index].status = nextStatus;
-
-    // Update progress calculation
-    const completed = state.milestones.filter(m => m.status === 'completed').length;
-    const total = state.milestones.length;
-    const pct = Math.round((completed / total) * 100);
-
-    // Refresh UI smoothly
-    const timeline = document.getElementById('milestones-timeline');
-    if (timeline) timeline.innerHTML = renderTimeline(state.milestones);
-
-    const badge = document.getElementById('milestones-count-badge');
-    if (badge) badge.textContent = `${completed}/${total} completed`;
-
-    const pctText = document.getElementById('progress-pct-text');
-    if (pctText) pctText.textContent = `${pct}%`;
-
-    const fill = document.getElementById('progress-bar-fill');
-    if (fill) fill.style.width = `${pct}%`;
-
-    if (nextStatus === 'completed') {
-      Toast.success(`Milestone completed! Overall progress: ${pct}%`);
-    }
+  function resetCheckboxes() {
+    if (!confirm(`Reset all completed tasks for ${state.targetRole}?`)) return;
+    saveAIChecked(state.targetRole, {});
+    saveTemplateChecked(state.targetRole, {});
+    render();
+    Toast.info('Progress checklist reset.');
   }
 
-  async function generateAIRoadmap() {
-    const btn = document.getElementById('generate-roadmap-btn');
-    if (btn) {
-      btn.textContent = '🤖 Generating Plan...';
-      btn.disabled = true;
-    }
+  // ─── AI Roadmap Generation Call ──────────────────────────────
+  async function generateAIRoadmap(isInitial = false) {
+    state.isGenerating = true;
+    state.aiError = null;
+    render();
 
-    const profile = Store.getProfile();
-    const targetRole = state.targetRole || profile.targetRole || 'Data Analyst';
+    const profile = Store.getProfile() || {};
+    const targetRole = state.targetRole || profile.targetRole || 'Frontend Developer';
+    const customKey = localStorage.getItem('CAMPUSLINK_CUSTOM_GROQ_KEY') || '';
 
     let result = null;
     try {
@@ -262,116 +612,62 @@ const StudentRoadmap = (() => {
         skillGaps: [],
         cgpa: profile.cgpa || 7.5,
         projectsCount: 2,
-        weeksUntilPlacement: 12,
+        weeksUntilPlacement: 4,
+        customApiKey: customKey,
       });
     } catch (err) {
-      console.warn('[Roadmap] Network error calling /ai/generate-roadmap:', err);
+      console.warn('[Roadmap] Error calling /ai/generate-roadmap:', err);
     }
 
-    if (btn) {
-      btn.textContent = '🤖 Generate AI Roadmap';
-      btn.disabled = false;
+    state.isGenerating = false;
+
+    const milestones = result?.milestones || result?.data?.milestones || [];
+    const summary = result?.summary || result?.data?.summary || '';
+    const source = result?.source || result?.data?.source || '';
+    const errorMsg = result?.error || result?.data?.error || '';
+
+    // If AI failed or returned ai-unavailable:
+    // ONLY THEN show the fallback template with error alert!
+    if (!milestones || milestones.length === 0 || source === 'ai-unavailable') {
+      state.showingFallbackTemplate = true;
+      state.aiRoadmap = null;
+      state.aiError = errorMsg || 'AI roadmap generation is currently unavailable. Displaying the verified 4-week placement curriculum below with full checkbox tracking.';
+      render();
+      Toast.error('AI unavailable: Showing verified 4-week placement plan.');
+      return;
     }
 
-    let milestones = result?.milestones || result?.data?.milestones || [];
-    let summary = result?.summary || result?.data?.summary || '';
-    let source = result?.source || result?.data?.source || 'template-fallback';
+    // AI Succeeded: Show ONLY the AI plan!
+    state.showingFallbackTemplate = false;
+    state.aiError = null;
+    state.aiRoadmap = {
+      summary,
+      milestones,
+      source: source || 'groq-llm',
+      timestamp: new Date().toISOString(),
+    };
 
-    // Client resilience: if backend returned empty array or error, use tailored client template
-    if (!milestones || milestones.length === 0) {
-      const templateList = ROLE_TEMPLATES[targetRole] || ROLE_TEMPLATES['Data Analyst'];
-      milestones = templateList.map((m, idx) => ({
-        week: idx + 1,
-        title: m.title,
-        description: m.desc,
-        priority: idx < 2 ? 'critical' : idx < 4 ? 'high' : 'medium',
-        category: m.category || 'skill',
-        resources: m.resources || [],
-        success_criteria: 'Complete assigned assignments and mock tests',
-      }));
-      summary = `Personalized 12-week preparation roadmap for ${targetRole} campus placements.`;
-      source = 'client-fallback';
+    // Save AI roadmap to localStorage
+    try {
+      localStorage.setItem(`CAMPUSLINK_ROADMAP_AI_DATA_${targetRole}`, JSON.stringify(state.aiRoadmap));
+    } catch (e) {
+      console.warn('[Roadmap] Failed to persist AI roadmap', e);
     }
 
-    state.generatedMilestones = milestones;
-    state.generatedSummary = summary;
-    state.generatedSource = source;
-
-    const el = document.getElementById('ai-roadmap-results');
-    if (el) {
-      el.innerHTML = renderGeneratedPlan();
-      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-
-    Toast.success(`AI Roadmap generated for ${targetRole}!`);
-  }
-
-  function renderGeneratedPlan() {
-    if (!state.generatedMilestones) return '';
-    const milestones = state.generatedMilestones;
-    const sourceLabel = state.generatedSource === 'groq-llm' ? '🤖 LLM Personalized' : '📋 Curated Placement Plan';
-
-    return `
-      <article class="card animate-fade-in-up mt-4" style="border:1px solid var(--accent)">
-        <div class="card-header">
-          <div>
-            <h2 class="card-title">🤖 AI-Generated Roadmap Plan</h2>
-            <div class="text-xs text-muted mt-1">${AIText.formatInline(state.generatedSummary)}</div>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="badge badge-accent">${sourceLabel}</span>
-            <button class="btn btn-sm btn-primary" onclick="StudentRoadmap.applyGeneratedPlan()">
-              ✓ Apply as Active Roadmap
-            </button>
-          </div>
-        </div>
-
-        <div class="schedule-timeline">
-          ${milestones.map((m, i) => `
-            <div class="schedule-event animate-fade-in-up"
-                 style="animation-delay:${i * 40}ms; border-left-color:${m.priority === 'critical' ? 'var(--danger)' : m.priority === 'high' ? 'var(--warning)' : 'var(--accent)'}">
-              <div class="flex justify-between items-center mb-2">
-                <div class="flex items-center gap-3">
-                  <div class="milestone-number">${m.week || i + 1}</div>
-                  <div>
-                    <div class="font-bold text-sm">${m.title}</div>
-                    <span class="badge badge-${m.priority === 'critical' ? 'danger' : m.priority === 'high' ? 'warning' : 'ghost'}" style="font-size:10px;padding:1px 6px">${m.priority || 'medium'}</span>
-                    <span class="badge badge-ghost" style="font-size:10px;padding:1px 6px">${m.category || 'skill'}</span>
-                  </div>
-                </div>
-                <span class="text-xs text-muted">Week ${m.week || i + 1}</span>
-              </div>
-              <p class="text-sm text-muted">${m.description}</p>
-              ${m.resources?.length ? `<div class="text-xs text-accent mt-2">📚 ${Array.isArray(m.resources) ? m.resources.join(' · ') : m.resources}</div>` : ''}
-              ${m.success_criteria ? `<div class="text-xs text-muted mt-1">✅ Done when: ${m.success_criteria}</div>` : ''}
-            </div>
-          `).join('')}
-        </div>
-      </article>
-    `;
-  }
-
-  function applyGeneratedPlan() {
-    if (!state.generatedMilestones || state.generatedMilestones.length === 0) return;
-    state.milestones = state.generatedMilestones.map((m, idx) => ({
-      id: `gen-${idx}`,
-      title: m.title,
-      desc: m.description,
-      due: `Week ${m.week || idx + 1}`,
-      status: 'pending',
-      category: m.category,
-      resources: m.resources,
-    }));
-    state.generatedMilestones = null;
     render();
-    Toast.success('Active roadmap updated with your AI milestones!');
+    if (!isInitial) {
+      Toast.success(`Live Groq AI Roadmap generated for ${targetRole}!`);
+    }
   }
 
   return {
     render,
     onRoleChange,
-    toggleMilestone,
+    toggleWeek,
+    toggleAICheck,
+    toggleDayCheck,
+    toggleProjectCheck,
     generateAIRoadmap,
-    applyGeneratedPlan,
+    resetCheckboxes,
   };
 })();

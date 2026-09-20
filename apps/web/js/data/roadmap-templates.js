@@ -1,0 +1,4108 @@
+/* Auto-generated 4-week placement roadmaps for all 10 roles */
+const ROADMAP_FALLBACK_DATA = {
+  "Frontend Developer": {
+    "role": "Frontend Developer",
+    "weeks": [
+      {
+        "week": 1,
+        "title": "Week 1: HTML & React",
+        "goal": "Be comfortable applying HTML & React and ship the week's project.",
+        "project": {
+          "title": "Week 1 Mini-Project: HTML & React",
+          "tools": "HTML, React",
+          "deliverable": "A working example demonstrating HTML & React, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "HTML fundamentals",
+            "tasks": [
+              "Go through core concepts of HTML",
+              "Take notes / build a cheat-sheet for HTML"
+            ],
+            "hours": 2.0,
+            "resources": "freeCodeCamp Responsive Web Design certification"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "HTML hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using HTML",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "freeCodeCamp Responsive Web Design certification"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "React fundamentals",
+            "tasks": [
+              "Go through core concepts of React",
+              "Take notes / build a cheat-sheet for React"
+            ],
+            "hours": 2.0,
+            "resources": "React.dev official tutorial + Kent C. Dodds courses"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "React hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using React",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "React.dev official tutorial + Kent C. Dodds courses"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 1 Mini-Project: HTML & React' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review HTML & React once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain HTML & React in an interview."
+      },
+      {
+        "week": 2,
+        "title": "Week 2: CSS & Responsive Design",
+        "goal": "Be comfortable applying CSS & Responsive Design and ship the week's project.",
+        "project": {
+          "title": "Week 2 Mini-Project: CSS & Responsive Design",
+          "tools": "CSS, Responsive Design",
+          "deliverable": "A working example demonstrating CSS & Responsive Design, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "CSS fundamentals",
+            "tasks": [
+              "Go through core concepts of CSS",
+              "Take notes / build a cheat-sheet for CSS"
+            ],
+            "hours": 2.0,
+            "resources": "CSS-Tricks + Josh Comeau's CSS for JS Developers (free chapters)"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "CSS hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using CSS",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "CSS-Tricks + Josh Comeau's CSS for JS Developers (free chapters)"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Responsive Design fundamentals",
+            "tasks": [
+              "Go through core concepts of Responsive Design",
+              "Take notes / build a cheat-sheet for Responsive Design"
+            ],
+            "hours": 2.0,
+            "resources": "freeCodeCamp Responsive Web Design + Frontend Mentor challenges"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Responsive Design hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Responsive Design",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "freeCodeCamp Responsive Web Design + Frontend Mentor challenges"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 2 Mini-Project: CSS & Responsive Design' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review CSS & Responsive Design once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain CSS & Responsive Design in an interview."
+      },
+      {
+        "week": 3,
+        "title": "Week 3: JavaScript & Git",
+        "goal": "Be comfortable applying JavaScript & Git and ship the week's project.",
+        "project": {
+          "title": "Week 3 Mini-Project: JavaScript & Git",
+          "tools": "JavaScript, Git",
+          "deliverable": "A working example demonstrating JavaScript & Git, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "JavaScript fundamentals",
+            "tasks": [
+              "Go through core concepts of JavaScript",
+              "Take notes / build a cheat-sheet for JavaScript"
+            ],
+            "hours": 2.0,
+            "resources": "JavaScript.info or freeCodeCamp JS curriculum"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "JavaScript hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using JavaScript",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "JavaScript.info or freeCodeCamp JS curriculum"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Git fundamentals",
+            "tasks": [
+              "Go through core concepts of Git",
+              "Take notes / build a cheat-sheet for Git"
+            ],
+            "hours": 2.0,
+            "resources": "Git branching interactive tutorial (learngitbranching.js.org)"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Git hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Git",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "Git branching interactive tutorial (learngitbranching.js.org)"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 3 Mini-Project: JavaScript & Git' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review JavaScript & Git once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain JavaScript & Git in an interview."
+      },
+      {
+        "week": 4,
+        "title": "Week 4: TypeScript & Web Performance",
+        "goal": "Be comfortable applying TypeScript & Web Performance and ship the week's project.",
+        "project": {
+          "title": "Week 4 Mini-Project: TypeScript & Web Performance",
+          "tools": "TypeScript, Web Performance",
+          "deliverable": "A working example demonstrating TypeScript & Web Performance, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "TypeScript fundamentals",
+            "tasks": [
+              "Go through core concepts of TypeScript",
+              "Take notes / build a cheat-sheet for TypeScript"
+            ],
+            "hours": 2.0,
+            "resources": "TypeScript official handbook + Total TypeScript free course"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "TypeScript hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using TypeScript",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "TypeScript official handbook + Total TypeScript free course"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Web Performance fundamentals",
+            "tasks": [
+              "Go through core concepts of Web Performance",
+              "Take notes / build a cheat-sheet for Web Performance"
+            ],
+            "hours": 2.0,
+            "resources": "web.dev Learn Performance course (Google)"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Web Performance hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Web Performance",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "web.dev Learn Performance course (Google)"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 4 Mini-Project: TypeScript & Web Performance' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review TypeScript & Web Performance once more",
+              "Complete 2 mock interview sessions (technical + behavioral)"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain TypeScript & Web Performance in an interview. Complete at least 2 mock interviews before the week ends."
+      }
+    ]
+  },
+  "Backend Developer": {
+    "role": "Backend Developer",
+    "weeks": [
+      {
+        "week": 1,
+        "title": "Week 1: Node.js & PostgreSQL",
+        "goal": "Be comfortable applying Node.js & PostgreSQL and ship the week's project.",
+        "project": {
+          "title": "Week 1 Mini-Project: Node.js & PostgreSQL",
+          "tools": "Node.js, PostgreSQL",
+          "deliverable": "A working example demonstrating Node.js & PostgreSQL, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "Node.js fundamentals",
+            "tasks": [
+              "Go through core concepts of Node.js",
+              "Take notes / build a cheat-sheet for Node.js"
+            ],
+            "hours": 2.0,
+            "resources": "Node.js documentation + The Odin Project backend track"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "Node.js hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Node.js",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "Node.js documentation + The Odin Project backend track"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "PostgreSQL fundamentals",
+            "tasks": [
+              "Go through core concepts of PostgreSQL",
+              "Take notes / build a cheat-sheet for PostgreSQL"
+            ],
+            "hours": 2.0,
+            "resources": "PostgreSQL official tutorial + PostgreSQL Exercises (pgexercises.com)"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "PostgreSQL hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using PostgreSQL",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "PostgreSQL official tutorial + PostgreSQL Exercises (pgexercises.com)"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 1 Mini-Project: Node.js & PostgreSQL' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review Node.js & PostgreSQL once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain Node.js & PostgreSQL in an interview."
+      },
+      {
+        "week": 2,
+        "title": "Week 2: Python & Authentication",
+        "goal": "Be comfortable applying Python & Authentication and ship the week's project.",
+        "project": {
+          "title": "Week 2 Mini-Project: Python & Authentication",
+          "tools": "Python, Authentication",
+          "deliverable": "A working example demonstrating Python & Authentication, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "Python fundamentals",
+            "tasks": [
+              "Go through core concepts of Python",
+              "Take notes / build a cheat-sheet for Python"
+            ],
+            "hours": 2.0,
+            "resources": "Python for Everybody (Coursera) or Automate the Boring Stuff"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "Python hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Python",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "Python for Everybody (Coursera) or Automate the Boring Stuff"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Authentication fundamentals",
+            "tasks": [
+              "Go through core concepts of Authentication",
+              "Take notes / build a cheat-sheet for Authentication"
+            ],
+            "hours": 2.0,
+            "resources": "Auth0 blog fundamentals + JWT.io introduction"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Authentication hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Authentication",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "Auth0 blog fundamentals + JWT.io introduction"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 2 Mini-Project: Python & Authentication' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review Python & Authentication once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain Python & Authentication in an interview."
+      },
+      {
+        "week": 3,
+        "title": "Week 3: REST APIs & System Design",
+        "goal": "Be comfortable applying REST APIs & System Design and ship the week's project.",
+        "project": {
+          "title": "Week 3 Mini-Project: REST APIs & System Design",
+          "tools": "REST APIs, System Design",
+          "deliverable": "A working example demonstrating REST APIs & System Design, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "REST APIs fundamentals",
+            "tasks": [
+              "Go through core concepts of REST APIs",
+              "Take notes / build a cheat-sheet for REST APIs"
+            ],
+            "hours": 2.0,
+            "resources": "roadmap.sh API design guide + Postman API fundamentals"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "REST APIs hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using REST APIs",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "roadmap.sh API design guide + Postman API fundamentals"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "System Design fundamentals",
+            "tasks": [
+              "Go through core concepts of System Design",
+              "Take notes / build a cheat-sheet for System Design"
+            ],
+            "hours": 2.0,
+            "resources": "System Design Primer (GitHub) + Gaurav Sen YouTube"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "System Design hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using System Design",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "System Design Primer (GitHub) + Gaurav Sen YouTube"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 3 Mini-Project: REST APIs & System Design' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review REST APIs & System Design once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain REST APIs & System Design in an interview."
+      },
+      {
+        "week": 4,
+        "title": "Week 4: SQL & Docker",
+        "goal": "Be comfortable applying SQL & Docker and ship the week's project.",
+        "project": {
+          "title": "Week 4 Mini-Project: SQL & Docker",
+          "tools": "SQL, Docker",
+          "deliverable": "A working example demonstrating SQL & Docker, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "SQL fundamentals",
+            "tasks": [
+              "Go through core concepts of SQL",
+              "Take notes / build a cheat-sheet for SQL"
+            ],
+            "hours": 2.0,
+            "resources": "SQLBolt interactive exercises + LeetCode SQL track"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "SQL hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using SQL",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "SQLBolt interactive exercises + LeetCode SQL track"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Docker fundamentals",
+            "tasks": [
+              "Go through core concepts of Docker",
+              "Take notes / build a cheat-sheet for Docker"
+            ],
+            "hours": 2.0,
+            "resources": "Docker official Getting Started tutorial"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Docker hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Docker",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "Docker official Getting Started tutorial"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 4 Mini-Project: SQL & Docker' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review SQL & Docker once more",
+              "Complete 2 mock interview sessions (technical + behavioral)"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain SQL & Docker in an interview. Complete at least 2 mock interviews before the week ends."
+      }
+    ]
+  },
+  "Data Engineer": {
+    "role": "Data Engineer",
+    "weeks": [
+      {
+        "week": 1,
+        "title": "Week 1: Python & Airflow",
+        "goal": "Be comfortable applying Python & Airflow and ship the week's project.",
+        "project": {
+          "title": "Week 1 Mini-Project: Python & Airflow",
+          "tools": "Python, Airflow",
+          "deliverable": "A working example demonstrating Python & Airflow, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "Python fundamentals",
+            "tasks": [
+              "Go through core concepts of Python",
+              "Take notes / build a cheat-sheet for Python"
+            ],
+            "hours": 2.0,
+            "resources": "Python for Everybody (Coursera) or Automate the Boring Stuff"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "Python hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Python",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "Python for Everybody (Coursera) or Automate the Boring Stuff"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Airflow fundamentals",
+            "tasks": [
+              "Go through core concepts of Airflow",
+              "Take notes / build a cheat-sheet for Airflow"
+            ],
+            "hours": 2.0,
+            "resources": "Apache Airflow official 'Get Started' tutorial"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Airflow hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Airflow",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "Apache Airflow official 'Get Started' tutorial"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 1 Mini-Project: Python & Airflow' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review Python & Airflow once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain Python & Airflow in an interview."
+      },
+      {
+        "week": 2,
+        "title": "Week 2: SQL & Data Warehousing",
+        "goal": "Be comfortable applying SQL & Data Warehousing and ship the week's project.",
+        "project": {
+          "title": "Week 2 Mini-Project: SQL & Data Warehousing",
+          "tools": "SQL, Data Warehousing",
+          "deliverable": "A working example demonstrating SQL & Data Warehousing, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "SQL fundamentals",
+            "tasks": [
+              "Go through core concepts of SQL",
+              "Take notes / build a cheat-sheet for SQL"
+            ],
+            "hours": 2.0,
+            "resources": "SQLBolt interactive exercises + LeetCode SQL track"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "SQL hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using SQL",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "SQLBolt interactive exercises + LeetCode SQL track"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Data Warehousing fundamentals",
+            "tasks": [
+              "Go through core concepts of Data Warehousing",
+              "Take notes / build a cheat-sheet for Data Warehousing"
+            ],
+            "hours": 2.0,
+            "resources": "Google Cloud's BigQuery free courses + Kimball basics articles"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Data Warehousing hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Data Warehousing",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "Google Cloud's BigQuery free courses + Kimball basics articles"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 2 Mini-Project: SQL & Data Warehousing' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review SQL & Data Warehousing once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain SQL & Data Warehousing in an interview."
+      },
+      {
+        "week": 3,
+        "title": "Week 3: Apache Spark & AWS",
+        "goal": "Be comfortable applying Apache Spark & AWS and ship the week's project.",
+        "project": {
+          "title": "Week 3 Mini-Project: Apache Spark & AWS",
+          "tools": "Apache Spark, AWS",
+          "deliverable": "A working example demonstrating Apache Spark & AWS, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "Apache Spark fundamentals",
+            "tasks": [
+              "Go through core concepts of Apache Spark",
+              "Take notes / build a cheat-sheet for Apache Spark"
+            ],
+            "hours": 2.0,
+            "resources": "Databricks free Spark tutorials + Spark official docs"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "Apache Spark hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Apache Spark",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "Databricks free Spark tutorials + Spark official docs"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "AWS fundamentals",
+            "tasks": [
+              "Go through core concepts of AWS",
+              "Take notes / build a cheat-sheet for AWS"
+            ],
+            "hours": 2.0,
+            "resources": "AWS Cloud Practitioner free training on AWS Skill Builder"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "AWS hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using AWS",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "AWS Cloud Practitioner free training on AWS Skill Builder"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 3 Mini-Project: Apache Spark & AWS' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review Apache Spark & AWS once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain Apache Spark & AWS in an interview."
+      },
+      {
+        "week": 4,
+        "title": "Week 4: ETL & Kafka",
+        "goal": "Be comfortable applying ETL & Kafka and ship the week's project.",
+        "project": {
+          "title": "Week 4 Mini-Project: ETL & Kafka",
+          "tools": "ETL, Kafka",
+          "deliverable": "A working example demonstrating ETL & Kafka, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "ETL fundamentals",
+            "tasks": [
+              "Go through core concepts of ETL",
+              "Take notes / build a cheat-sheet for ETL"
+            ],
+            "hours": 2.0,
+            "resources": "freeCodeCamp Data Engineering course (ETL section)"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "ETL hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using ETL",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "freeCodeCamp Data Engineering course (ETL section)"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Kafka fundamentals",
+            "tasks": [
+              "Go through core concepts of Kafka",
+              "Take notes / build a cheat-sheet for Kafka"
+            ],
+            "hours": 2.0,
+            "resources": "Confluent Kafka free tutorials + Conduktor Kafka crash course"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Kafka hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Kafka",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "Confluent Kafka free tutorials + Conduktor Kafka crash course"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 4 Mini-Project: ETL & Kafka' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review ETL & Kafka once more",
+              "Complete 2 mock interview sessions (technical + behavioral)"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain ETL & Kafka in an interview. Complete at least 2 mock interviews before the week ends."
+      }
+    ]
+  },
+  "Business Analyst": {
+    "role": "Business Analyst",
+    "weeks": [
+      {
+        "week": 1,
+        "title": "Week 1: SQL & Communication",
+        "goal": "Be comfortable applying SQL & Communication and ship the week's project.",
+        "project": {
+          "title": "Week 1 Mini-Project: SQL & Communication",
+          "tools": "SQL, Communication",
+          "deliverable": "A working example demonstrating SQL & Communication, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "SQL fundamentals",
+            "tasks": [
+              "Go through core concepts of SQL",
+              "Take notes / build a cheat-sheet for SQL"
+            ],
+            "hours": 2.0,
+            "resources": "SQLBolt interactive exercises + LeetCode SQL track"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "SQL hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using SQL",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "SQLBolt interactive exercises + LeetCode SQL track"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Communication fundamentals",
+            "tasks": [
+              "Go through core concepts of Communication",
+              "Take notes / build a cheat-sheet for Communication"
+            ],
+            "hours": 2.0,
+            "resources": "Toastmasters free resources + Coursera 'Improve Communication Skills'"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Communication hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Communication",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "Toastmasters free resources + Coursera 'Improve Communication Skills'"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 1 Mini-Project: SQL & Communication' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review SQL & Communication once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain SQL & Communication in an interview."
+      },
+      {
+        "week": 2,
+        "title": "Week 2: Excel & JIRA",
+        "goal": "Be comfortable applying Excel & JIRA and ship the week's project.",
+        "project": {
+          "title": "Week 2 Mini-Project: Excel & JIRA",
+          "tools": "Excel, JIRA",
+          "deliverable": "A working example demonstrating Excel & JIRA, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "Excel fundamentals",
+            "tasks": [
+              "Go through core concepts of Excel",
+              "Take notes / build a cheat-sheet for Excel"
+            ],
+            "hours": 2.0,
+            "resources": "Microsoft Excel free training on Learn.Microsoft.com"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "Excel hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Excel",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "Microsoft Excel free training on Learn.Microsoft.com"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "JIRA fundamentals",
+            "tasks": [
+              "Go through core concepts of JIRA",
+              "Take notes / build a cheat-sheet for JIRA"
+            ],
+            "hours": 2.0,
+            "resources": "Atlassian University free JIRA fundamentals course"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "JIRA hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using JIRA",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "Atlassian University free JIRA fundamentals course"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 2 Mini-Project: Excel & JIRA' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review Excel & JIRA once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain Excel & JIRA in an interview."
+      },
+      {
+        "week": 3,
+        "title": "Week 3: Power BI & Data Visualization",
+        "goal": "Be comfortable applying Power BI & Data Visualization and ship the week's project.",
+        "project": {
+          "title": "Week 3 Mini-Project: Power BI & Data Visualization",
+          "tools": "Power BI, Data Visualization",
+          "deliverable": "A working example demonstrating Power BI & Data Visualization, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "Power BI fundamentals",
+            "tasks": [
+              "Go through core concepts of Power BI",
+              "Take notes / build a cheat-sheet for Power BI"
+            ],
+            "hours": 2.0,
+            "resources": "Microsoft Power BI certification on Learn.Microsoft.com"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "Power BI hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Power BI",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "Microsoft Power BI certification on Learn.Microsoft.com"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Data Visualization fundamentals",
+            "tasks": [
+              "Go through core concepts of Data Visualization",
+              "Take notes / build a cheat-sheet for Data Visualization"
+            ],
+            "hours": 2.0,
+            "resources": "Storytelling with Data (book) + Tableau Public gallery"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Data Visualization hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Data Visualization",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "Storytelling with Data (book) + Tableau Public gallery"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 3 Mini-Project: Power BI & Data Visualization' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review Power BI & Data Visualization once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain Power BI & Data Visualization in an interview."
+      },
+      {
+        "week": 4,
+        "title": "Week 4: Requirements Gathering",
+        "goal": "Be comfortable applying Requirements Gathering and ship the week's project.",
+        "project": {
+          "title": "Week 4 Mini-Project: Requirements Gathering",
+          "tools": "Requirements Gathering",
+          "deliverable": "A working example demonstrating Requirements Gathering, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "Requirements Gathering fundamentals",
+            "tasks": [
+              "Go through core concepts of Requirements Gathering",
+              "Take notes / build a cheat-sheet for Requirements Gathering"
+            ],
+            "hours": 2.0,
+            "resources": "BABOK guide summary + IIBA free resources"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "Requirements Gathering hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Requirements Gathering",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "BABOK guide summary + IIBA free resources"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Requirements Gathering \u2014 intermediate patterns",
+            "tasks": [
+              "Study intermediate/real-world patterns for Requirements Gathering",
+              "Read 1-2 case studies or open-source examples using Requirements Gathering"
+            ],
+            "hours": 2.0,
+            "resources": "BABOK guide summary + IIBA free resources"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Requirements Gathering \u2014 advanced practice",
+            "tasks": [
+              "Complete 3-5 harder practice problems using Requirements Gathering",
+              "Review mistakes and write down key takeaways"
+            ],
+            "hours": 2.0,
+            "resources": "BABOK guide summary + IIBA free resources"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 4 Mini-Project: Requirements Gathering' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review Requirements Gathering once more",
+              "Complete 2 mock interview sessions (technical + behavioral)"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain Requirements Gathering in an interview. Complete at least 2 mock interviews before the week ends."
+      }
+    ]
+  },
+  "Database Administrator": {
+    "role": "Database Administrator",
+    "weeks": [
+      {
+        "week": 1,
+        "title": "Week 1: SQL & Backup & Recovery",
+        "goal": "Be comfortable applying SQL & Backup & Recovery and ship the week's project.",
+        "project": {
+          "title": "Week 1 Mini-Project: SQL & Backup & Recovery",
+          "tools": "SQL, Backup & Recovery",
+          "deliverable": "A working example demonstrating SQL & Backup & Recovery, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "SQL fundamentals",
+            "tasks": [
+              "Go through core concepts of SQL",
+              "Take notes / build a cheat-sheet for SQL"
+            ],
+            "hours": 2.0,
+            "resources": "SQLBolt interactive exercises + LeetCode SQL track"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "SQL hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using SQL",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "SQLBolt interactive exercises + LeetCode SQL track"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Backup & Recovery fundamentals",
+            "tasks": [
+              "Go through core concepts of Backup & Recovery",
+              "Take notes / build a cheat-sheet for Backup & Recovery"
+            ],
+            "hours": 2.0,
+            "resources": "PostgreSQL/MySQL official backup & recovery docs"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Backup & Recovery hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Backup & Recovery",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "PostgreSQL/MySQL official backup & recovery docs"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 1 Mini-Project: SQL & Backup & Recovery' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review SQL & Backup & Recovery once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain SQL & Backup & Recovery in an interview."
+      },
+      {
+        "week": 2,
+        "title": "Week 2: PostgreSQL & Indexing",
+        "goal": "Be comfortable applying PostgreSQL & Indexing and ship the week's project.",
+        "project": {
+          "title": "Week 2 Mini-Project: PostgreSQL & Indexing",
+          "tools": "PostgreSQL, Indexing",
+          "deliverable": "A working example demonstrating PostgreSQL & Indexing, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "PostgreSQL fundamentals",
+            "tasks": [
+              "Go through core concepts of PostgreSQL",
+              "Take notes / build a cheat-sheet for PostgreSQL"
+            ],
+            "hours": 2.0,
+            "resources": "PostgreSQL official tutorial + PostgreSQL Exercises (pgexercises.com)"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "PostgreSQL hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using PostgreSQL",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "PostgreSQL official tutorial + PostgreSQL Exercises (pgexercises.com)"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Indexing fundamentals",
+            "tasks": [
+              "Go through core concepts of Indexing",
+              "Take notes / build a cheat-sheet for Indexing"
+            ],
+            "hours": 2.0,
+            "resources": "Use The Index, Luke! + database-specific indexing docs"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Indexing hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Indexing",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "Use The Index, Luke! + database-specific indexing docs"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 2 Mini-Project: PostgreSQL & Indexing' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review PostgreSQL & Indexing once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain PostgreSQL & Indexing in an interview."
+      },
+      {
+        "week": 3,
+        "title": "Week 3: MySQL & MongoDB",
+        "goal": "Be comfortable applying MySQL & MongoDB and ship the week's project.",
+        "project": {
+          "title": "Week 3 Mini-Project: MySQL & MongoDB",
+          "tools": "MySQL, MongoDB",
+          "deliverable": "A working example demonstrating MySQL & MongoDB, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "MySQL fundamentals",
+            "tasks": [
+              "Go through core concepts of MySQL",
+              "Take notes / build a cheat-sheet for MySQL"
+            ],
+            "hours": 2.0,
+            "resources": "MySQL Tutorial (mysqltutorial.org) + W3Schools MySQL track"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "MySQL hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using MySQL",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "MySQL Tutorial (mysqltutorial.org) + W3Schools MySQL track"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "MongoDB fundamentals",
+            "tasks": [
+              "Go through core concepts of MongoDB",
+              "Take notes / build a cheat-sheet for MongoDB"
+            ],
+            "hours": 2.0,
+            "resources": "MongoDB University free courses (M001, M100)"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "MongoDB hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using MongoDB",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "MongoDB University free courses (M001, M100)"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 3 Mini-Project: MySQL & MongoDB' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review MySQL & MongoDB once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain MySQL & MongoDB in an interview."
+      },
+      {
+        "week": 4,
+        "title": "Week 4: Database Tuning & Linux",
+        "goal": "Be comfortable applying Database Tuning & Linux and ship the week's project.",
+        "project": {
+          "title": "Week 4 Mini-Project: Database Tuning & Linux",
+          "tools": "Database Tuning, Linux",
+          "deliverable": "A working example demonstrating Database Tuning & Linux, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "Database Tuning fundamentals",
+            "tasks": [
+              "Go through core concepts of Database Tuning",
+              "Take notes / build a cheat-sheet for Database Tuning"
+            ],
+            "hours": 2.0,
+            "resources": "Use The Index, Luke! (free SQL performance book)"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "Database Tuning hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Database Tuning",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "Use The Index, Luke! (free SQL performance book)"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Linux fundamentals",
+            "tasks": [
+              "Go through core concepts of Linux",
+              "Take notes / build a cheat-sheet for Linux"
+            ],
+            "hours": 2.0,
+            "resources": "Linux Journey (free) + OverTheWire Bandit wargame"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Linux hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Linux",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "Linux Journey (free) + OverTheWire Bandit wargame"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 4 Mini-Project: Database Tuning & Linux' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review Database Tuning & Linux once more",
+              "Complete 2 mock interview sessions (technical + behavioral)"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain Database Tuning & Linux in an interview. Complete at least 2 mock interviews before the week ends."
+      }
+    ]
+  },
+  "Agentic AI Engineer": {
+    "role": "Agentic AI Engineer",
+    "weeks": [
+      {
+        "week": 1,
+        "title": "Week 1: Python & RAG",
+        "goal": "Be comfortable applying Python & RAG and ship the week's project.",
+        "project": {
+          "title": "Week 1 Mini-Project: Python & RAG",
+          "tools": "Python, RAG",
+          "deliverable": "A working example demonstrating Python & RAG, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "Python fundamentals",
+            "tasks": [
+              "Go through core concepts of Python",
+              "Take notes / build a cheat-sheet for Python"
+            ],
+            "hours": 2.0,
+            "resources": "Python for Everybody (Coursera) or Automate the Boring Stuff"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "Python hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Python",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "Python for Everybody (Coursera) or Automate the Boring Stuff"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "RAG fundamentals",
+            "tasks": [
+              "Go through core concepts of RAG",
+              "Take notes / build a cheat-sheet for RAG"
+            ],
+            "hours": 2.0,
+            "resources": "LangChain RAG tutorial + Pinecone learning center articles"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "RAG hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using RAG",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "LangChain RAG tutorial + Pinecone learning center articles"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 1 Mini-Project: Python & RAG' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review Python & RAG once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain Python & RAG in an interview."
+      },
+      {
+        "week": 2,
+        "title": "Week 2: LLM APIs & Vector DBs",
+        "goal": "Be comfortable applying LLM APIs & Vector DBs and ship the week's project.",
+        "project": {
+          "title": "Week 2 Mini-Project: LLM APIs & Vector DBs",
+          "tools": "LLM APIs, Vector DBs",
+          "deliverable": "A working example demonstrating LLM APIs & Vector DBs, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "LLM APIs fundamentals",
+            "tasks": [
+              "Go through core concepts of LLM APIs",
+              "Take notes / build a cheat-sheet for LLM APIs"
+            ],
+            "hours": 2.0,
+            "resources": "OpenAI/Groq API documentation quickstarts"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "LLM APIs hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using LLM APIs",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "OpenAI/Groq API documentation quickstarts"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Vector DBs fundamentals",
+            "tasks": [
+              "Go through core concepts of Vector DBs",
+              "Take notes / build a cheat-sheet for Vector DBs"
+            ],
+            "hours": 2.0,
+            "resources": "Pinecone/Weaviate free learning center content"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Vector DBs hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Vector DBs",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "Pinecone/Weaviate free learning center content"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 2 Mini-Project: LLM APIs & Vector DBs' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review LLM APIs & Vector DBs once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain LLM APIs & Vector DBs in an interview."
+      },
+      {
+        "week": 3,
+        "title": "Week 3: LangChain & Agent Orchestration",
+        "goal": "Be comfortable applying LangChain & Agent Orchestration and ship the week's project.",
+        "project": {
+          "title": "Week 3 Mini-Project: LangChain & Agent Orchestration",
+          "tools": "LangChain, Agent Orchestration",
+          "deliverable": "A working example demonstrating LangChain & Agent Orchestration, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "LangChain fundamentals",
+            "tasks": [
+              "Go through core concepts of LangChain",
+              "Take notes / build a cheat-sheet for LangChain"
+            ],
+            "hours": 2.0,
+            "resources": "LangChain official documentation + DeepLearning.AI LangChain course"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "LangChain hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using LangChain",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "LangChain official documentation + DeepLearning.AI LangChain course"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Agent Orchestration fundamentals",
+            "tasks": [
+              "Go through core concepts of Agent Orchestration",
+              "Take notes / build a cheat-sheet for Agent Orchestration"
+            ],
+            "hours": 2.0,
+            "resources": "LangGraph official docs + CrewAI documentation"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Agent Orchestration hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Agent Orchestration",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "LangGraph official docs + CrewAI documentation"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 3 Mini-Project: LangChain & Agent Orchestration' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review LangChain & Agent Orchestration once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain LangChain & Agent Orchestration in an interview."
+      },
+      {
+        "week": 4,
+        "title": "Week 4: Prompt Engineering",
+        "goal": "Be comfortable applying Prompt Engineering and ship the week's project.",
+        "project": {
+          "title": "Week 4 Mini-Project: Prompt Engineering",
+          "tools": "Prompt Engineering",
+          "deliverable": "A working example demonstrating Prompt Engineering, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "Prompt Engineering fundamentals",
+            "tasks": [
+              "Go through core concepts of Prompt Engineering",
+              "Take notes / build a cheat-sheet for Prompt Engineering"
+            ],
+            "hours": 2.0,
+            "resources": "DeepLearning.AI Prompt Engineering for Developers (free)"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "Prompt Engineering hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Prompt Engineering",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "DeepLearning.AI Prompt Engineering for Developers (free)"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Prompt Engineering \u2014 intermediate patterns",
+            "tasks": [
+              "Study intermediate/real-world patterns for Prompt Engineering",
+              "Read 1-2 case studies or open-source examples using Prompt Engineering"
+            ],
+            "hours": 2.0,
+            "resources": "DeepLearning.AI Prompt Engineering for Developers (free)"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Prompt Engineering \u2014 advanced practice",
+            "tasks": [
+              "Complete 3-5 harder practice problems using Prompt Engineering",
+              "Review mistakes and write down key takeaways"
+            ],
+            "hours": 2.0,
+            "resources": "DeepLearning.AI Prompt Engineering for Developers (free)"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 4 Mini-Project: Prompt Engineering' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review Prompt Engineering once more",
+              "Complete 2 mock interview sessions (technical + behavioral)"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain Prompt Engineering in an interview. Complete at least 2 mock interviews before the week ends."
+      }
+    ]
+  },
+  "Cybersecurity Analyst": {
+    "role": "Cybersecurity Analyst",
+    "weeks": [
+      {
+        "week": 1,
+        "title": "Week 1: Network Security & SIEM",
+        "goal": "Be comfortable applying Network Security & SIEM and ship the week's project.",
+        "project": {
+          "title": "Week 1 Mini-Project: Network Security & SIEM",
+          "tools": "Network Security, SIEM",
+          "deliverable": "A working example demonstrating Network Security & SIEM, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "Network Security fundamentals",
+            "tasks": [
+              "Go through core concepts of Network Security",
+              "Take notes / build a cheat-sheet for Network Security"
+            ],
+            "hours": 2.0,
+            "resources": "Professor Messer Security+ free videos"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "Network Security hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Network Security",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "Professor Messer Security+ free videos"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "SIEM fundamentals",
+            "tasks": [
+              "Go through core concepts of SIEM",
+              "Take notes / build a cheat-sheet for SIEM"
+            ],
+            "hours": 2.0,
+            "resources": "TryHackMe SOC Level 1 path (free tier)"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "SIEM hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using SIEM",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "TryHackMe SOC Level 1 path (free tier)"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 1 Mini-Project: Network Security & SIEM' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review Network Security & SIEM once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain Network Security & SIEM in an interview."
+      },
+      {
+        "week": 2,
+        "title": "Week 2: Linux & Cryptography",
+        "goal": "Be comfortable applying Linux & Cryptography and ship the week's project.",
+        "project": {
+          "title": "Week 2 Mini-Project: Linux & Cryptography",
+          "tools": "Linux, Cryptography",
+          "deliverable": "A working example demonstrating Linux & Cryptography, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "Linux fundamentals",
+            "tasks": [
+              "Go through core concepts of Linux",
+              "Take notes / build a cheat-sheet for Linux"
+            ],
+            "hours": 2.0,
+            "resources": "Linux Journey (free) + OverTheWire Bandit wargame"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "Linux hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Linux",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "Linux Journey (free) + OverTheWire Bandit wargame"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Cryptography fundamentals",
+            "tasks": [
+              "Go through core concepts of Cryptography",
+              "Take notes / build a cheat-sheet for Cryptography"
+            ],
+            "hours": 2.0,
+            "resources": "Cryptography I (Stanford, Coursera, free to audit)"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Cryptography hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Cryptography",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "Cryptography I (Stanford, Coursera, free to audit)"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 2 Mini-Project: Linux & Cryptography' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review Linux & Cryptography once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain Linux & Cryptography in an interview."
+      },
+      {
+        "week": 3,
+        "title": "Week 3: OWASP & Incident Response",
+        "goal": "Be comfortable applying OWASP & Incident Response and ship the week's project.",
+        "project": {
+          "title": "Week 3 Mini-Project: OWASP & Incident Response",
+          "tools": "OWASP, Incident Response",
+          "deliverable": "A working example demonstrating OWASP & Incident Response, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "OWASP fundamentals",
+            "tasks": [
+              "Go through core concepts of OWASP",
+              "Take notes / build a cheat-sheet for OWASP"
+            ],
+            "hours": 2.0,
+            "resources": "OWASP Top 10 official documentation"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "OWASP hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using OWASP",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "OWASP Top 10 official documentation"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Incident Response fundamentals",
+            "tasks": [
+              "Go through core concepts of Incident Response",
+              "Take notes / build a cheat-sheet for Incident Response"
+            ],
+            "hours": 2.0,
+            "resources": "SANS Incident Handler's Handbook (free PDF)"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Incident Response hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Incident Response",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "SANS Incident Handler's Handbook (free PDF)"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 3 Mini-Project: OWASP & Incident Response' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review OWASP & Incident Response once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain OWASP & Incident Response in an interview."
+      },
+      {
+        "week": 4,
+        "title": "Week 4: Pen Testing",
+        "goal": "Be comfortable applying Pen Testing and ship the week's project.",
+        "project": {
+          "title": "Week 4 Mini-Project: Pen Testing",
+          "tools": "Pen Testing",
+          "deliverable": "A working example demonstrating Pen Testing, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "Pen Testing fundamentals",
+            "tasks": [
+              "Go through core concepts of Pen Testing",
+              "Take notes / build a cheat-sheet for Pen Testing"
+            ],
+            "hours": 2.0,
+            "resources": "TryHackMe free rooms + PortSwigger Web Security Academy (free)"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "Pen Testing hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Pen Testing",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "TryHackMe free rooms + PortSwigger Web Security Academy (free)"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Pen Testing \u2014 intermediate patterns",
+            "tasks": [
+              "Study intermediate/real-world patterns for Pen Testing",
+              "Read 1-2 case studies or open-source examples using Pen Testing"
+            ],
+            "hours": 2.0,
+            "resources": "TryHackMe free rooms + PortSwigger Web Security Academy (free)"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Pen Testing \u2014 advanced practice",
+            "tasks": [
+              "Complete 3-5 harder practice problems using Pen Testing",
+              "Review mistakes and write down key takeaways"
+            ],
+            "hours": 2.0,
+            "resources": "TryHackMe free rooms + PortSwigger Web Security Academy (free)"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 4 Mini-Project: Pen Testing' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review Pen Testing once more",
+              "Complete 2 mock interview sessions (technical + behavioral)"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain Pen Testing in an interview. Complete at least 2 mock interviews before the week ends."
+      }
+    ]
+  },
+  "Mobile App Developer": {
+    "role": "Mobile App Developer",
+    "weeks": [
+      {
+        "week": 1,
+        "title": "Week 1: React Native & Git",
+        "goal": "Be comfortable applying React Native & Git and ship the week's project.",
+        "project": {
+          "title": "Week 1 Mini-Project: React Native & Git",
+          "tools": "React Native, Git",
+          "deliverable": "A working example demonstrating React Native & Git, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "React Native fundamentals",
+            "tasks": [
+              "Go through core concepts of React Native",
+              "Take notes / build a cheat-sheet for React Native"
+            ],
+            "hours": 2.0,
+            "resources": "React Native official docs + freeCodeCamp React Native course"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "React Native hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using React Native",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "React Native official docs + freeCodeCamp React Native course"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Git fundamentals",
+            "tasks": [
+              "Go through core concepts of Git",
+              "Take notes / build a cheat-sheet for Git"
+            ],
+            "hours": 2.0,
+            "resources": "Git branching interactive tutorial (learngitbranching.js.org)"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Git hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Git",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "Git branching interactive tutorial (learngitbranching.js.org)"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 1 Mini-Project: React Native & Git' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review React Native & Git once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain React Native & Git in an interview."
+      },
+      {
+        "week": 2,
+        "title": "Week 2: JavaScript & UI/UX Design",
+        "goal": "Be comfortable applying JavaScript & UI/UX Design and ship the week's project.",
+        "project": {
+          "title": "Week 2 Mini-Project: JavaScript & UI/UX Design",
+          "tools": "JavaScript, UI/UX Design",
+          "deliverable": "A working example demonstrating JavaScript & UI/UX Design, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "JavaScript fundamentals",
+            "tasks": [
+              "Go through core concepts of JavaScript",
+              "Take notes / build a cheat-sheet for JavaScript"
+            ],
+            "hours": 2.0,
+            "resources": "JavaScript.info or freeCodeCamp JS curriculum"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "JavaScript hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using JavaScript",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "JavaScript.info or freeCodeCamp JS curriculum"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "UI/UX Design fundamentals",
+            "tasks": [
+              "Go through core concepts of UI/UX Design",
+              "Take notes / build a cheat-sheet for UI/UX Design"
+            ],
+            "hours": 2.0,
+            "resources": "Google UX Design Certificate (Coursera, free to audit) + Figma tutorials"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "UI/UX Design hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using UI/UX Design",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "Google UX Design Certificate (Coursera, free to audit) + Figma tutorials"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 2 Mini-Project: JavaScript & UI/UX Design' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review JavaScript & UI/UX Design once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain JavaScript & UI/UX Design in an interview."
+      },
+      {
+        "week": 3,
+        "title": "Week 3: Flutter & Firebase",
+        "goal": "Be comfortable applying Flutter & Firebase and ship the week's project.",
+        "project": {
+          "title": "Week 3 Mini-Project: Flutter & Firebase",
+          "tools": "Flutter, Firebase",
+          "deliverable": "A working example demonstrating Flutter & Firebase, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "Flutter fundamentals",
+            "tasks": [
+              "Go through core concepts of Flutter",
+              "Take notes / build a cheat-sheet for Flutter"
+            ],
+            "hours": 2.0,
+            "resources": "Flutter.dev official codelabs + The Net Ninja Flutter playlist"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "Flutter hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Flutter",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "Flutter.dev official codelabs + The Net Ninja Flutter playlist"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Firebase fundamentals",
+            "tasks": [
+              "Go through core concepts of Firebase",
+              "Take notes / build a cheat-sheet for Firebase"
+            ],
+            "hours": 2.0,
+            "resources": "Firebase official documentation + codelabs"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Firebase hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Firebase",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "Firebase official documentation + codelabs"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 3 Mini-Project: Flutter & Firebase' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review Flutter & Firebase once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain Flutter & Firebase in an interview."
+      },
+      {
+        "week": 4,
+        "title": "Week 4: REST APIs",
+        "goal": "Be comfortable applying REST APIs and ship the week's project.",
+        "project": {
+          "title": "Week 4 Mini-Project: REST APIs",
+          "tools": "REST APIs",
+          "deliverable": "A working example demonstrating REST APIs, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "REST APIs fundamentals",
+            "tasks": [
+              "Go through core concepts of REST APIs",
+              "Take notes / build a cheat-sheet for REST APIs"
+            ],
+            "hours": 2.0,
+            "resources": "roadmap.sh API design guide + Postman API fundamentals"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "REST APIs hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using REST APIs",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "roadmap.sh API design guide + Postman API fundamentals"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "REST APIs \u2014 intermediate patterns",
+            "tasks": [
+              "Study intermediate/real-world patterns for REST APIs",
+              "Read 1-2 case studies or open-source examples using REST APIs"
+            ],
+            "hours": 2.0,
+            "resources": "roadmap.sh API design guide + Postman API fundamentals"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "REST APIs \u2014 advanced practice",
+            "tasks": [
+              "Complete 3-5 harder practice problems using REST APIs",
+              "Review mistakes and write down key takeaways"
+            ],
+            "hours": 2.0,
+            "resources": "roadmap.sh API design guide + Postman API fundamentals"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 4 Mini-Project: REST APIs' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review REST APIs once more",
+              "Complete 2 mock interview sessions (technical + behavioral)"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain REST APIs in an interview. Complete at least 2 mock interviews before the week ends."
+      }
+    ]
+  },
+  "Cloud Architect": {
+    "role": "Cloud Architect",
+    "weeks": [
+      {
+        "week": 1,
+        "title": "Week 1: AWS & Microservices",
+        "goal": "Be comfortable applying AWS & Microservices and ship the week's project.",
+        "project": {
+          "title": "Week 1 Mini-Project: AWS & Microservices",
+          "tools": "AWS, Microservices",
+          "deliverable": "A working example demonstrating AWS & Microservices, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "AWS fundamentals",
+            "tasks": [
+              "Go through core concepts of AWS",
+              "Take notes / build a cheat-sheet for AWS"
+            ],
+            "hours": 2.0,
+            "resources": "AWS Cloud Practitioner free training on AWS Skill Builder"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "AWS hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using AWS",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "AWS Cloud Practitioner free training on AWS Skill Builder"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Microservices fundamentals",
+            "tasks": [
+              "Go through core concepts of Microservices",
+              "Take notes / build a cheat-sheet for Microservices"
+            ],
+            "hours": 2.0,
+            "resources": "microservices.io patterns + Sam Newman's articles"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Microservices hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Microservices",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "microservices.io patterns + Sam Newman's articles"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 1 Mini-Project: AWS & Microservices' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review AWS & Microservices once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain AWS & Microservices in an interview."
+      },
+      {
+        "week": 2,
+        "title": "Week 2: Azure & Docker",
+        "goal": "Be comfortable applying Azure & Docker and ship the week's project.",
+        "project": {
+          "title": "Week 2 Mini-Project: Azure & Docker",
+          "tools": "Azure, Docker",
+          "deliverable": "A working example demonstrating Azure & Docker, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "Azure fundamentals",
+            "tasks": [
+              "Go through core concepts of Azure",
+              "Take notes / build a cheat-sheet for Azure"
+            ],
+            "hours": 2.0,
+            "resources": "Microsoft Learn Azure Fundamentals (AZ-900) free path"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "Azure hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Azure",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "Microsoft Learn Azure Fundamentals (AZ-900) free path"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Docker fundamentals",
+            "tasks": [
+              "Go through core concepts of Docker",
+              "Take notes / build a cheat-sheet for Docker"
+            ],
+            "hours": 2.0,
+            "resources": "Docker official Getting Started tutorial"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Docker hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Docker",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "Docker official Getting Started tutorial"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 2 Mini-Project: Azure & Docker' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review Azure & Docker once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain Azure & Docker in an interview."
+      },
+      {
+        "week": 3,
+        "title": "Week 3: Terraform & Kubernetes",
+        "goal": "Be comfortable applying Terraform & Kubernetes and ship the week's project.",
+        "project": {
+          "title": "Week 3 Mini-Project: Terraform & Kubernetes",
+          "tools": "Terraform, Kubernetes",
+          "deliverable": "A working example demonstrating Terraform & Kubernetes, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "Terraform fundamentals",
+            "tasks": [
+              "Go through core concepts of Terraform",
+              "Take notes / build a cheat-sheet for Terraform"
+            ],
+            "hours": 2.0,
+            "resources": "HashiCorp Learn Terraform official tutorials"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "Terraform hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Terraform",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "HashiCorp Learn Terraform official tutorials"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Kubernetes fundamentals",
+            "tasks": [
+              "Go through core concepts of Kubernetes",
+              "Take notes / build a cheat-sheet for Kubernetes"
+            ],
+            "hours": 2.0,
+            "resources": "Kubernetes official tutorials + KodeKloud labs"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Kubernetes hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Kubernetes",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "Kubernetes official tutorials + KodeKloud labs"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 3 Mini-Project: Terraform & Kubernetes' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review Terraform & Kubernetes once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain Terraform & Kubernetes in an interview."
+      },
+      {
+        "week": 4,
+        "title": "Week 4: Networking & Security",
+        "goal": "Be comfortable applying Networking & Security and ship the week's project.",
+        "project": {
+          "title": "Week 4 Mini-Project: Networking & Security",
+          "tools": "Networking, Security",
+          "deliverable": "A working example demonstrating Networking & Security, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "Networking fundamentals",
+            "tasks": [
+              "Go through core concepts of Networking",
+              "Take notes / build a cheat-sheet for Networking"
+            ],
+            "hours": 2.0,
+            "resources": "Professor Messer Networking basics (free YouTube)"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "Networking hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Networking",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "Professor Messer Networking basics (free YouTube)"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Security fundamentals",
+            "tasks": [
+              "Go through core concepts of Security",
+              "Take notes / build a cheat-sheet for Security"
+            ],
+            "hours": 2.0,
+            "resources": "OWASP Top 10 official documentation"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Security hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Security",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "OWASP Top 10 official documentation"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 4 Mini-Project: Networking & Security' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review Networking & Security once more",
+              "Complete 2 mock interview sessions (technical + behavioral)"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain Networking & Security in an interview. Complete at least 2 mock interviews before the week ends."
+      }
+    ]
+  },
+  "Product Manager": {
+    "role": "Product Manager",
+    "weeks": [
+      {
+        "week": 1,
+        "title": "Week 1: Product Strategy & JIRA",
+        "goal": "Be comfortable applying Product Strategy & JIRA and ship the week's project.",
+        "project": {
+          "title": "Week 1 Mini-Project: Product Strategy & JIRA",
+          "tools": "Product Strategy, JIRA",
+          "deliverable": "A working example demonstrating Product Strategy & JIRA, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "Product Strategy fundamentals",
+            "tasks": [
+              "Go through core concepts of Product Strategy",
+              "Take notes / build a cheat-sheet for Product Strategy"
+            ],
+            "hours": 2.0,
+            "resources": "Reforge free articles + 'Inspired' by Marty Cagan (book)"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "Product Strategy hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Product Strategy",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "Reforge free articles + 'Inspired' by Marty Cagan (book)"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "JIRA fundamentals",
+            "tasks": [
+              "Go through core concepts of JIRA",
+              "Take notes / build a cheat-sheet for JIRA"
+            ],
+            "hours": 2.0,
+            "resources": "Atlassian University free JIRA fundamentals course"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "JIRA hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using JIRA",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "Atlassian University free JIRA fundamentals course"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 1 Mini-Project: Product Strategy & JIRA' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review Product Strategy & JIRA once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain Product Strategy & JIRA in an interview."
+      },
+      {
+        "week": 2,
+        "title": "Week 2: User Research & Wireframing",
+        "goal": "Be comfortable applying User Research & Wireframing and ship the week's project.",
+        "project": {
+          "title": "Week 2 Mini-Project: User Research & Wireframing",
+          "tools": "User Research, Wireframing",
+          "deliverable": "A working example demonstrating User Research & Wireframing, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "User Research fundamentals",
+            "tasks": [
+              "Go through core concepts of User Research",
+              "Take notes / build a cheat-sheet for User Research"
+            ],
+            "hours": 2.0,
+            "resources": "Google UX Design Certificate (research module) + NN/g free articles"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "User Research hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using User Research",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "Google UX Design Certificate (research module) + NN/g free articles"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Wireframing fundamentals",
+            "tasks": [
+              "Go through core concepts of Wireframing",
+              "Take notes / build a cheat-sheet for Wireframing"
+            ],
+            "hours": 2.0,
+            "resources": "Figma free tutorials + Balsamiq wireframing guides"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Wireframing hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Wireframing",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "Figma free tutorials + Balsamiq wireframing guides"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 2 Mini-Project: User Research & Wireframing' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review User Research & Wireframing once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain User Research & Wireframing in an interview."
+      },
+      {
+        "week": 3,
+        "title": "Week 3: SQL & Communication",
+        "goal": "Be comfortable applying SQL & Communication and ship the week's project.",
+        "project": {
+          "title": "Week 3 Mini-Project: SQL & Communication",
+          "tools": "SQL, Communication",
+          "deliverable": "A working example demonstrating SQL & Communication, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "SQL fundamentals",
+            "tasks": [
+              "Go through core concepts of SQL",
+              "Take notes / build a cheat-sheet for SQL"
+            ],
+            "hours": 2.0,
+            "resources": "SQLBolt interactive exercises + LeetCode SQL track"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "SQL hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using SQL",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "SQLBolt interactive exercises + LeetCode SQL track"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Communication fundamentals",
+            "tasks": [
+              "Go through core concepts of Communication",
+              "Take notes / build a cheat-sheet for Communication"
+            ],
+            "hours": 2.0,
+            "resources": "Toastmasters free resources + Coursera 'Improve Communication Skills'"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Communication hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Communication",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "Toastmasters free resources + Coursera 'Improve Communication Skills'"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 3 Mini-Project: SQL & Communication' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review SQL & Communication once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain SQL & Communication in an interview."
+      },
+      {
+        "week": 4,
+        "title": "Week 4: Agile",
+        "goal": "Be comfortable applying Agile and ship the week's project.",
+        "project": {
+          "title": "Week 4 Mini-Project: Agile",
+          "tools": "Agile",
+          "deliverable": "A working example demonstrating Agile, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "Agile fundamentals",
+            "tasks": [
+              "Go through core concepts of Agile",
+              "Take notes / build a cheat-sheet for Agile"
+            ],
+            "hours": 2.0,
+            "resources": "Atlassian Agile Coach (free) + Scrum.org Open Assessments"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "Agile hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Agile",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "Atlassian Agile Coach (free) + Scrum.org Open Assessments"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Agile \u2014 intermediate patterns",
+            "tasks": [
+              "Study intermediate/real-world patterns for Agile",
+              "Read 1-2 case studies or open-source examples using Agile"
+            ],
+            "hours": 2.0,
+            "resources": "Atlassian Agile Coach (free) + Scrum.org Open Assessments"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Agile \u2014 advanced practice",
+            "tasks": [
+              "Complete 3-5 harder practice problems using Agile",
+              "Review mistakes and write down key takeaways"
+            ],
+            "hours": 2.0,
+            "resources": "Atlassian Agile Coach (free) + Scrum.org Open Assessments"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 4 Mini-Project: Agile' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review Agile once more",
+              "Complete 2 mock interview sessions (technical + behavioral)"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain Agile in an interview. Complete at least 2 mock interviews before the week ends."
+      }
+    ]
+  },
+  "Data Analyst": {
+    "role": "Data Analyst",
+    "weeks": [
+      {
+        "week": 1,
+        "title": "Week 1: Python & Airflow",
+        "goal": "Be comfortable applying Python & Airflow and ship the week's project.",
+        "project": {
+          "title": "Week 1 Mini-Project: Python & Airflow",
+          "tools": "Python, Airflow",
+          "deliverable": "A working example demonstrating Python & Airflow, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "Python fundamentals",
+            "tasks": [
+              "Go through core concepts of Python",
+              "Take notes / build a cheat-sheet for Python"
+            ],
+            "hours": 2.0,
+            "resources": "Python for Everybody (Coursera) or Automate the Boring Stuff"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "Python hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Python",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "Python for Everybody (Coursera) or Automate the Boring Stuff"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Airflow fundamentals",
+            "tasks": [
+              "Go through core concepts of Airflow",
+              "Take notes / build a cheat-sheet for Airflow"
+            ],
+            "hours": 2.0,
+            "resources": "Apache Airflow official 'Get Started' tutorial"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Airflow hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Airflow",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "Apache Airflow official 'Get Started' tutorial"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 1 Mini-Project: Python & Airflow' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review Python & Airflow once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain Python & Airflow in an interview."
+      },
+      {
+        "week": 2,
+        "title": "Week 2: SQL & Data Warehousing",
+        "goal": "Be comfortable applying SQL & Data Warehousing and ship the week's project.",
+        "project": {
+          "title": "Week 2 Mini-Project: SQL & Data Warehousing",
+          "tools": "SQL, Data Warehousing",
+          "deliverable": "A working example demonstrating SQL & Data Warehousing, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "SQL fundamentals",
+            "tasks": [
+              "Go through core concepts of SQL",
+              "Take notes / build a cheat-sheet for SQL"
+            ],
+            "hours": 2.0,
+            "resources": "SQLBolt interactive exercises + LeetCode SQL track"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "SQL hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using SQL",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "SQLBolt interactive exercises + LeetCode SQL track"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Data Warehousing fundamentals",
+            "tasks": [
+              "Go through core concepts of Data Warehousing",
+              "Take notes / build a cheat-sheet for Data Warehousing"
+            ],
+            "hours": 2.0,
+            "resources": "Google Cloud's BigQuery free courses + Kimball basics articles"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Data Warehousing hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Data Warehousing",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "Google Cloud's BigQuery free courses + Kimball basics articles"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 2 Mini-Project: SQL & Data Warehousing' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review SQL & Data Warehousing once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain SQL & Data Warehousing in an interview."
+      },
+      {
+        "week": 3,
+        "title": "Week 3: Apache Spark & AWS",
+        "goal": "Be comfortable applying Apache Spark & AWS and ship the week's project.",
+        "project": {
+          "title": "Week 3 Mini-Project: Apache Spark & AWS",
+          "tools": "Apache Spark, AWS",
+          "deliverable": "A working example demonstrating Apache Spark & AWS, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "Apache Spark fundamentals",
+            "tasks": [
+              "Go through core concepts of Apache Spark",
+              "Take notes / build a cheat-sheet for Apache Spark"
+            ],
+            "hours": 2.0,
+            "resources": "Databricks free Spark tutorials + Spark official docs"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "Apache Spark hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Apache Spark",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "Databricks free Spark tutorials + Spark official docs"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "AWS fundamentals",
+            "tasks": [
+              "Go through core concepts of AWS",
+              "Take notes / build a cheat-sheet for AWS"
+            ],
+            "hours": 2.0,
+            "resources": "AWS Cloud Practitioner free training on AWS Skill Builder"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "AWS hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using AWS",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "AWS Cloud Practitioner free training on AWS Skill Builder"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 3 Mini-Project: Apache Spark & AWS' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review Apache Spark & AWS once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain Apache Spark & AWS in an interview."
+      },
+      {
+        "week": 4,
+        "title": "Week 4: ETL & Kafka",
+        "goal": "Be comfortable applying ETL & Kafka and ship the week's project.",
+        "project": {
+          "title": "Week 4 Mini-Project: ETL & Kafka",
+          "tools": "ETL, Kafka",
+          "deliverable": "A working example demonstrating ETL & Kafka, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "ETL fundamentals",
+            "tasks": [
+              "Go through core concepts of ETL",
+              "Take notes / build a cheat-sheet for ETL"
+            ],
+            "hours": 2.0,
+            "resources": "freeCodeCamp Data Engineering course (ETL section)"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "ETL hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using ETL",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "freeCodeCamp Data Engineering course (ETL section)"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Kafka fundamentals",
+            "tasks": [
+              "Go through core concepts of Kafka",
+              "Take notes / build a cheat-sheet for Kafka"
+            ],
+            "hours": 2.0,
+            "resources": "Confluent Kafka free tutorials + Conduktor Kafka crash course"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Kafka hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Kafka",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "Confluent Kafka free tutorials + Conduktor Kafka crash course"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 4 Mini-Project: ETL & Kafka' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review ETL & Kafka once more",
+              "Complete 2 mock interview sessions (technical + behavioral)"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain ETL & Kafka in an interview. Complete at least 2 mock interviews before the week ends."
+      }
+    ]
+  },
+  "Software Engineer": {
+    "role": "Software Engineer",
+    "weeks": [
+      {
+        "week": 1,
+        "title": "Week 1: Node.js & PostgreSQL",
+        "goal": "Be comfortable applying Node.js & PostgreSQL and ship the week's project.",
+        "project": {
+          "title": "Week 1 Mini-Project: Node.js & PostgreSQL",
+          "tools": "Node.js, PostgreSQL",
+          "deliverable": "A working example demonstrating Node.js & PostgreSQL, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "Node.js fundamentals",
+            "tasks": [
+              "Go through core concepts of Node.js",
+              "Take notes / build a cheat-sheet for Node.js"
+            ],
+            "hours": 2.0,
+            "resources": "Node.js documentation + The Odin Project backend track"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "Node.js hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Node.js",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "Node.js documentation + The Odin Project backend track"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "PostgreSQL fundamentals",
+            "tasks": [
+              "Go through core concepts of PostgreSQL",
+              "Take notes / build a cheat-sheet for PostgreSQL"
+            ],
+            "hours": 2.0,
+            "resources": "PostgreSQL official tutorial + PostgreSQL Exercises (pgexercises.com)"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "PostgreSQL hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using PostgreSQL",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "PostgreSQL official tutorial + PostgreSQL Exercises (pgexercises.com)"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 1 Mini-Project: Node.js & PostgreSQL' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review Node.js & PostgreSQL once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain Node.js & PostgreSQL in an interview."
+      },
+      {
+        "week": 2,
+        "title": "Week 2: Python & Authentication",
+        "goal": "Be comfortable applying Python & Authentication and ship the week's project.",
+        "project": {
+          "title": "Week 2 Mini-Project: Python & Authentication",
+          "tools": "Python, Authentication",
+          "deliverable": "A working example demonstrating Python & Authentication, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "Python fundamentals",
+            "tasks": [
+              "Go through core concepts of Python",
+              "Take notes / build a cheat-sheet for Python"
+            ],
+            "hours": 2.0,
+            "resources": "Python for Everybody (Coursera) or Automate the Boring Stuff"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "Python hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Python",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "Python for Everybody (Coursera) or Automate the Boring Stuff"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Authentication fundamentals",
+            "tasks": [
+              "Go through core concepts of Authentication",
+              "Take notes / build a cheat-sheet for Authentication"
+            ],
+            "hours": 2.0,
+            "resources": "Auth0 blog fundamentals + JWT.io introduction"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Authentication hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Authentication",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "Auth0 blog fundamentals + JWT.io introduction"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 2 Mini-Project: Python & Authentication' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review Python & Authentication once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain Python & Authentication in an interview."
+      },
+      {
+        "week": 3,
+        "title": "Week 3: REST APIs & System Design",
+        "goal": "Be comfortable applying REST APIs & System Design and ship the week's project.",
+        "project": {
+          "title": "Week 3 Mini-Project: REST APIs & System Design",
+          "tools": "REST APIs, System Design",
+          "deliverable": "A working example demonstrating REST APIs & System Design, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "REST APIs fundamentals",
+            "tasks": [
+              "Go through core concepts of REST APIs",
+              "Take notes / build a cheat-sheet for REST APIs"
+            ],
+            "hours": 2.0,
+            "resources": "roadmap.sh API design guide + Postman API fundamentals"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "REST APIs hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using REST APIs",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "roadmap.sh API design guide + Postman API fundamentals"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "System Design fundamentals",
+            "tasks": [
+              "Go through core concepts of System Design",
+              "Take notes / build a cheat-sheet for System Design"
+            ],
+            "hours": 2.0,
+            "resources": "System Design Primer (GitHub) + Gaurav Sen YouTube"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "System Design hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using System Design",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "System Design Primer (GitHub) + Gaurav Sen YouTube"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 3 Mini-Project: REST APIs & System Design' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review REST APIs & System Design once more"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain REST APIs & System Design in an interview."
+      },
+      {
+        "week": 4,
+        "title": "Week 4: SQL & Docker",
+        "goal": "Be comfortable applying SQL & Docker and ship the week's project.",
+        "project": {
+          "title": "Week 4 Mini-Project: SQL & Docker",
+          "tools": "SQL, Docker",
+          "deliverable": "A working example demonstrating SQL & Docker, pushed to GitHub with a README."
+        },
+        "days": [
+          {
+            "day": "Day 1 (Mon)",
+            "focus": "SQL fundamentals",
+            "tasks": [
+              "Go through core concepts of SQL",
+              "Take notes / build a cheat-sheet for SQL"
+            ],
+            "hours": 2.0,
+            "resources": "SQLBolt interactive exercises + LeetCode SQL track"
+          },
+          {
+            "day": "Day 2 (Tue)",
+            "focus": "SQL hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using SQL",
+              "Fix errors and review solutions"
+            ],
+            "hours": 2.0,
+            "resources": "SQLBolt interactive exercises + LeetCode SQL track"
+          },
+          {
+            "day": "Day 3 (Wed)",
+            "focus": "Docker fundamentals",
+            "tasks": [
+              "Go through core concepts of Docker",
+              "Take notes / build a cheat-sheet for Docker"
+            ],
+            "hours": 2.0,
+            "resources": "Docker official Getting Started tutorial"
+          },
+          {
+            "day": "Day 4 (Thu)",
+            "focus": "Docker hands-on practice",
+            "tasks": [
+              "Complete 3-5 practice exercises using Docker",
+              "Review any weak areas from Day 1-3"
+            ],
+            "hours": 2.0,
+            "resources": "Docker official Getting Started tutorial"
+          },
+          {
+            "day": "Day 5 (Fri)",
+            "focus": "Project planning & setup",
+            "tasks": [
+              "Scope the 'Week 4 Mini-Project: SQL & Docker' project",
+              "Set up repo, environment, and folder structure"
+            ],
+            "hours": 2.0,
+            "resources": "GitHub 'Creating a repo' guide"
+          },
+          {
+            "day": "Day 6 (Sat)",
+            "focus": "Project build (core)",
+            "tasks": [
+              "Implement the core functionality of the weekly project",
+              "Commit progress incrementally"
+            ],
+            "hours": 3.5,
+            "resources": ""
+          },
+          {
+            "day": "Day 7 (Sun)",
+            "focus": "Project finish + weekly review",
+            "tasks": [
+              "Finish and polish the project deliverable",
+              "Write the README",
+              "Review SQL & Docker once more",
+              "Complete 2 mock interview sessions (technical + behavioral)"
+            ],
+            "hours": 2.5,
+            "resources": ""
+          }
+        ],
+        "successCriteria": "Project deliverable pushed to GitHub; can explain SQL & Docker in an interview. Complete at least 2 mock interviews before the week ends."
+      }
+    ]
+  }
+};
+if (typeof module !== 'undefined') module.exports = ROADMAP_FALLBACK_DATA;

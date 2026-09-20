@@ -119,19 +119,25 @@ def generate_roadmap(req: RoadmapRequest) -> RoadmapResponse:
 
     data = call_groq_json(SYSTEM_PROMPT, user_prompt, temperature=0.5, max_tokens=1500)
     if not data or not data.get("milestones"):
-        return _template_roadmap(req)
+        return RoadmapResponse(
+            milestones=[],
+            summary="AI could not generate roadmap. AI is not fetching ready-made template of roadmap — dynamic Groq AI generation is required.",
+            source="ai-unavailable",
+            modelVersion="none",
+            timestamp=datetime.now().isoformat(),
+        )
 
     milestones = [
         RoadmapMilestone(
-            title=m.get("title", ""),
-            description=m.get("description", ""),
-            week=m.get("week", 1),
-            priority=m.get("priority", "medium"),
+            title=m.get("title", m.get("focus", m.get("milestone", "Milestone"))),
+            description=m.get("description", m.get("deliverable", m.get("details", ""))),
+            week=m.get("week", idx + 1) if isinstance(m.get("week"), int) else (idx + 1),
+            priority=m.get("priority", "high" if idx < 3 else "medium"),
             category=m.get("category", "skill"),
-            resources=m.get("resources", []),
-            success_criteria=m.get("success_criteria", ""),
+            resources=m.get("resources", []) if isinstance(m.get("resources"), list) else ([m.get("resources")] if m.get("resources") else []),
+            success_criteria=m.get("success_criteria", m.get("deliverable", "")),
         )
-        for m in data.get("milestones", [])
+        for idx, m in enumerate(data.get("milestones", []))
     ]
 
     return RoadmapResponse(
@@ -142,34 +148,3 @@ def generate_roadmap(req: RoadmapRequest) -> RoadmapResponse:
         timestamp=datetime.now().isoformat(),
     )
 
-
-def _template_roadmap(req: RoadmapRequest) -> RoadmapResponse:
-    """Fallback: role-based template milestones."""
-    target_role = req.target_role or req.targetRole or "Data Analyst"
-    templates = {
-        "Data Analyst": [
-            RoadmapMilestone(title="Master SQL Fundamentals", description="Complete joins, subqueries, window functions, and aggregation exercises.", week=1, priority="critical", category="skill", resources=["SQLBolt.com", "LeetCode SQL track"], success_criteria="Solve 30 SQL problems on LeetCode"),
-            RoadmapMilestone(title="Python for Data Analysis", description="Learn pandas, numpy, and matplotlib for data manipulation and visualization.", week=2, priority="critical", category="skill", resources=["Kaggle Learn Python", "Automate the Boring Stuff"], success_criteria="Complete 3 Kaggle datasets analysis"),
-            RoadmapMilestone(title="Build Dashboard Project", description="Create an interactive Power BI or Tableau dashboard using real-world data.", week=4, priority="high", category="project", resources=["Microsoft Power BI free tier", "Makeover Monday datasets"], success_criteria="Publish 1 dashboard on Tableau Public or Power BI"),
-            RoadmapMilestone(title="Statistics Refresher", description="Review hypothesis testing, distributions, and regression concepts.", week=5, priority="high", category="skill", resources=["Khan Academy Statistics", "StatQuest YouTube"], success_criteria="Score 80%+ on a statistics mock test"),
-            RoadmapMilestone(title="Practice Aptitude Tests", description="Complete timed mock aptitude assessments to build speed and accuracy.", week=7, priority="high", category="practice", resources=["IndiaBIX.com", "Placement preparation apps"], success_criteria="Score 80%+ in 3 consecutive mock tests"),
-            RoadmapMilestone(title="Mock Interviews x3", description="Complete 3 AI mock interviews focusing on STAR method and data case studies.", week=9, priority="critical", category="practice", resources=["CAMPUSLINK Mock Interview", "Pramp.com"], success_criteria="Average score 70+ across 3 sessions"),
-        ],
-        "Software Engineer": [
-            RoadmapMilestone(title="DSA Foundation", description="Master arrays, strings, linked lists, stacks, queues, trees, and graphs.", week=1, priority="critical", category="skill", resources=["NeetCode 150", "Abdul Bari DSA playlist"], success_criteria="Solve 50 LeetCode problems (easy + medium)"),
-            RoadmapMilestone(title="System Design Basics", description="Learn load balancing, caching, databases, and API design patterns.", week=3, priority="high", category="skill", resources=["System Design Primer (GitHub)", "Gaurav Sen YouTube"], success_criteria="Design 3 systems (URL shortener, chat app, feed)"),
-            RoadmapMilestone(title="Full-Stack Project", description="Build a complete web application with authentication, CRUD, and deployment.", week=5, priority="critical", category="project", resources=["The Odin Project", "FreeCodeCamp"], success_criteria="Deploy 1 project on Vercel/Railway with GitHub repo"),
-            RoadmapMilestone(title="Git & CI/CD", description="Master branching, PRs, merge conflicts, and basic CI pipeline.", week=6, priority="medium", category="skill", resources=["learngitbranching.js.org", "GitHub Actions docs"], success_criteria="Set up CI pipeline for your project"),
-            RoadmapMilestone(title="Mock Interviews", description="Practice coding interviews and behavioral questions.", week=8, priority="critical", category="practice", resources=["CAMPUSLINK Mock Interview", "LeetCode contest mode"], success_criteria="Complete 5 timed coding challenges + 3 behavioral mocks"),
-        ],
-    }
-
-    milestones = templates.get(target_role, templates.get("Data Analyst", []))
-
-    return RoadmapResponse(
-        milestones=milestones,
-        summary=f"Template-based {target_role} preparation roadmap. Personalization requires LLM integration.",
-        source="rule-engine",
-        modelVersion="roadmap-template-v1",
-        timestamp=datetime.now().isoformat(),
-    )

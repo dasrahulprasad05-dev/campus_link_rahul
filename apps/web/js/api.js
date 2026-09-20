@@ -70,6 +70,16 @@ const API = (() => {
       return simulateSkillGap(body.targetRole, body.skills);
     }
 
+    if (path.includes('generate-roadmap')) {
+      return {
+        success: false,
+        milestones: [],
+        summary: '',
+        source: 'ai-unavailable',
+        error: 'AI service unavailable in offline mode.',
+      };
+    }
+
     if (path.includes('readiness')) {
       const p = (typeof Store !== 'undefined' && Store.getProfile) ? Store.getProfile() : {};
       return simulateReadiness(p);

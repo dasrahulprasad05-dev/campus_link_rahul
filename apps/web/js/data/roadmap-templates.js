@@ -4105,4 +4105,5 @@ const ROADMAP_FALLBACK_DATA = {
     ]
   }
 };
+if (typeof window !== 'undefined') window.ROADMAP_FALLBACK_DATA = ROADMAP_FALLBACK_DATA;
 if (typeof module !== 'undefined') module.exports = ROADMAP_FALLBACK_DATA;

@@ -86,16 +86,16 @@ async function query(text, params = []) {
  */
 const memoryDb = (() => {
   const bcrypt = require('bcryptjs');
-  const defaultHash = bcrypt.hashSync('rahul2005', 10);
+  const defaultHash = bcrypt.hashSync(process.env.SEED_DEFAULT_PASSWORD || 'CampusLink@2026', 10);
 
   const now = new Date().toISOString();
   const d = (days) => new Date(Date.now() + days * 86400000).toISOString();
 
   const tables = {
     users: [
-      { id: 'u-tpo-abit', name: 'Training & Placement Office ABIT', email: 'rahulprasaddas9@gmail.com', password_hash: defaultHash, role: 'admin', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
-      { id: 'u-recruiter-tcs', name: 'TCS BHUBANESWAR', email: 'ommprasadd363@gmail.com', password_hash: defaultHash, role: 'recruiter', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
-      { id: 'u-mentor-rahul', name: 'Prof. Rahul Prasad Das', email: 'rahulprsaddas@gmail.com', password_hash: defaultHash, role: 'mentor', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
+      { id: 'u-tpo-abit', name: 'Training & Placement Office ABIT', email: 'admin@campuslink.in', password_hash: defaultHash, role: 'admin', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
+      { id: 'u-recruiter-tcs', name: 'TCS Campus Recruitment', email: 'recruiter@campuslink.in', password_hash: defaultHash, role: 'recruiter', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
+      { id: 'u-mentor-rahul', name: 'Faculty Mentor ABIT', email: 'mentor@campuslink.in', password_hash: defaultHash, role: 'mentor', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
       { id: 'u-stu-001', name: 'Ananya Sharma', email: 'ananya.sharma@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
       { id: 'u-stu-002', name: 'Vikram Rao', email: 'vikram.rao@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
       { id: 'u-stu-003', name: 'Soham Das', email: 'soham.das@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true },

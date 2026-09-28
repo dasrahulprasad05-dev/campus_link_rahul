@@ -33,11 +33,9 @@ router.post('/register', async (req, res) => {
     const cleanEmail = email.toLowerCase().trim();
 
     // Strict Role Protection: Staff/Recruiter/TPO emails cannot be registered as student accounts
-    const RESERVED_STAFF_EMAILS = [
-      'rahulprasaddas9@gmail.com',
-      'ommprasadd363@gmail.com',
-      'rahulprsaddas@gmail.com'
-    ];
+    const RESERVED_STAFF_EMAILS = (process.env.RESERVED_STAFF_EMAILS || 'admin@campuslink.in,recruiter@campuslink.in,mentor@campuslink.in')
+      .split(',')
+      .map(e => e.trim().toLowerCase());
     if (RESERVED_STAFF_EMAILS.includes(cleanEmail)) {
       return res.status(403).json({
         success: false,

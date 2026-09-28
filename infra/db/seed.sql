@@ -1,15 +1,15 @@
 -- ============================================================
 -- CAMPUSLINK — Seed Data (Comprehensive)
 -- Replaces hardcoded API.DEMO with database-level realistic data.
--- Password for all seed accounts: rahul2005
+-- Password hash: Bcrypt (10 rounds) for local development seeds
 -- ============================================================
 
 -- ========== USERS ==========
 INSERT INTO users (id, name, email, password_hash, role, email_verified) VALUES
 -- Institutional
-('a1b2c3d4-0001-0001-0001-000000000002', 'Training & Placement Office ABIT', 'rahulprasaddas9@gmail.com', '$2a$10$fwZNNHQTfgM2kTXYKRrgE.4RRGbB84abxa93aGQUcRp5JJkZwg6F.', 'admin', true),
-('a1b2c3d4-0001-0001-0001-000000000003', 'TCS BHUBANESWAR', 'ommprasadd363@gmail.com', '$2a$10$fwZNNHQTfgM2kTXYKRrgE.4RRGbB84abxa93aGQUcRp5JJkZwg6F.', 'recruiter', true),
-('a1b2c3d4-0001-0001-0001-000000000004', 'Prof. Rahul Prasad Das', 'rahulprsaddas@gmail.com', '$2a$10$fwZNNHQTfgM2kTXYKRrgE.4RRGbB84abxa93aGQUcRp5JJkZwg6F.', 'mentor', true),
+('a1b2c3d4-0001-0001-0001-000000000002', 'Training & Placement Office ABIT', 'admin@campuslink.in', '$2a$10$fwZNNHQTfgM2kTXYKRrgE.4RRGbB84abxa93aGQUcRp5JJkZwg6F.', 'admin', true),
+('a1b2c3d4-0001-0001-0001-000000000003', 'TCS Campus Recruitment', 'recruiter@campuslink.in', '$2a$10$fwZNNHQTfgM2kTXYKRrgE.4RRGbB84abxa93aGQUcRp5JJkZwg6F.', 'recruiter', true),
+('a1b2c3d4-0001-0001-0001-000000000004', 'Faculty Mentor ABIT', 'mentor@campuslink.in', '$2a$10$fwZNNHQTfgM2kTXYKRrgE.4RRGbB84abxa93aGQUcRp5JJkZwg6F.', 'mentor', true),
 -- Students (20)
 ('u-stu-001', 'Ananya Sharma',     'ananya.sharma@campuslink.in',   '$2a$10$fwZNNHQTfgM2kTXYKRrgE.4RRGbB84abxa93aGQUcRp5JJkZwg6F.', 'student', true),
 ('u-stu-002', 'Vikram Rao',        'vikram.rao@campuslink.in',      '$2a$10$fwZNNHQTfgM2kTXYKRrgE.4RRGbB84abxa93aGQUcRp5JJkZwg6F.', 'student', true),

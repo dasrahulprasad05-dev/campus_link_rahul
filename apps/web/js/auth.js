@@ -5,13 +5,6 @@
 
 const Auth = (() => {
 
-  // Permanent configured institutional and corporate accounts
-  const PERMANENT_USERS = {
-    'rahulprasaddas9@gmail.com': { id: 'u-tpo-abit', name: 'Training & Placement Office ABIT', email: 'rahulprasaddas9@gmail.com', role: 'admin', password: 'rahul2005' },
-    'ommprasadd363@gmail.com':   { id: 'u-recruiter-tcs', name: 'TCS BHUBANESWAR', email: 'ommprasadd363@gmail.com', role: 'recruiter', password: 'rahul2005' },
-    'rahulprsaddas@gmail.com':   { id: 'u-mentor-rahul', name: 'Prof. Rahul Prasad Das', email: 'rahulprsaddas@gmail.com', role: 'mentor', password: 'rahul2005' },
-  };
-
   const getBase = () => {
     const root = (window.__API_URL__ || localStorage.getItem('CAMPUSLINK_API_URL') || '').replace(/\/+$/, '');
     return `${root}/api/v1/auth`;
@@ -46,31 +39,11 @@ const Auth = (() => {
         };
       }
 
-      // Static host returned HTML (404/405 on Vercel without backend proxy)
-      return loginOffline(email, password);
+      return { success: false, error: 'Authentication service temporarily unavailable. Please try again.' };
     } catch (e) {
-      console.warn('[Auth] Connecting via direct client authentication fallback.');
-      return loginOffline(email, password);
+      console.error('[Auth] Network or server error during login:', e);
+      return { success: false, error: 'Unable to connect to authentication server. Please check your network connection.' };
     }
-  }
-
-  function loginOffline(email, password) {
-    const user = PERMANENT_USERS[email.toLowerCase().trim()];
-    if (!user) {
-      return { success: false, error: 'Invalid email or password. Please check your credentials.' };
-    }
-    if (user.password !== password) {
-      return { success: false, error: 'Invalid email or password.' };
-    }
-
-    const { password: _, ...safeUser } = user;
-    Store.setMany({
-      user: safeUser,
-      token: 'jwt-' + safeUser.role + '-' + Date.now(),
-      role: safeUser.role,
-      isOfflineDemo: false,
-    });
-    return { success: true };
   }
 
   async function register(data) {

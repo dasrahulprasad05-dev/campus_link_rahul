@@ -19,6 +19,7 @@ const Sidebar = (() => {
       { section: 'Opportunities', items: [
         { id: 'student/jobs', icon: '💼', label: 'Job Discovery' },
         { id: 'student/applications', icon: '📝', label: 'Applications', badge: '4' },
+        { id: 'student/offers', icon: '🎉', label: 'My Offers' },
         { id: 'student/resume', icon: '📄', label: 'Resume Analyzer' },
       ]},
       { section: 'Preparation', items: [
@@ -39,6 +40,7 @@ const Sidebar = (() => {
       ]},
       { section: 'Insights', items: [
         { id: 'admin/interventions', icon: '⚡', label: 'Interventions', badge: '3' },
+        { id: 'admin/offers', icon: '📋', label: 'Offer Tracker' },
       ]},
     ],
     recruiter: [

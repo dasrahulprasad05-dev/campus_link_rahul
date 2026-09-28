@@ -7,6 +7,7 @@
 const router = require('express').Router();
 const { authenticate, authorize } = require('../middleware/auth');
 const appRepo = require('../repositories/application.repository');
+const { logAudit } = require('../middleware/audit');
 
 // GET /api/v1/applications — list applications (filtered by student or all for admin/recruiter)
 router.get('/', authenticate, async (req, res) => {
@@ -51,6 +52,9 @@ router.post('/', authenticate, authorize('student'), async (req, res) => {
       current_round: 'Resume Screening',
     });
 
+    // Audit log
+    logAudit({ userId: req.user.id, userRole: req.user.role, action: 'application.create', entityType: 'application', entityId: app?.id, newValue: { job_id: targetJobId, status: 'applied' } });
+
     res.status(201).json({ success: true, data: app });
   } catch (err) {
     res.status(500).json({ success: false, error: { code: 'DB_ERROR', message: err.message } });
@@ -66,6 +70,10 @@ router.patch('/:id/status', authenticate, authorize('recruiter', 'admin'), async
     if (!updated) {
       return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Application not found' } });
     }
+
+    // Audit log
+    logAudit({ userId: req.user.id, userRole: req.user.role, action: 'application.status_change', entityType: 'application', entityId: req.params.id, oldValue: { status: 'previous' }, newValue: { status, round: targetRound } });
+
     res.json({ success: true, data: updated });
   } catch (err) {
     res.status(500).json({ success: false, error: { code: 'DB_ERROR', message: err.message } });

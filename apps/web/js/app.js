@@ -76,6 +76,7 @@ const App = (() => {
     Router.register('student/skill-gap', authPage(StudentSkillGap.render), { auth: true, roles: ['student'] });
     Router.register('student/jobs', authPage(StudentJobs.render), { auth: true, roles: ['student'] });
     Router.register('student/applications', authPage(StudentApplications.render), { auth: true, roles: ['student'] });
+    Router.register('student/offers', authPage(StudentOffers.render), { auth: true, roles: ['student'] });
     Router.register('student/resume', authPage(StudentResume.render), { auth: true, roles: ['student'] });
     Router.register('student/interview', authPage(StudentInterview.render), { auth: true, roles: ['student'] });
     Router.register('student/policy-qa', authPage(StudentPolicyQA.render), { auth: true, roles: ['student'] });
@@ -90,6 +91,7 @@ const App = (() => {
     Router.register('admin/scheduler', authPage(AdminScheduler.render), { auth: true, roles: ['admin'] });
     Router.register('admin/analytics', authPage(AdminAnalytics.render), { auth: true, roles: ['admin'] });
     Router.register('admin/interventions', authPage(AdminInterventions.render), { auth: true, roles: ['admin'] });
+    Router.register('admin/offers', authPage(AdminOffers.render), { auth: true, roles: ['admin'] });
 
     // Recruiter routes
     Router.register('recruiter/dashboard', authPage(RecruiterDashboard.render), { auth: true, roles: ['recruiter'] });

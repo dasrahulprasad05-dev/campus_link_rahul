@@ -742,6 +742,71 @@ const memoryDb = (() => {
       return Promise.resolve({ rows: [...tables.readiness_configs], rowCount: tables.readiness_configs.length });
     }
 
+    // ---- OFFERS ----
+    if (q.includes('from offers') && q.includes('where student_id =')) {
+      const studentId = params[0];
+      const results = tables.offers.filter(o => o.student_id === studentId).map(o => {
+        const comp = tables.companies.find(c => c.id === o.company_id);
+        const job = tables.jobs.find(j => j.id === o.job_id);
+        return { ...o, company_name: comp?.name || '', job_title: job?.title || o.role };
+      });
+      return Promise.resolve({ rows: results, rowCount: results.length });
+    }
+
+    if (q.includes('from offers') && q.includes('where id =')) {
+      const offerId = params[0];
+      const offer = tables.offers.find(o => o.id === offerId);
+      if (offer) {
+        const comp = tables.companies.find(c => c.id === offer.company_id);
+        const job = tables.jobs.find(j => j.id === offer.job_id);
+        return Promise.resolve({ rows: [{ ...offer, company_name: comp?.name || '', job_title: job?.title || offer.role }], rowCount: 1 });
+      }
+      return Promise.resolve({ rows: [], rowCount: 0 });
+    }
+
+    if (q.includes('from offers') && !q.includes('where')) {
+      const results = tables.offers.map(o => {
+        const comp = tables.companies.find(c => c.id === o.company_id);
+        const job = tables.jobs.find(j => j.id === o.job_id);
+        const prof = tables.student_profiles.find(p => p.id === o.student_id);
+        const user = prof ? tables.users.find(u => u.id === prof.user_id) : null;
+        return { ...o, company_name: comp?.name || '', job_title: job?.title || o.role, student_name: user?.name || '', student_email: user?.email || '', branch: prof?.branch || '', cgpa: prof?.cgpa || 0 };
+      });
+      return Promise.resolve({ rows: results, rowCount: results.length });
+    }
+
+    if (q.includes('update offers') && q.includes('set status')) {
+      const status = params[0];
+      const offerId = params[1];
+      const offer = tables.offers.find(o => o.id === offerId);
+      if (offer) {
+        offer.status = status;
+        offer.updated_at = new Date().toISOString();
+        return Promise.resolve({ rows: [{ ...offer }], rowCount: 1 });
+      }
+      return Promise.resolve({ rows: [], rowCount: 0 });
+    }
+
+    // ---- OFFER DOCUMENTS ----
+    if (q.includes('from offer_documents') && q.includes('where offer_id =')) {
+      const offerId = params[0];
+      const docs = tables.offer_documents.filter(d => d.offer_id === offerId);
+      return Promise.resolve({ rows: docs, rowCount: docs.length });
+    }
+
+    if (q.includes('update offer_documents') && q.includes('set status')) {
+      const status = params[0];
+      const docId = params[1];
+      const doc = tables.offer_documents.find(d => d.id === docId);
+      if (doc) {
+        doc.status = status;
+        if (status === 'submitted') doc.submitted_at = new Date().toISOString();
+        if (status === 'verified') doc.verified_at = new Date().toISOString();
+        return Promise.resolve({ rows: [{ ...doc }], rowCount: 1 });
+      }
+      return Promise.resolve({ rows: [], rowCount: 0 });
+    }
+
     // ---- AUDIT LOG ----
     if (q.includes('insert into audit_log')) {
       const [id, userId, userRole, action, entityType, entityId, oldValue, newValue] = params;

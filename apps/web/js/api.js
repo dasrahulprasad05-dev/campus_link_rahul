@@ -60,6 +60,10 @@ const API = (() => {
     if (path.startsWith('/students') && !path.includes('/')) return [];
     if (path.startsWith('/companies')) return [];
 
+    if (path.startsWith('/offers')) {
+      return { success: true, data: [], source: 'offline' };
+    }
+
     if (path.includes('resume-match')) {
       const body = options.body ? (typeof options.body === 'string' ? JSON.parse(options.body) : options.body) : {};
       return simulateResumeMatch(body.jobDescription || '');

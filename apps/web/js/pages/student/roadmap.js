@@ -800,10 +800,24 @@ const StudentRoadmap = (() => {
 
     let result = null;
     try {
+      // HYBRID: First run deterministic skill-gap analysis to get actual missing skills,
+      // then feed those into the LLM roadmap generator so milestones target real gaps.
+      let skillGaps = [];
+      try {
+        const gapResult = await API.post('/analyze/skill-gap', {
+          targetRole,
+          skills: profile.skills || [],
+        });
+        const missing = gapResult?.missing || gapResult?.data?.missing || [];
+        skillGaps = missing.map(m => m.skill || m).filter(Boolean).slice(0, 8);
+      } catch (gapErr) {
+        console.warn('[Roadmap] Skill-gap pre-analysis failed, proceeding without:', gapErr);
+      }
+
       result = await API.post('/ai/generate-roadmap', {
         targetRole,
         currentSkills: profile.skills || [],
-        skillGaps: [],
+        skillGaps,
         cgpa: profile.cgpa || 7.5,
         projectsCount: 2,
         weeksUntilPlacement: 4,

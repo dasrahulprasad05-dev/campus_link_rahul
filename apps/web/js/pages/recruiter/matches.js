@@ -1,11 +1,15 @@
 /* ============================================================
    CAMPUSLINK — Recruiter AI Matching Page (Real Data)
    Job-specific candidate matching with explainable scoring.
+   Calls Feature 8 ML Ranker via /api/v1/analyze/candidate-match,
+   falls back to client-side scoring if AI service is unavailable.
    ============================================================ */
 const RecruiterMatches = (() => {
   let _students = [];
   let _jobs = [];
   let _selectedJobId = '';
+  let _rankingSource = 'client'; // 'client' or 'ml-ranker'
+  let _mlRankedCache = {};       // jobId -> ranked array
 
   async function render() {
     const main = document.getElementById('main');
@@ -19,13 +23,86 @@ const RecruiterMatches = (() => {
     _jobs = Array.isArray(jobResult?.data) ? jobResult.data : (Array.isArray(jobResult) ? jobResult : []);
 
     _selectedJobId = _jobs.length > 0 ? _jobs[0].id : '';
+    _rankingSource = 'client';
+    _mlRankedCache = {};
     _renderPage();
+  }
+
+  async function runMLRanking() {
+    const selectedJob = _jobs.find(j => j.id === _selectedJobId);
+    if (!selectedJob || !_students.length) return;
+
+    const btn = document.getElementById('ml-rank-btn');
+    if (btn) { btn.disabled = true; btn.textContent = '⏳ Running ML model...'; }
+
+    try {
+      const jobSkills = selectedJob.skills_required || selectedJob.skills || [];
+      const candidates = _students.map(s => ({
+        name: s.name || 'Unknown',
+        skills: s.skills || [],
+        cgpa: parseFloat(s.cgpa) || 7.0,
+        projects_count: parseInt(s.projects_count) || 1,
+        readiness_score: parseInt(s.readiness) || 60,
+      }));
+
+      const result = await API.post('/analyze/candidate-match', {
+        job_skills: jobSkills,
+        candidates,
+      });
+
+      if (result?.candidates && result.candidates.length > 0) {
+        _rankingSource = 'ml-ranker';
+        // Map ML results back to full student objects
+        const mlRanked = result.candidates.map(mlC => {
+          const student = _students.find(s => s.name === mlC.name) || {};
+          return {
+            ...student,
+            compositeScore: mlC.match_score,
+            skillScore: mlC.ranking_factors?.skill_match || 0,
+            matchedSkills: mlC.matched_skills || [],
+            missingSkills: mlC.missing_skills || [],
+            eligible: true,
+            mlExplanation: mlC.explanation,
+            mlFactors: mlC.ranking_factors || {},
+            explanation: _buildExplanationFromML(mlC, student),
+            initials: (student.name || 'S').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2),
+          };
+        });
+        _mlRankedCache[_selectedJobId] = mlRanked;
+        Toast.success(`ML Ranker scored ${mlRanked.length} candidates (source: ${result.source || 'ml-ranker'})`);
+        _renderPage();
+      } else {
+        throw new Error(result?.error?.message || 'No results from ML ranker');
+      }
+    } catch (err) {
+      Toast.error(`ML Ranker unavailable: ${err.message}. Using client-side ranking.`);
+      _rankingSource = 'client';
+      if (btn) { btn.disabled = false; btn.textContent = '🤖 Run ML Ranking'; }
+    }
+  }
+
+  function _buildExplanationFromML(mlCandidate, student) {
+    const f = mlCandidate.ranking_factors || {};
+    return [
+      { factor: 'Skill Match', score: f.skill_match || 0, weight: 'ML', detail: `${(mlCandidate.matched_skills || []).length} skills matched`, color: (f.skill_match || 0) >= 70 ? 'var(--success)' : (f.skill_match || 0) >= 40 ? 'var(--warning)' : 'var(--danger)' },
+      { factor: 'Academics', score: f.cgpa_weight || 0, weight: 'ML', detail: `CGPA ${student.cgpa || '—'}`, color: (f.cgpa_weight || 0) >= 70 ? 'var(--success)' : (f.cgpa_weight || 0) >= 40 ? 'var(--warning)' : 'var(--danger)' },
+      { factor: 'Projects', score: f.projects_weight || 0, weight: 'ML', detail: `${student.projects_count || 0} projects`, color: (f.projects_weight || 0) >= 70 ? 'var(--success)' : (f.projects_weight || 0) >= 40 ? 'var(--warning)' : 'var(--danger)' },
+      { factor: 'Readiness', score: f.readiness_weight || 0, weight: 'ML', detail: `Readiness score`, color: (f.readiness_weight || 0) >= 70 ? 'var(--success)' : (f.readiness_weight || 0) >= 40 ? 'var(--warning)' : 'var(--danger)' },
+    ];
   }
 
   function _renderPage() {
     const main = document.getElementById('main');
     const selectedJob = _jobs.find(j => j.id === _selectedJobId);
-    const ranked = selectedJob ? _rankCandidates(_students, selectedJob) : [];
+    let ranked;
+    if (_rankingSource === 'ml-ranker' && _mlRankedCache[_selectedJobId]) {
+      ranked = _mlRankedCache[_selectedJobId];
+    } else {
+      ranked = selectedJob ? _rankCandidates(_students, selectedJob) : [];
+    }
+    const sourceLabel = _rankingSource === 'ml-ranker'
+      ? '<span class="badge badge-accent" style="font-size:10px">🤖 ML Ranker (demo model)</span>'
+      : '<span class="badge" style="font-size:10px">📊 Client-side heuristic</span>';
 
     main.innerHTML = `
       <div class="page-header">
@@ -40,6 +117,8 @@ const RecruiterMatches = (() => {
         <select class="form-select" style="flex:1;max-width:400px" id="match-job-select">
           ${_jobs.map(j => `<option value="${j.id}" ${j.id === _selectedJobId ? 'selected' : ''}>${j.title} — ${j.company_name || j.company || ''}</option>`).join('')}
         </select>
+        <button class="btn btn-sm btn-primary" id="ml-rank-btn" onclick="RecruiterMatches.runMLRanking()">🤖 Run ML Ranking</button>
+        ${sourceLabel}
         ${selectedJob ? `<span class="text-sm text-muted">Required: ${(selectedJob.skills_required || selectedJob.skills || []).join(', ')}</span>` : ''}
       </div>
       <div class="stack">
@@ -48,6 +127,7 @@ const RecruiterMatches = (() => {
     `;
     document.getElementById('match-job-select')?.addEventListener('change', (e) => {
       _selectedJobId = e.target.value;
+      _rankingSource = _mlRankedCache[_selectedJobId] ? 'ml-ranker' : 'client';
       _renderPage();
     });
   }
@@ -64,47 +144,29 @@ const RecruiterMatches = (() => {
       const cgpa = parseFloat(s.cgpa) || 0;
       const backlogs = parseInt(s.backlogs) || 0;
 
-      // Skill match score (0-100)
       const matchedSkills = jobSkills.filter(js => studentSkills.some(ss => ss.includes(js) || js.includes(ss)));
       const skillScore = jobSkills.length > 0 ? Math.round(matchedSkills.length / jobSkills.length * 100) : 50;
-
-      // CGPA score (0-100)
       const cgpaScore = cgpa > 0 ? Math.min(100, Math.round((cgpa / 10) * 100)) : 0;
-
-      // Readiness score (already computed)
       const readinessScore = s.readiness || 0;
-
-      // Eligibility check
       const eligible = (
         (minCgpa === 0 || cgpa >= minCgpa) &&
         (eligBranches.length === 0 || eligBranches.includes(branch)) &&
         (backlogs <= maxBacklogs)
       );
-
-      // Composite score: Skill Match 40% + Readiness 30% + CGPA 20% + Eligible Bonus 10%
       const compositeScore = Math.round(
-        skillScore * 0.40 +
-        readinessScore * 0.30 +
-        cgpaScore * 0.20 +
-        (eligible ? 10 : 0)
+        skillScore * 0.40 + readinessScore * 0.30 + cgpaScore * 0.20 + (eligible ? 10 : 0)
       );
-
-      // Explanation breakdown
       const explanation = [
         { factor: 'Skill Match', score: skillScore, weight: '40%', detail: `${matchedSkills.length}/${jobSkills.length} required skills`, color: skillScore >= 70 ? 'var(--success)' : skillScore >= 40 ? 'var(--warning)' : 'var(--danger)' },
         { factor: 'Readiness', score: readinessScore, weight: '30%', detail: `Readiness score from profile`, color: readinessScore >= 70 ? 'var(--success)' : readinessScore >= 40 ? 'var(--warning)' : 'var(--danger)' },
         { factor: 'Academics', score: cgpaScore, weight: '20%', detail: `CGPA ${cgpa}/10`, color: cgpaScore >= 70 ? 'var(--success)' : cgpaScore >= 40 ? 'var(--warning)' : 'var(--danger)' },
         { factor: 'Eligibility', score: eligible ? 100 : 0, weight: '10%', detail: eligible ? 'Meets all criteria' : 'Does not meet criteria', color: eligible ? 'var(--success)' : 'var(--danger)' },
       ];
-
       return {
-        ...s,
-        compositeScore,
-        skillScore,
+        ...s, compositeScore, skillScore,
         matchedSkills: matchedSkills.map(s => s.charAt(0).toUpperCase() + s.slice(1)),
         missingSkills: jobSkills.filter(js => !matchedSkills.includes(js)).map(s => s.charAt(0).toUpperCase() + s.slice(1)),
-        eligible,
-        explanation,
+        eligible, explanation,
         initials: (s.name || 'S').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2),
       };
     }).sort((a, b) => b.compositeScore - a.compositeScore);
@@ -114,7 +176,6 @@ const RecruiterMatches = (() => {
     const tierColor = c.compositeScore >= 75 ? 'var(--success)' : c.compositeScore >= 50 ? 'var(--warning)' : 'var(--danger)';
     const tierLabel = c.compositeScore >= 75 ? 'Strong Match' : c.compositeScore >= 50 ? 'Moderate Match' : 'Weak Match';
     const branchShort = (c.branch || '').replace('Computer Science & Engineering', 'CSE').replace('Information Technology', 'IT').replace('Electronics & Telecom', 'ETC').replace('Mechanical Engineering', 'ME');
-
     return `
       <article class="card card-interactive animate-fade-in-up" style="animation-delay:${index * 60}ms;${!c.eligible ? 'border-left:3px solid var(--danger);opacity:0.8' : 'border-left:3px solid ' + tierColor}">
         <div class="flex justify-between items-center mb-3">
@@ -165,5 +226,5 @@ const RecruiterMatches = (() => {
     return b;
   }
 
-  return { render };
+  return { render, runMLRanking };
 })();

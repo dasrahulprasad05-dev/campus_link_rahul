@@ -1,6 +1,10 @@
 """
 Feature 2 — Skill-Gap Analyzer (NLP)
-Uses Semantic Vector Embeddings (Subword N-grams + Domain Synonym Mapping + Cosine Similarity).
+Uses hashing-trick sparse vectors (char 3-gram + word tokens, 256-dim)
+with a domain synonym map and cosine similarity.
+NOTE: These are NOT dense/transformer embeddings — they are lightweight
+hash-based sparse vectors. Effective for keyword-level matching within
+a fixed role ontology, but limited for true semantic similarity.
 Analyzes candidate skills against role requirements from an ontology of 12+ roles.
 Detects exact matches, partial/synonym matches (e.g. Data Wrangling ≈ Data Cleaning), and prioritized gaps.
 """
@@ -103,19 +107,69 @@ SKILL_RESOURCES: Dict[str, str] = {
 }
 
 SYNONYMS: Dict[str, str] = {
+    # Data / cleaning
     "data wrangling": "data cleaning",
     "data preprocessing": "data cleaning",
+    "data munging": "data cleaning",
+    "etl": "data cleaning data pipeline",
+    # Abbreviations → full names
+    "ml": "machine learning",
+    "ai": "artificial intelligence machine learning",
+    "dl": "deep learning neural networks",
+    "js": "javascript",
+    "ts": "typescript",
+    "py": "python",
+    "cpp": "c++",
+    "csharp": "c#",
     "k8s": "kubernetes",
+    "dsa": "data structures algorithms",
+    "bi": "business intelligence power bi tableau",
+    "ci/cd": "continuous integration continuous deployment",
+    "cicd": "continuous integration continuous deployment ci/cd",
+    "oop": "object oriented programming",
+    "os": "operating systems",
+    "dbms": "database management system sql",
+    # Database aliases
     "postgres": "postgresql sql",
     "mysql": "sql database",
-    "restful": "rest api",
+    "mongo": "mongodb nosql",
+    "mongodb": "mongo nosql database",
+    "sqlite": "sql database",
+    # Framework aliases
     "reactjs": "react",
     "react.js": "react",
     "nodejs": "node.js",
     "node": "node.js",
+    "nextjs": "next.js react",
+    "next.js": "nextjs react",
+    "vue": "vue.js vuejs",
+    "angular": "angularjs typescript",
+    "express": "expressjs node.js",
+    "flask": "python web framework",
+    "django": "python web framework",
+    "fastapi": "python web framework rest api",
+    "spring": "java spring boot",
+    "spring boot": "java spring",
+    # API
+    "restful": "rest api",
+    "rest": "rest api restful",
+    "graphql": "api query language",
+    # ML / DL
     "deep learning": "neural networks ml",
-    "dsa": "data structures algorithms",
-    "bi": "business intelligence power bi tableau",
+    "scikit-learn": "sklearn machine learning python",
+    "sklearn": "scikit-learn machine learning python",
+    "tf": "tensorflow deep learning",
+    "keras": "tensorflow deep learning",
+    # Cloud
+    "gcp": "google cloud platform",
+    "amazon web services": "aws cloud",
+    # Misc
+    "linux": "unix shell bash",
+    "bash": "shell scripting linux",
+    "powershell": "shell scripting windows",
+    "tableau": "data visualization bi",
+    "power bi": "data visualization bi",
+    "excel": "spreadsheet data analysis",
 }
 
 

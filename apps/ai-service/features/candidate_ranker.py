@@ -3,6 +3,11 @@ Feature 8 — Recruiter Candidate Ranking
 Uses Machine Learning (Linear Ranking Model, weights fit via Ridge regression
 on synthetic historical hiring-outcome data — not hand-set weights).
 Ranks candidates based on skill match, academic standing, project portfolio, and readiness.
+
+DATA_SOURCE: synthetic_training_data
+  Training data is generated programmatically (see _generate_training_data).
+  It is NOT derived from real hiring outcomes. Rankings should be treated
+  as estimates from a demo model.
 """
 
 import numpy as np

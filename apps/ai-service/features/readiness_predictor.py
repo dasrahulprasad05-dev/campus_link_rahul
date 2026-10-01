@@ -1,8 +1,12 @@
 """
 Feature 1 — Placement Readiness Predictor
 Uses Machine Learning (Regularized Multivariate Regression with Non-linear Feature Expansion).
-Trained on student placement historical profiles.
 Predicts readiness score (0-100), feature importances, confidence intervals, and recommendations.
+
+DATA_SOURCE: synthetic_training_data
+  Training data is generated programmatically (see _generate_training_data).
+  It is NOT derived from real student placement records. Scores should be
+  treated as estimates from a demo model, not validated predictions.
 """
 
 import numpy as np
@@ -137,6 +141,8 @@ class RidgeRegressionModel:
 
 
 # ---- Training Data Generation ----
+# DATA_SOURCE: Synthetic — NumPy random with hand-crafted target function.
+# Not derived from real student placement outcomes.
 
 def _generate_training_data(n_samples: int = 600, seed: int = 42):
     rng = np.random.RandomState(seed)

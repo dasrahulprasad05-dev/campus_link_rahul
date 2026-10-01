@@ -160,7 +160,18 @@ def answer_policy_question(req: PolicyQARequest) -> PolicyQAResponse:
         )
 
     # 1. Retrieve most relevant chunks
-    query_tokens = [w.lower() for w in re.findall(r"\b[a-zA-Z0-9_-]{2,}\b", query)]
+    # Filter common stop words from query to prevent spurious BM25 matches
+    STOP_WORDS = {
+        "what", "is", "the", "are", "how", "do", "does", "can", "for", "in",
+        "of", "to", "and", "or", "not", "it", "this", "that", "with", "from",
+        "an", "be", "at", "by", "on", "about", "has", "have", "was", "were",
+        "will", "would", "should", "could", "may", "might", "shall", "its",
+        "my", "your", "me", "we", "they", "he", "she", "if", "so", "but",
+        "any", "all", "some", "there", "here", "when", "where", "who", "why",
+        "tell", "give", "please", "want", "need", "know",
+    }
+    query_tokens = [w.lower() for w in re.findall(r"\b[a-zA-Z0-9_-]{2,}\b", query)
+                    if w.lower() not in STOP_WORDS]
     scored_chunks = []
     for chunk in _chunks:
         s = _score_chunk(chunk, query_tokens)
@@ -170,12 +181,36 @@ def answer_policy_question(req: PolicyQARequest) -> PolicyQAResponse:
     scored_chunks.sort(key=lambda x: x[0], reverse=True)
     top_results = scored_chunks[:4]
 
-    # If no relevant chunks found
+    # If no relevant chunks found at all
     if not top_results:
         return PolicyQAResponse(
             answer="This query is not covered in the current placement policy documents. Please consult the Training & Placement Office (TPO) for official guidance.",
             sources=[],
-            confidence=0.2,
+            confidence=0.1,
+            source="groq-rag",
+            timestamp=datetime.now().isoformat(),
+        )
+
+    # Hallucination guard: if best BM25 score is below threshold, the
+    # retrieved context is too weak to trust — skip the LLM entirely.
+    MIN_BM25_SCORE = 5.0
+    if top_results[0][0] < MIN_BM25_SCORE:
+        weak_sources = [
+            PolicySource(
+                document=f"{ch.doc_name} ({ch.section})",
+                content=ch.text[:220].replace("\n", " ").strip() + "...",
+                relevance_score=round(min(1.0, sc / (MIN_BM25_SCORE + 1e-5)), 2),
+            )
+            for sc, ch in top_results
+        ]
+        return PolicyQAResponse(
+            answer=(
+                "I couldn't find a confident answer to this in the placement policy documents. "
+                "The retrieved context was too weakly related to provide an accurate answer. "
+                "Please consult the Training & Placement Office (TPO) directly for this query."
+            ),
+            sources=weak_sources,
+            confidence=round(min(0.3, top_results[0][0] / MIN_BM25_SCORE), 2),
             source="groq-rag",
             timestamp=datetime.now().isoformat(),
         )

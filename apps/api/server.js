@@ -56,7 +56,7 @@ app.use('/api/v1/ai', aiRoutes);
 app.use('/api/v1/career-finder', careerFinderRoutes);
 app.use('/api/v1/offers', offerRoutes);
 
-const { authenticate } = require('./middleware/auth');
+const { authenticate, authorize } = require('./middleware/auth');
 const { query, memoryDb } = require('./db/pool');
 
 // Dashboard endpoint (strictly authenticated; returns role-specific aggregated data)
@@ -253,6 +253,12 @@ app.post('/api/v1/analyze/at-risk', (req, res) => handleAIProxy('/v1/at-risk', r
 app.post('/api/analyze/at-risk', (req, res) => handleAIProxy('/v1/at-risk', req, res));
 app.post('/api/v1/analyze/policy-qa', (req, res) => handleAIProxy('/v1/policy-qa', req, res));
 app.post('/api/analyze/policy-qa', (req, res) => handleAIProxy('/v1/policy-qa', req, res));
+app.post('/api/v1/analyze/candidate-match', authenticate, authorize('recruiter', 'admin'), (req, res) => handleAIProxy('/v1/candidate-match', req, res));
+app.post('/api/analyze/candidate-match', authenticate, authorize('recruiter', 'admin'), (req, res) => handleAIProxy('/v1/candidate-match', req, res));
+app.post('/api/v1/analyze/skill-gap', (req, res) => handleAIProxy('/v1/skill-gap', req, res));
+app.post('/api/analyze/skill-gap', (req, res) => handleAIProxy('/v1/skill-gap', req, res));
+app.post('/api/v1/analyze/readiness', (req, res) => handleAIProxy('/v1/readiness', req, res));
+app.post('/api/analyze/readiness', (req, res) => handleAIProxy('/v1/readiness', req, res));
 
 // Legacy dashboard compatibility route (redirects to authenticated dashboard)
 app.get('/api/dashboard', authenticate, (req, res) => {

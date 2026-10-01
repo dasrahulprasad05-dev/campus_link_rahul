@@ -1,7 +1,10 @@
 """
 Feature 3 — Resume ↔ JD Matcher (NLP)
-Uses Semantic Vector Embeddings + Cosine Similarity.
-Replaces simple keyword substring search with vector space document-to-skill matching.
+Uses hashing-trick sparse vectors (char 3-gram + word tokens, 256-dim)
+with cosine similarity for skill-level matching.
+NOTE: These are NOT dense/transformer embeddings — they are lightweight
+hash-based sparse vectors. Effective for keyword overlap scoring but
+limited for true semantic understanding.
 Extracts keywords from JD, matches against candidate profile/resume, and provides explainable rubric scoring.
 """
 
@@ -36,7 +39,7 @@ class ResumeMatchResponse(BaseModel):
     timestamp: str = ""
 
 
-# ---- Semantic Embedding Engine (NumPy) ----
+# ---- Hashing-Trick Sparse Vector Engine (NumPy) ----
 
 KNOWN_SKILLS = [
     "sql", "python", "java", "javascript", "react", "node.js", "typescript",
@@ -51,18 +54,41 @@ KNOWN_SKILLS = [
 
 SYNONYMS = {
     "data wrangling": "data cleaning",
+    "data preprocessing": "data cleaning",
     "postgres": "postgresql",
     "k8s": "kubernetes",
     "restful": "rest api",
+    "rest": "rest api restful",
     "reactjs": "react",
     "react.js": "react",
     "nodejs": "node.js",
+    "node": "node.js",
     "ml": "machine learning",
+    "ai": "artificial intelligence machine learning",
+    "dl": "deep learning",
+    "js": "javascript",
+    "ts": "typescript",
+    "py": "python",
+    "cpp": "c++",
+    "dsa": "data structures algorithms",
+    "mongo": "mongodb",
+    "sklearn": "scikit-learn machine learning",
+    "flask": "python web framework",
+    "django": "python web framework",
+    "fastapi": "python rest api",
+    "express": "node.js web framework",
+    "nextjs": "next.js react",
+    "vue": "vue.js",
+    "angular": "angularjs typescript",
+    "spring boot": "java spring",
+    "gcp": "google cloud platform",
+    "amazon web services": "aws",
+    "bash": "shell scripting linux",
 }
 
 
 def _embed_text(text: str, dim: int = 256) -> np.ndarray:
-    """Embed string into fixed-dimension vector using subwords + words."""
+    """Embed string into fixed-dimension sparse vector using char 3-grams + word hashing."""
     vec = np.zeros(dim, dtype=float)
     cleaned = text.lower().strip()
 

@@ -3,6 +3,11 @@ Feature 9 — Early Warning At-Risk System
 Uses Machine Learning (Logistic Regression Classifier trained via gradient descent).
 Predicts whether a student is at-risk of missing campus placement opportunities,
 breaks down exact risk drivers, and prescribes targeted interventions.
+
+DATA_SOURCE: synthetic_training_data
+  Training data is generated programmatically (see _generate_training_data).
+  It is NOT derived from real student outcomes. Risk scores should be
+  treated as estimates from a demo model.
 """
 
 import numpy as np

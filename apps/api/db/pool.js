@@ -351,7 +351,7 @@ const memoryDb = (() => {
     }
 
     // 4b. UPDATE users SET email_verified = true
-    if (q.includes('update users') && q.includes('email_verified = true')) {
+    if (q.includes('update users') && q.includes('email_verified = true') && !q.includes('password_hash')) {
       const userId = params[0];
       const user = tables.users.find(u => u.id === userId);
       if (user) {
@@ -389,6 +389,7 @@ const memoryDb = (() => {
         user.password_hash = newHash;
         user.reset_password_token = null;
         user.reset_password_expires = null;
+        user.email_verified = true;
         return Promise.resolve({ rows: [{ ...user }], rowCount: 1 });
       }
       return Promise.resolve({ rows: [], rowCount: 0 });

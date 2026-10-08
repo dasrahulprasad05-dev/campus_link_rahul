@@ -107,7 +107,13 @@ const LoginPage = (() => {
         btn.textContent = 'Signing in...';
         btn.disabled = true;
 
+        // Friendly notice if Render cloud server is waking from cold start
+        const slowNotice = setTimeout(() => {
+          Toast.info('Connecting to cloud backend... Free-tier server may take ~15s to wake up.');
+        }, 2500);
+
         const result = await Auth.login(email, password);
+        clearTimeout(slowNotice);
 
         if (result.success) {
           Toast.success('Welcome back!');
@@ -141,10 +147,31 @@ const LoginPage = (() => {
   }
 
   async function quickLogin(role) {
-    const result = await Auth.quickLogin(role);
-    if (result.success) {
-      Toast.success(`Signed in as ${role}`);
-      Router.navigate(role + '/dashboard');
+    const demoBtns = document.querySelectorAll('.demo-login-section button');
+    demoBtns.forEach(b => { b.disabled = true; b.style.opacity = '0.6'; });
+    const submitBtn = document.getElementById('login-submit');
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = `Signing in as ${role}...`; }
+
+    const slowNotice = setTimeout(() => {
+      Toast.info('Connecting to cloud backend... Waking up server container, please wait.');
+    }, 2500);
+
+    try {
+      const result = await Auth.quickLogin(role);
+      clearTimeout(slowNotice);
+      if (result.success) {
+        Toast.success(`Signed in as ${role}`);
+        Router.navigate(role + '/dashboard');
+      } else {
+        Toast.error(result.error || 'Login failed. Please try again.');
+        demoBtns.forEach(b => { b.disabled = false; b.style.opacity = '1'; });
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Sign In →'; }
+      }
+    } catch (err) {
+      clearTimeout(slowNotice);
+      Toast.error('Login error: ' + (err.message || 'Please check network'));
+      demoBtns.forEach(b => { b.disabled = false; b.style.opacity = '1'; });
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Sign In →'; }
     }
   }
 

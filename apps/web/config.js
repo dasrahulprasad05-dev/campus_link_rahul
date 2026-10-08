@@ -2,7 +2,26 @@
    CAMPUSLINK — Frontend Global Configuration
    ============================================================ */
 
-// If hosting the frontend on Vercel and the backend on Render,
-// set your Render Backend API URL below (e.g., 'https://campuslink-web.onrender.com').
-// If hosting frontend + backend together on Render, leave it empty '' (same-origin).
-window.__API_URL__ = window.__API_URL__ || localStorage.getItem('CAMPUSLINK_API_URL') || (window.location.hostname.includes('vercel.app') ? 'https://campuslink-web.onrender.com' : '');
+// Clear stale cached URLs if pointing to incorrect or deprecated hosts
+try {
+  const cached = localStorage.getItem('CAMPUSLINK_API_URL');
+  if (cached && (cached.includes('campuslink-web') || cached.includes('localhost:3000'))) {
+    localStorage.removeItem('CAMPUSLINK_API_URL');
+  }
+} catch (_e) {}
+
+// Point to the live Node.js Express backend on Render
+// In production on Vercel, direct requests to node-js-web-app.onrender.com (CORS enabled)
+const _DEFAULT_REMOTE_BACKEND = 'https://node-js-web-app.onrender.com';
+
+window.__API_URL__ = window.__API_URL__ 
+  || localStorage.getItem('CAMPUSLINK_API_URL') 
+  || (window.location.hostname.includes('vercel.app') ? _DEFAULT_REMOTE_BACKEND : '');
+
+// Background warm-up ping: wakes up free-tier Render container silently
+(function warmUpServer() {
+  const root = window.__API_URL__ || _DEFAULT_REMOTE_BACKEND;
+  if (root && typeof fetch !== 'undefined') {
+    fetch(`${root}/api/v1/health`, { method: 'GET', keepalive: true }).catch(() => {});
+  }
+})();

@@ -10,7 +10,130 @@ const Auth = (() => {
     return `${root}/api/v1/auth`;
   };
 
+  // ============================================================
+  // TEMPORARY PRESEEDED DEMO ACCOUNTS
+  // These credentials are used for 1-click auto-fill & fast demo testing.
+  // When permanent user credentials are provided, replace or remove these.
+  // ============================================================
+  const PRESEEDED_CREDENTIALS = {
+    student: {
+      role: 'student',
+      email: 'ananya.sharma@campuslink.in',
+      password: 'demo123',
+      label: 'Student (Ananya Sharma)',
+      user: {
+        id: '10000000-0000-4000-8000-000000000001',
+        name: 'Ananya Sharma',
+        email: 'ananya.sharma@campuslink.in',
+        role: 'student',
+        branch: 'Computer Science & Engineering',
+        cgpa: 8.42,
+        readiness: 78,
+        skills: ['Python', 'SQL', 'React', 'DSA'],
+        email_verified: true,
+      },
+    },
+    recruiter: {
+      role: 'recruiter',
+      email: 'recruiter@campuslink.in',
+      password: 'demo123',
+      label: 'Recruiter (TechNova Solutions)',
+      user: {
+        id: 'a1b2c3d4-0001-0001-0001-000000000003',
+        name: 'Sneha Patel',
+        email: 'recruiter@campuslink.in',
+        role: 'recruiter',
+        company: 'TechNova Solutions',
+        email_verified: true,
+      },
+    },
+    admin: {
+      role: 'admin',
+      email: 'admin@campuslink.in',
+      password: 'demo123',
+      label: 'Admin (ABIT TPO)',
+      user: {
+        id: 'a1b2c3d4-0001-0001-0001-000000000002',
+        name: 'Dr. Rajesh Nayak',
+        email: 'admin@campuslink.in',
+        role: 'admin',
+        email_verified: true,
+      },
+    },
+    mentor: {
+      role: 'mentor',
+      email: 'mentor@campuslink.in',
+      password: 'demo123',
+      label: 'Mentor (Prof. Suresh Mishra)',
+      user: {
+        id: 'a1b2c3d4-0001-0001-0001-000000000004',
+        name: 'Prof. Suresh Mishra',
+        email: 'mentor@campuslink.in',
+        role: 'mentor',
+        email_verified: true,
+      },
+    },
+  };
+
+  function getPreseededCredentials() {
+    return PRESEEDED_CREDENTIALS;
+  }
+
   async function login(email, password) {
+    const trimmedEmail = (email || '').trim().toLowerCase();
+
+    // Check if this matches any preseeded demo account
+    const matchedRole = Object.keys(PRESEEDED_CREDENTIALS).find(
+      r => PRESEEDED_CREDENTIALS[r].email.toLowerCase() === trimmedEmail
+    );
+    const demoAccount = matchedRole ? PRESEEDED_CREDENTIALS[matchedRole] : null;
+
+    // Fast resilient path for preseeded demo credentials:
+    // If Render is awake, fetch succeeds in ~1-2s.
+    // If Render is sleeping (cold start taking 20-40s), after 3.5s we activate the demo session
+    // so user is NEVER blocked or left waiting!
+    if (demoAccount && (password === demoAccount.password || password === 'demo123')) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3500);
+
+        const res = await fetch(`${getBase()}/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: trimmedEmail, password }),
+          signal: controller.signal,
+        });
+        clearTimeout(timeoutId);
+
+        if (res.ok) {
+          const contentType = res.headers.get('content-type') || '';
+          if (contentType.includes('application/json')) {
+            const data = await res.json().catch(() => null);
+            if (data && data.token) {
+              Store.setMany({
+                user: data.user,
+                token: data.token,
+                role: data.user.role,
+              });
+              return { success: true };
+            }
+          }
+        }
+      } catch (_err) {
+        // Cold start or network delay: fall through directly to instant demo session
+        console.info('[Auth] Server sleeping or slow; activating instant preseeded session.');
+      }
+
+      // Instant resilient session
+      Store.setMany({
+        user: demoAccount.user,
+        token: 'demo_token_' + demoAccount.role,
+        role: demoAccount.role,
+      });
+      return { success: true, offline: true };
+    }
+
+    // Standard login flow for non-demo/custom user accounts
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 14000);
@@ -201,37 +324,24 @@ const Auth = (() => {
   }
 
   async function quickLogin(role) {
-    const creds = {
-      admin:     { email: 'admin@campuslink.in', password: 'demo123' },
-      student:   { email: 'ananya.sharma@campuslink.in', password: 'demo123' },
-      recruiter: { email: 'recruiter@campuslink.in', password: 'demo123' },
-      mentor:    { email: 'mentor@campuslink.in', password: 'demo123' },
-    };
-    if (creds[role]) {
-      try {
-        const res = await login(creds[role].email, creds[role].password);
-        if (res.success) return res;
-      } catch (_e) {}
-
-      // Fallback: If network is blocked or server is in extended cold start, activate demo session directly
-      const demoUsers = {
-        student: { id: '10000000-0000-4000-8000-000000000001', name: 'Ananya Sharma', email: 'ananya.sharma@campuslink.in', role: 'student', branch: 'Computer Science & Engineering', cgpa: 8.42, readiness: 78, skills: ['Python', 'SQL', 'React', 'DSA'] },
-        admin: { id: 'a1b2c3d4-0001-0001-0001-000000000002', name: 'Dr. Rajesh Nayak', email: 'admin@campuslink.in', role: 'admin' },
-        recruiter: { id: 'a1b2c3d4-0001-0001-0001-000000000003', name: 'Sneha Patel', email: 'recruiter@campuslink.in', role: 'recruiter', company: 'TechNova Solutions' },
-        mentor: { id: 'a1b2c3d4-0001-0001-0001-000000000004', name: 'Prof. Suresh Mishra', email: 'mentor@campuslink.in', role: 'mentor' },
-      };
-
-      if (demoUsers[role]) {
-        Store.setMany({
-          user: demoUsers[role],
-          token: 'demo_token_' + role,
-          role: role,
-        });
-        return { success: true, offline: true };
-      }
+    const cred = PRESEEDED_CREDENTIALS[role];
+    if (cred) {
+      return login(cred.email, cred.password);
     }
     return Promise.resolve({ success: false, error: 'Invalid demo role selected' });
   }
 
-  return { login, register, logout, isLoggedIn, getUser, quickLogin, forgotPassword, resetPassword, verifyEmail, resendVerification };
+  return { 
+    login, 
+    register, 
+    logout, 
+    isLoggedIn, 
+    getUser, 
+    quickLogin, 
+    forgotPassword, 
+    resetPassword, 
+    verifyEmail, 
+    resendVerification,
+    getPreseededCredentials,
+  };
 })();

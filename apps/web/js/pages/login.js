@@ -40,7 +40,36 @@ const LoginPage = (() => {
         <div class="auth-form-container">
           <div class="auth-card">
             <h2>Sign in</h2>
-            <p class="text-sm text-muted mb-6">Enter your credentials to access your portal.</p>
+            <p class="text-sm text-muted mb-4">Enter your credentials to access your portal.</p>
+
+            <!-- ⚡ 1-Click Auto-Fill Demo Credentials (Temporary) -->
+            <div class="autofill-section mb-5" style="background:linear-gradient(135deg, rgba(99,102,241,0.08), rgba(168,85,247,0.08));border:1px solid rgba(99,102,241,0.25);border-radius:var(--radius-md);padding:12px 14px;">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <span style="font-size:14px">⚡</span>
+                  <span class="text-xs font-semibold uppercase tracking-wider" style="color:var(--primary, #6366f1);letter-spacing:0.04em">Auto-Fill Credentials</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="badge badge-accent text-xs" style="padding:2px 7px;font-size:10px;font-weight:600">Auto-Write</span>
+                  <a class="text-xs text-muted" style="cursor:pointer;font-size:11px;text-decoration:underline" onclick="LoginPage.clearFields()">Clear</a>
+                </div>
+              </div>
+              <p class="text-xs text-muted mb-2" style="margin:0 0 8px 0;line-height:1.4">Click any role to automatically write the preseeded email & password into the input fields:</p>
+              <div style="display:grid;grid-template-columns:repeat(2, 1fr);gap:6px">
+                <button type="button" class="btn btn-sm" id="btn-fill-student" onclick="LoginPage.autoFill('student')" style="font-size:11.5px;padding:6px 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);justify-content:center;color:var(--text-color, #fff)">
+                  🎓 Fill Student
+                </button>
+                <button type="button" class="btn btn-sm" id="btn-fill-recruiter" onclick="LoginPage.autoFill('recruiter')" style="font-size:11.5px;padding:6px 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);justify-content:center;color:var(--text-color, #fff)">
+                  💼 Fill Recruiter
+                </button>
+                <button type="button" class="btn btn-sm" id="btn-fill-admin" onclick="LoginPage.autoFill('admin')" style="font-size:11.5px;padding:6px 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);justify-content:center;color:var(--text-color, #fff)">
+                  🏛️ Fill Admin
+                </button>
+                <button type="button" class="btn btn-sm" id="btn-fill-mentor" onclick="LoginPage.autoFill('mentor')" style="font-size:11.5px;padding:6px 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);justify-content:center;color:var(--text-color, #fff)">
+                  👨‍🏫 Fill Mentor
+                </button>
+              </div>
+            </div>
 
             <form id="login-form" onsubmit="return false">
               ${Forms.input({ id: 'login-email', label: 'Email Address', type: 'email', placeholder: 'Enter your registered email', required: true })}
@@ -60,21 +89,21 @@ const LoginPage = (() => {
 
             <div class="demo-login-section mt-5 pt-4" style="border-top:1px solid var(--border-color, rgba(255,255,255,0.08))">
               <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-semibold text-muted uppercase tracking-wider" style="letter-spacing:0.05em">⚡ Quick Demo Login (Judges)</span>
-                <span class="badge badge-accent text-xs" style="padding:2px 8px;font-size:11px">Pre-Seeded</span>
+                <span class="text-xs font-semibold text-muted uppercase tracking-wider" style="letter-spacing:0.05em">⚡ Direct 1-Click Login (Bypass Form)</span>
+                <span class="badge badge-accent text-xs" style="padding:2px 8px;font-size:11px">Instant</span>
               </div>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
                 <button type="button" class="btn btn-sm btn-secondary" style="font-size:12px;padding:7px 10px;justify-content:center" onclick="LoginPage.quickLogin('student')">
-                  🎓 Student Demo
+                  🎓 Student Instant
                 </button>
                 <button type="button" class="btn btn-sm btn-secondary" style="font-size:12px;padding:7px 10px;justify-content:center" onclick="LoginPage.quickLogin('admin')">
-                  🏛️ Admin Demo
+                  🏛️ Admin Instant
                 </button>
                 <button type="button" class="btn btn-sm btn-secondary" style="font-size:12px;padding:7px 10px;justify-content:center" onclick="LoginPage.quickLogin('recruiter')">
-                  💼 Recruiter Demo
+                  💼 Recruiter Instant
                 </button>
                 <button type="button" class="btn btn-sm btn-secondary" style="font-size:12px;padding:7px 10px;justify-content:center" onclick="LoginPage.quickLogin('mentor')">
-                  👨‍🏫 Mentor Demo
+                  👨‍🏫 Mentor Instant
                 </button>
               </div>
             </div>
@@ -99,7 +128,7 @@ const LoginPage = (() => {
         const password = document.getElementById('login-password').value;
 
         if (!email || !password) {
-          Toast.warning('Please fill in all fields');
+          Toast.warning('Please fill in all fields or click an Auto-Fill button above');
           return;
         }
 
@@ -107,13 +136,7 @@ const LoginPage = (() => {
         btn.textContent = 'Signing in...';
         btn.disabled = true;
 
-        // Friendly notice if Render cloud server is waking from cold start
-        const slowNotice = setTimeout(() => {
-          Toast.info('Connecting to cloud backend... Free-tier server may take ~15s to wake up.');
-        }, 2500);
-
         const result = await Auth.login(email, password);
-        clearTimeout(slowNotice);
 
         if (result.success) {
           Toast.success('Welcome back!');
@@ -146,19 +169,72 @@ const LoginPage = (() => {
     }
   }
 
+  function autoFill(role) {
+    const creds = (typeof Auth !== 'undefined' && Auth.getPreseededCredentials) ? Auth.getPreseededCredentials() : {
+      student:   { email: 'ananya.sharma@campuslink.in', password: 'demo123', label: 'Student' },
+      recruiter: { email: 'recruiter@campuslink.in',     password: 'demo123', label: 'Recruiter' },
+      admin:     { email: 'admin@campuslink.in',         password: 'demo123', label: 'Admin' },
+      mentor:    { email: 'mentor@campuslink.in',        password: 'demo123', label: 'Mentor' },
+    };
+    const cred = creds[role];
+    if (!cred) return;
+
+    const emailEl = document.getElementById('login-email');
+    const passEl = document.getElementById('login-password');
+    if (emailEl && passEl) {
+      emailEl.value = cred.email;
+      passEl.value = cred.password;
+      emailEl.dispatchEvent(new Event('input', { bubbles: true }));
+      emailEl.dispatchEvent(new Event('change', { bubbles: true }));
+      passEl.dispatchEvent(new Event('input', { bubbles: true }));
+      passEl.dispatchEvent(new Event('change', { bubbles: true }));
+
+      // Visual pulse highlight on the inputs
+      emailEl.style.transition = 'all 0.3s ease';
+      passEl.style.transition = 'all 0.3s ease';
+      emailEl.style.borderColor = 'var(--primary, #6366f1)';
+      emailEl.style.boxShadow = '0 0 0 3px rgba(99, 102, 241, 0.35)';
+      passEl.style.borderColor = 'var(--primary, #6366f1)';
+      passEl.style.boxShadow = '0 0 0 3px rgba(99, 102, 241, 0.35)';
+      setTimeout(() => {
+        emailEl.style.borderColor = '';
+        emailEl.style.boxShadow = '';
+        passEl.style.borderColor = '';
+        passEl.style.boxShadow = '';
+      }, 1200);
+
+      if (typeof Toast !== 'undefined') {
+        Toast.info(`✨ Auto-filled ${cred.label || role} credentials (${cred.email})! Click 'Sign In →' to enter.`);
+      }
+    }
+  }
+
+  function clearFields() {
+    const emailEl = document.getElementById('login-email');
+    const passEl = document.getElementById('login-password');
+    if (emailEl) {
+      emailEl.value = '';
+      emailEl.dispatchEvent(new Event('input', { bubbles: true }));
+      emailEl.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    if (passEl) {
+      passEl.value = '';
+      passEl.dispatchEvent(new Event('input', { bubbles: true }));
+      passEl.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    if (typeof Toast !== 'undefined') {
+      Toast.show('Form fields cleared', 'info');
+    }
+  }
+
   async function quickLogin(role) {
     const demoBtns = document.querySelectorAll('.demo-login-section button');
     demoBtns.forEach(b => { b.disabled = true; b.style.opacity = '0.6'; });
     const submitBtn = document.getElementById('login-submit');
     if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = `Signing in as ${role}...`; }
 
-    const slowNotice = setTimeout(() => {
-      Toast.info('Connecting to cloud backend... Waking up server container, please wait.');
-    }, 2500);
-
     try {
       const result = await Auth.quickLogin(role);
-      clearTimeout(slowNotice);
       if (result.success) {
         Toast.success(`Signed in as ${role}`);
         Router.navigate(role + '/dashboard');
@@ -168,12 +244,11 @@ const LoginPage = (() => {
         if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Sign In →'; }
       }
     } catch (err) {
-      clearTimeout(slowNotice);
       Toast.error('Login error: ' + (err.message || 'Please check network'));
       demoBtns.forEach(b => { b.disabled = false; b.style.opacity = '1'; });
       if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Sign In →'; }
     }
   }
 
-  return { render, quickLogin };
+  return { render, quickLogin, autoFill, clearFields };
 })();

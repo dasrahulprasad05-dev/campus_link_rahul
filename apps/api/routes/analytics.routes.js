@@ -11,7 +11,7 @@ const { query } = require('../db/pool');
 router.use(authenticate, authorize('admin', 'mentor'));
 
 // GET /api/v1/analytics/summary — comprehensive dashboard data
-router.get('/summary', async (req, res) => {
+async function handleSummary(req, res) {
   try {
     const studentsResult = await query('SELECT * FROM student_profiles', []);
     const students = studentsResult.rows || [];
@@ -129,22 +129,12 @@ router.get('/summary', async (req, res) => {
     console.error('[Analytics Error]:', err);
     res.status(500).json({ success: false, error: { code: 'ANALYTICS_ERROR', message: err.message } });
   }
-});
+}
 
-// GET /api/v1/analytics/kpis (legacy — redirects to summary)
-router.get('/kpis', async (req, res) => {
-  res.redirect('/api/v1/analytics/summary');
-});
-
-// GET /api/v1/analytics/funnel (legacy — redirects to summary)
-router.get('/funnel', async (req, res) => {
-  res.redirect('/api/v1/analytics/summary');
-});
-
-// GET /api/v1/analytics/risk (legacy — redirects to summary)
-router.get('/risk', async (req, res) => {
-  res.redirect('/api/v1/analytics/summary');
-});
+router.get('/summary', handleSummary);
+router.get('/kpis', handleSummary);
+router.get('/funnel', handleSummary);
+router.get('/risk', handleSummary);
 
 // GET /api/v1/analytics/readiness-distribution
 router.get('/readiness-distribution', async (req, res) => {
@@ -178,6 +168,72 @@ router.get('/branch-placement', async (req, res) => {
     res.json({ success: true, data });
   } catch (err) {
     res.status(500).json({ success: false, error: { code: 'DB_ERROR', message: err.message } });
+  }
+});
+
+// GET /api/v1/analytics/skill-heatmap — industry skill demand vs student supply
+router.get('/skill-heatmap', async (req, res) => {
+  try {
+    const [jobsRes, studentsRes] = await Promise.all([
+      query('SELECT * FROM jobs', []),
+      query('SELECT * FROM student_profiles', [])
+    ]);
+    const jobs = jobsRes.rows || [];
+    const students = studentsRes.rows || [];
+
+    const totalJobs = Math.max(jobs.length, 1);
+    const totalStudents = Math.max(students.length, 1);
+
+    const demandCounts = {};
+    jobs.forEach(j => {
+      const skills = Array.isArray(j.skills_required) ? j.skills_required : [];
+      skills.forEach(s => {
+        const norm = s.trim();
+        demandCounts[norm] = (demandCounts[norm] || 0) + 1;
+      });
+    });
+
+    const supplyCounts = {};
+    students.forEach(st => {
+      const skills = Array.isArray(st.skills) ? st.skills : (typeof st.skills === 'string' ? st.skills.split(',') : []);
+      skills.forEach(s => {
+        const norm = s.trim();
+        supplyCounts[norm] = (supplyCounts[norm] || 0) + 1;
+      });
+    });
+
+    const allSkills = Array.from(new Set([...Object.keys(demandCounts), ...Object.keys(supplyCounts)]));
+    const heatmap = allSkills.map(skill => {
+      const demandPct = Math.round(((demandCounts[skill] || 0) / totalJobs) * 100);
+      const supplyPct = Math.round(((supplyCounts[skill] || 0) / totalStudents) * 100);
+      const gap = supplyPct - demandPct;
+      return {
+        skill,
+        demand: demandPct,
+        demandCount: demandCounts[skill] || 0,
+        supply: supplyPct,
+        supplyCount: supplyCounts[skill] || 0,
+        gap,
+        status: gap < -15 ? 'critical-shortage' : gap < 0 ? 'deficit' : 'healthy',
+      };
+    }).sort((a, b) => b.demand - a.demand);
+
+    const topPriorities = heatmap
+      .filter(h => h.gap < 0 && h.demand >= 25)
+      .slice(0, 3)
+      .map(h => `${h.skill} (${Math.abs(h.gap)}% institutional deficit)`);
+
+    res.json({
+      success: true,
+      data: {
+        skills: heatmap.slice(0, 12),
+        totalJobs,
+        totalStudents,
+        institutionalPriorities: topPriorities.length > 0 ? topPriorities : ['Docker & Cloud Architecture', 'SQL Query Optimization'],
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: { code: 'HEATMAP_ERROR', message: err.message } });
   }
 });
 

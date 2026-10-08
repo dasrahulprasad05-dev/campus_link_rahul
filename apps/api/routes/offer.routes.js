@@ -36,6 +36,15 @@ router.get('/:id', authenticate, async (req, res) => {
     }
     const offer = offerResult.rows[0];
 
+    // Ownership check: students can only view their own offers
+    if (req.user.role === 'student') {
+      const profileResult = await query('SELECT id FROM student_profiles WHERE user_id = $1', [req.user.id]);
+      const profileId = profileResult.rows[0]?.id;
+      if (!profileId || offer.student_id !== profileId) {
+        return res.status(403).json({ success: false, error: { code: 'FORBIDDEN', message: 'You are not authorized to view this offer' } });
+      }
+    }
+
     // Get documents for this offer
     const docsResult = await query('SELECT * FROM offer_documents WHERE offer_id = $1', [offer.id]);
 
@@ -48,12 +57,18 @@ router.get('/:id', authenticate, async (req, res) => {
   }
 });
 
-// PATCH /api/v1/offers/:id/accept — student accepts offer
+// PATCH /api/v1/offers/:id/accept — student accepts offer (ownership verified)
 router.patch('/:id/accept', authenticate, authorize('student'), async (req, res) => {
   try {
-    const result = await query('UPDATE offers SET status = $1 WHERE id = $2', ['accepted', req.params.id]);
+    const profileResult = await query('SELECT id FROM student_profiles WHERE user_id = $1', [req.user.id]);
+    const profileId = profileResult.rows[0]?.id;
+    if (!profileId) {
+      return res.status(403).json({ success: false, error: { code: 'FORBIDDEN', message: 'Student profile not found' } });
+    }
+
+    const result = await query('UPDATE offers SET status = $1 WHERE id = $2 AND student_id = $3', ['accepted', req.params.id, profileId]);
     if (result.rowCount === 0) {
-      return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Offer not found' } });
+      return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Offer not found or does not belong to you' } });
     }
     logAudit({ userId: req.user.id, userRole: 'student', action: 'offer.accept', entityType: 'offer', entityId: req.params.id, newValue: { status: 'accepted' } });
     res.json({ success: true, data: result.rows[0] });
@@ -62,12 +77,18 @@ router.patch('/:id/accept', authenticate, authorize('student'), async (req, res)
   }
 });
 
-// PATCH /api/v1/offers/:id/decline — student declines offer
+// PATCH /api/v1/offers/:id/decline — student declines offer (ownership verified)
 router.patch('/:id/decline', authenticate, authorize('student'), async (req, res) => {
   try {
-    const result = await query('UPDATE offers SET status = $1 WHERE id = $2', ['declined', req.params.id]);
+    const profileResult = await query('SELECT id FROM student_profiles WHERE user_id = $1', [req.user.id]);
+    const profileId = profileResult.rows[0]?.id;
+    if (!profileId) {
+      return res.status(403).json({ success: false, error: { code: 'FORBIDDEN', message: 'Student profile not found' } });
+    }
+
+    const result = await query('UPDATE offers SET status = $1 WHERE id = $2 AND student_id = $3', ['declined', req.params.id, profileId]);
     if (result.rowCount === 0) {
-      return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Offer not found' } });
+      return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Offer not found or does not belong to you' } });
     }
     logAudit({ userId: req.user.id, userRole: 'student', action: 'offer.decline', entityType: 'offer', entityId: req.params.id, newValue: { status: 'declined' } });
     res.json({ success: true, data: result.rows[0] });

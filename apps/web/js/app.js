@@ -3,6 +3,17 @@
    Route registration, app shell rendering, and initialization.
    ============================================================ */
 
+// Global HTML escape helper for XSS prevention in UI templates
+window.esc = function(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+};
+
 const App = (() => {
 
   // Render the authenticated app shell (sidebar + topbar + main)
@@ -81,6 +92,7 @@ const App = (() => {
     Router.register('student/interview', authPage(StudentInterview.render), { auth: true, roles: ['student'] });
     Router.register('student/policy-qa', authPage(StudentPolicyQA.render), { auth: true, roles: ['student'] });
     Router.register('student/roadmap', authPage(StudentRoadmap.render), { auth: true, roles: ['student'] });
+    Router.register('student/what-if', authPage(StudentWhatIf.render), { auth: true, roles: ['student'] });
     Router.register('student/career-finder', authPage(StudentCareerFinder.render), { auth: true, roles: ['student'] });
 
     // Admin routes

@@ -58,7 +58,28 @@ const LoginPage = (() => {
               </button>
             </form>
 
-            <div class="auth-link mt-6">
+            <div class="demo-login-section mt-5 pt-4" style="border-top:1px solid var(--border-color, rgba(255,255,255,0.08))">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-semibold text-muted uppercase tracking-wider" style="letter-spacing:0.05em">⚡ Quick Demo Login (Judges)</span>
+                <span class="badge badge-accent text-xs" style="padding:2px 8px;font-size:11px">Pre-Seeded</span>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                <button type="button" class="btn btn-sm btn-secondary" style="font-size:12px;padding:7px 10px;justify-content:center" onclick="LoginPage.quickLogin('student')">
+                  🎓 Student Demo
+                </button>
+                <button type="button" class="btn btn-sm btn-secondary" style="font-size:12px;padding:7px 10px;justify-content:center" onclick="LoginPage.quickLogin('admin')">
+                  🏛️ Admin Demo
+                </button>
+                <button type="button" class="btn btn-sm btn-secondary" style="font-size:12px;padding:7px 10px;justify-content:center" onclick="LoginPage.quickLogin('recruiter')">
+                  💼 Recruiter Demo
+                </button>
+                <button type="button" class="btn btn-sm btn-secondary" style="font-size:12px;padding:7px 10px;justify-content:center" onclick="LoginPage.quickLogin('mentor')">
+                  👨‍🏫 Mentor Demo
+                </button>
+              </div>
+            </div>
+
+            <div class="auth-link mt-5">
               Don't have an account? <a onclick="Router.navigate('register')">Create one</a>
             </div>
           </div>

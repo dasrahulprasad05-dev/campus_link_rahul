@@ -10,12 +10,13 @@ const studentRepo = require('../repositories/student.repository');
 const appRepo = require('../repositories/application.repository');
 const { query } = require('../db/pool');
 
-// GET /api/v1/students — list students (Admin / Mentor)
-router.get('/', async (req, res) => {
+// GET /api/v1/students — list students (Admin / Mentor / Recruiter with role protection)
+router.get('/', authenticate, authorize('admin', 'mentor', 'recruiter'), async (req, res) => {
   try {
     // Use the student_profiles query which now joins with users
     const result = await query('SELECT * FROM student_profiles', []);
     const students = result.rows || [];
+    const isRecruiter = req.user.role === 'recruiter';
 
     const formatted = students.map(s => {
       const skills = Array.isArray(s.skills) ? s.skills : (typeof s.skills === 'string' && s.skills ? s.skills.split(',').map(x=>x.trim()).filter(Boolean) : []);
@@ -33,18 +34,18 @@ router.get('/', async (req, res) => {
 
       return {
         id: s.id,
-        name: s.name || 'Student',
-        email: s.email || '',
+        name: isRecruiter ? (s.name ? s.name.split(' ')[0] + ' ' + (s.name.split(' ')[1] ? s.name.split(' ')[1][0] + '.' : '') : 'Candidate') : (s.name || 'Student'),
+        email: isRecruiter ? undefined : (s.email || ''),
         branch: s.branch || 'Computer Science & Engineering',
         cgpa: cgpa,
         readiness: readiness,
         target_role: s.target_role || 'Software Engineer',
         skills: skills,
-        phone: s.phone || '',
-        linkedin: s.linkedin || '',
-        github: s.github || '',
+        phone: isRecruiter ? undefined : (s.phone || ''),
+        linkedin: isRecruiter ? undefined : (s.linkedin || ''),
+        github: isRecruiter ? undefined : (s.github || ''),
         year: s.year || 2026,
-        reg_no: s.reg_no || '',
+        reg_no: isRecruiter ? undefined : (s.reg_no || ''),
         applications: 0,
         status: status,
       };
@@ -184,6 +185,54 @@ router.get('/:id/roadmap', authenticate, async (req, res) => {
   } catch (err) {
     res.json({ success: true, data: [] });
   }
+});
+
+// ─── AI Intervention Engine (Mentor Support) ───────────────────
+const _interventions = [
+  { id: 'int-001', student_id: 'sp-004', mentor_id: 'a1b2c3d4-0001-0001-0001-000000000004', mentor_name: 'Faculty Mentor ABIT', title: 'Schedule 1-on-1 Placement Counseling', type: 'meeting', status: 'pending', priority: 'high', notes: 'Readiness dropped; needs resume rebuild and structured mock interview practice', created_at: new Date(Date.now() - 86400000 * 2).toISOString() },
+  { id: 'int-002', student_id: 'sp-006', mentor_id: 'a1b2c3d4-0001-0001-0001-000000000004', mentor_name: 'Faculty Mentor ABIT', title: 'Assign Web Dev Milestone & Practice Tasks', type: 'assignment', status: 'in-progress', priority: 'high', notes: 'Low technical readiness (45%). Assigned core JS + React fundamentals.', created_at: new Date(Date.now() - 86400000 * 4).toISOString() },
+  { id: 'int-003', student_id: 'sp-013', mentor_id: 'a1b2c3d4-0001-0001-0001-000000000004', mentor_name: 'Faculty Mentor ABIT', title: 'AI Mock Interview & Communication Coaching', type: 'mock-interview', status: 'completed', priority: 'medium', notes: 'Completed Business Analyst behavioral mock session with score 68/100.', created_at: new Date(Date.now() - 86400000 * 7).toISOString() }
+];
+
+// GET /api/v1/students/:id/interventions — list interventions
+router.get('/:id/interventions', authenticate, async (req, res) => {
+  const studentId = req.params.id;
+  const list = studentId === 'all'
+    ? _interventions
+    : _interventions.filter(i => i.student_id === studentId);
+  res.json({ success: true, data: list });
+});
+
+// POST /api/v1/students/:id/interventions — create intervention
+router.post('/:id/interventions', authenticate, authorize('admin', 'mentor'), async (req, res) => {
+  const studentId = req.params.id;
+  const { title, type, priority, notes } = req.body;
+  if (!title) return res.status(400).json({ success: false, error: { message: 'Title is required' } });
+
+  const newInt = {
+    id: `int-${Date.now()}`,
+    student_id: studentId,
+    mentor_id: req.user.id,
+    mentor_name: req.user.name || 'Faculty Mentor',
+    title,
+    type: type || 'coaching',
+    priority: priority || 'high',
+    status: 'pending',
+    notes: notes || '',
+    created_at: new Date().toISOString()
+  };
+  _interventions.unshift(newInt);
+  res.status(201).json({ success: true, data: newInt });
+});
+
+// PATCH /api/v1/students/:id/interventions/:intId — update status
+router.patch('/:id/interventions/:intId', authenticate, authorize('admin', 'mentor'), async (req, res) => {
+  const item = _interventions.find(i => i.id === req.params.intId);
+  if (!item) return res.status(404).json({ success: false, error: { message: 'Intervention not found' } });
+  if (req.body.status) item.status = req.body.status;
+  if (req.body.notes) item.notes = req.body.notes;
+  item.updated_at = new Date().toISOString();
+  res.json({ success: true, data: item });
 });
 
 module.exports = router;

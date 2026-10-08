@@ -6,7 +6,7 @@
 const Chart = (() => {
   // Vertical bar chart
   function barChart(data, options = {}) {
-    const maxVal = Math.max(...data.map(d => d.value));
+    const maxVal = Math.max(...data.map(d => d.value), 1);
     const { height = 180, color = '' } = options;
 
     return `

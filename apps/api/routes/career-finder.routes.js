@@ -204,7 +204,7 @@ function getGroqKey(req) {
   if (req?.body?.apiKey?.trim().length > 10) return req.body.apiKey.trim();
   const envKey = process.env.GROQ_API_KEY;
   if (envKey?.trim().length > 10) return envKey.trim();
-  return ['gsk', 'RvCtb9NWvTfwhZ1j2rgKWGdyb3FYppYErNRUzwOAdDmn7MKi4REP'].join('_');
+  return null;
 }
 
 async function callGroqText({ apiKey, messages, temperature = 0.6, timeoutMs = 15000 }) {

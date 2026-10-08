@@ -4,7 +4,8 @@
    ============================================================ */
 
 const ScoreRing = (() => {
-  function render(score, options = {}) {
+  function render(rawScore, options = {}) {
+    const score = Math.max(0, Math.min(100, Math.round(Number(rawScore) || 0)));
     const { size = 150, strokeWidth = 8, label = 'out of 100', gradient = 'scoreGradient' } = options;
     const radius = (size - strokeWidth) / 2;
     const circumference = 2 * Math.PI * radius;

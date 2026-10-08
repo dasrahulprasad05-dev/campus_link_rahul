@@ -14,6 +14,7 @@ const Sidebar = (() => {
         { id: 'student/readiness', icon: '📊', label: 'Readiness Score' },
         { id: 'student/skill-gap', icon: '🔍', label: 'Skill-Gap Analyzer' },
         { id: 'student/roadmap', icon: '🗺️', label: 'Career Roadmap' },
+        { id: 'student/what-if', icon: '🔮', label: 'What-If Simulator', badge: 'AI' },
         { id: 'student/career-finder', icon: '🧭', label: 'Career Path Finder', badge: 'New' },
       ]},
       { section: 'Opportunities', items: [

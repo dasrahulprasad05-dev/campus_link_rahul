@@ -66,7 +66,7 @@ const Auth = (() => {
             role: result.user.role || 'student',
           });
         }
-        return { success: true, user: result.user, requiresVerification: true };
+        return { success: true, user: result.user, requiresVerification: result.requiresVerification ?? true };
       }
 
       if (contentType.includes('application/json')) {
@@ -192,10 +192,17 @@ const Auth = (() => {
     return Store.get('user');
   }
 
-  function quickLogin(role) {
-    console.warn('[Auth] Quick login disabled. Permanent credentials required.');
-    Router.navigate('login');
-    return Promise.resolve({ success: false, error: 'Please log in with your credentials.' });
+  async function quickLogin(role) {
+    const creds = {
+      admin:     { email: 'admin@campuslink.in', password: 'demo123' },
+      student:   { email: 'ananya.sharma@campuslink.in', password: 'demo123' },
+      recruiter: { email: 'recruiter@campuslink.in', password: 'demo123' },
+      mentor:    { email: 'mentor@campuslink.in', password: 'demo123' },
+    };
+    if (creds[role]) {
+      return login(creds[role].email, creds[role].password);
+    }
+    return Promise.resolve({ success: false, error: 'Invalid demo role selected' });
   }
 
   return { login, register, logout, isLoggedIn, getUser, quickLogin, forgotPassword, resetPassword, verifyEmail, resendVerification };

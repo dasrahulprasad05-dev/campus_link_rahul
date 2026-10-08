@@ -81,7 +81,7 @@ async function findByResetToken(token) {
 async function updatePassword(userId, newPasswordHash) {
   const res = await query(
     `UPDATE users 
-     SET password_hash = $1, reset_password_token = NULL, reset_password_expires = NULL, updated_at = NOW() 
+     SET password_hash = $1, reset_password_token = NULL, reset_password_expires = NULL, email_verified = TRUE, updated_at = NOW() 
      WHERE id = $2 
      RETURNING id, name, email, role`,
     [newPasswordHash, userId]

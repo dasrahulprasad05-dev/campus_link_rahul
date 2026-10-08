@@ -12,6 +12,12 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Auto-run database migrations when connected to PostgreSQL
+const { runMigrations } = require('./db/migrate');
+if (process.env.DATABASE_URL) {
+  runMigrations().catch(err => console.error('[Startup] Migration note:', err.message));
+}
+
 /* ---------- Middleware ---------- */
 app.use(cors());
 app.use(express.json({ limit: '5mb' }));
@@ -212,8 +218,14 @@ function handleSchedulerCheck(req, res) {
   res.json({ success: true, data: result, ...result });
 }
 
-// AI Service proxy helper
-const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
+// AI Service proxy helper with URL normalization
+function normalizeAiUrl(raw) {
+  if (!raw) return 'http://localhost:8000';
+  if (raw.startsWith('http://') || raw.startsWith('https://')) return raw;
+  return raw.includes('.') ? `https://${raw}` : `http://${raw}:8000`;
+}
+const AI_SERVICE_URL = normalizeAiUrl(process.env.AI_SERVICE_URL);
+
 async function proxyAI(path, body) {
   try {
     const ctrl = new AbortController();
@@ -231,17 +243,26 @@ async function proxyAI(path, body) {
 // Support both /api/v1/analyze/... and /api/analyze/...
 app.post('/api/v1/analyze/resume-match', handleResumeMatch);
 app.post('/api/analyze/resume-match', handleResumeMatch);
-app.post('/api/v1/analyze/skill-gap', handleSkillGap);
-app.post('/api/analyze/skill-gap', handleSkillGap);
 app.post('/api/v1/interviews/feedback', handleInterviewFeedback);
 app.post('/api/interviews/feedback', handleInterviewFeedback);
 app.post('/api/v1/scheduler/check', handleSchedulerCheck);
 app.post('/api/scheduler/check', handleSchedulerCheck);
 
-// New AI feature endpoints (proxy to Python service)
+// New AI feature endpoints (proxy to Python service with robust local fallbacks)
 async function handleAIProxy(aiPath, req, res) {
   const result = await proxyAI(aiPath, req.body);
   if (result) return res.json({ success: true, data: result, ...result });
+
+  // Graceful local fallbacks if Python microservice is offline
+  if (aiPath === '/v1/skill-gap') {
+    return handleSkillGap(req, res);
+  }
+  if (aiPath === '/v1/readiness') {
+    const { calculateReadiness } = require('./services/readiness.service');
+    const localRes = calculateReadiness(req.body);
+    return res.json({ success: true, data: localRes, ...localRes });
+  }
+
   res.status(503).json({ success: false, error: { code: 'AI_UNAVAILABLE', message: 'AI service is not running. Start it with: cd apps/ai-service && uvicorn main:app --port 8000' } });
 }
 

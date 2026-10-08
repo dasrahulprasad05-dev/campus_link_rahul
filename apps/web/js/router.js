@@ -7,6 +7,7 @@
 const Router = (() => {
   const _routes = {};
   let _current = null;
+  let _lastRenderTime = 0;
   let _notFoundHandler = null;
 
   // Register a route
@@ -67,14 +68,12 @@ const Router = (() => {
       }
     }
 
-    // If already on same route and not forced, check if content is rendered
-    if (_current === path && !force) {
-      const main = document.getElementById('main');
-      if (!main || !main.querySelector('.empty-state')) {
-        return;
-      }
+    // Debounce rapid duplicate calls within 300ms, but allow fresh re-render on user navigation
+    if (_current === path && !force && (Date.now() - _lastRenderTime < 300)) {
+      return;
     }
     _current = path;
+    _lastRenderTime = Date.now();
 
     // Ensure mobile sidebar is closed on route navigation
     document.getElementById('sidebar')?.classList.remove('open');

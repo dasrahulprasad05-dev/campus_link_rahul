@@ -43,7 +43,7 @@ async function generateRoadmapFallback(body = {}, req = null) {
   const customKey = req?.headers?.['x-groq-api-key'] || body.customApiKey;
   const apiKey = (customKey && typeof customKey === 'string' && customKey.trim().startsWith('gsk_'))
     ? customKey.trim()
-    : (process.env.GROQ_API_KEY || ['gsk', 'RvCtb9NWvTfwhZ1j2rgKWGdyb3FYppYErNRUzwOAdDmn7MKi4REP'].join('_'));
+    : (process.env.GROQ_API_KEY || null);
 
   if (apiKey) {
     try {

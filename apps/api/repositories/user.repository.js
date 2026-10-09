@@ -20,9 +20,9 @@ async function findById(id) {
 
 async function create({ name, email, passwordHash, role = 'student', verificationToken = null }) {
   const id = uuidv4();
-  // Students are admin_verified by default (no staff approval needed)
-  // Staff roles (admin, recruiter, mentor, super_admin) require super_admin verification
-  const adminVerified = (role === 'student');
+  // Students and super_admin are admin_verified by default
+  // Staff roles (admin, recruiter, mentor) require super_admin verification
+  const adminVerified = (role === 'student' || role === 'super_admin');
   const res = await query(
     `INSERT INTO users (id, name, email, password_hash, role, email_verified, verification_token, admin_verified)
      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)

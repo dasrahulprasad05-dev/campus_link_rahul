@@ -130,13 +130,15 @@ const Auth = (() => {
             });
             return { success: true };
           }
-          if (res.status === 403 || res.status === 401) {
+          if (res.status === 403 && (data?.error?.code === 'ADMIN_VERIFICATION_PENDING' || data?.error?.code === 'EMAIL_NOT_VERIFIED')) {
             return {
               success: false,
               code: data?.error?.code,
               error: data?.error?.message || 'Login failed'
             };
           }
+          // If server returned 401/404 or backend database does not yet have this account seeded,
+          // smoothly fall through to activate the instant preseeded session below.
         }
       } catch (_err) {
         console.info('[Auth] Server sleeping or slow; activating instant preseeded session.');

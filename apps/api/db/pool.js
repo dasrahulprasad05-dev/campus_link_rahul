@@ -87,35 +87,37 @@ async function query(text, params = []) {
 const memoryDb = (() => {
   const bcrypt = require('bcryptjs');
   const defaultHash = bcrypt.hashSync(process.env.SEED_DEFAULT_PASSWORD || 'CampusLink@2026', 10);
+  const superAdminHash = bcrypt.hashSync('CampusSuper@2026', 10);
 
   const now = new Date().toISOString();
   const d = (days) => new Date(Date.now() + days * 86400000).toISOString();
 
   const tables = {
     users: [
-      { id: 'a1b2c3d4-0001-0001-0001-000000000002', name: 'Training & Placement Office ABIT', email: 'admin@campuslink.in', password_hash: defaultHash, role: 'admin', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
-      { id: 'a1b2c3d4-0001-0001-0001-000000000003', name: 'TCS Campus Recruitment', email: 'recruiter@campuslink.in', password_hash: defaultHash, role: 'recruiter', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
-      { id: 'a1b2c3d4-0001-0001-0001-000000000004', name: 'Faculty Mentor ABIT', email: 'mentor@campuslink.in', password_hash: defaultHash, role: 'mentor', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
-      { id: '10000000-0000-4000-8000-000000000001', name: 'Ananya Sharma', email: 'ananya.sharma@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
-      { id: '10000000-0000-4000-8000-000000000002', name: 'Vikram Rao', email: 'vikram.rao@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
-      { id: '10000000-0000-4000-8000-000000000003', name: 'Soham Das', email: 'soham.das@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
-      { id: '10000000-0000-4000-8000-000000000004', name: 'Rohan Patel', email: 'rohan.patel@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
-      { id: '10000000-0000-4000-8000-000000000005', name: 'Meera Sahoo', email: 'meera.sahoo@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
-      { id: '10000000-0000-4000-8000-000000000006', name: 'Priya Das', email: 'priya.das@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
-      { id: '10000000-0000-4000-8000-000000000007', name: 'Rahul Kumar', email: 'rahul.kumar@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
-      { id: '10000000-0000-4000-8000-000000000008', name: 'Priti Mohanty', email: 'priti.mohanty@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
-      { id: '10000000-0000-4000-8000-000000000009', name: 'Arjun Behera', email: 'arjun.behera@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
-      { id: '10000000-0000-4000-8000-000000000010', name: 'Sneha Mishra', email: 'sneha.mishra@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
-      { id: '10000000-0000-4000-8000-000000000011', name: 'Aditya Nayak', email: 'aditya.nayak@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
-      { id: '10000000-0000-4000-8000-000000000012', name: 'Kavya Reddy', email: 'kavya.reddy@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
-      { id: '10000000-0000-4000-8000-000000000013', name: 'Deepak Pradhan', email: 'deepak.pradhan@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
-      { id: '10000000-0000-4000-8000-000000000014', name: 'Tanvi Patra', email: 'tanvi.patra@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
-      { id: '10000000-0000-4000-8000-000000000015', name: 'Nikhil Swain', email: 'nikhil.swain@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
-      { id: '10000000-0000-4000-8000-000000000016', name: 'Isha Tripathi', email: 'isha.tripathi@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
-      { id: '10000000-0000-4000-8000-000000000017', name: 'Saurav Mahapatra', email: 'saurav.mahapatra@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
-      { id: '10000000-0000-4000-8000-000000000018', name: 'Ritika Samantray', email: 'ritika.samantray@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
-      { id: '10000000-0000-4000-8000-000000000019', name: 'Aman Sethi', email: 'aman.sethi@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
-      { id: '10000000-0000-4000-8000-000000000020', name: 'Pooja Lenka', email: 'pooja.lenka@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true },
+      { id: '00000000-0000-4000-8000-000000000001', name: 'System Super Admin', email: 'superadmin@campuslink.in', password_hash: superAdminHash, role: 'super_admin', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
+      { id: 'a1b2c3d4-0001-0001-0001-000000000002', name: 'Training & Placement Office ABIT', email: 'admin@campuslink.in', password_hash: defaultHash, role: 'admin', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
+      { id: 'a1b2c3d4-0001-0001-0001-000000000003', name: 'TCS Campus Recruitment', email: 'recruiter@campuslink.in', password_hash: defaultHash, role: 'recruiter', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
+      { id: 'a1b2c3d4-0001-0001-0001-000000000004', name: 'Faculty Mentor ABIT', email: 'mentor@campuslink.in', password_hash: defaultHash, role: 'mentor', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
+      { id: '10000000-0000-4000-8000-000000000001', name: 'Ananya Sharma', email: 'ananya.sharma@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
+      { id: '10000000-0000-4000-8000-000000000002', name: 'Vikram Rao', email: 'vikram.rao@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
+      { id: '10000000-0000-4000-8000-000000000003', name: 'Soham Das', email: 'soham.das@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
+      { id: '10000000-0000-4000-8000-000000000004', name: 'Rohan Patel', email: 'rohan.patel@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
+      { id: '10000000-0000-4000-8000-000000000005', name: 'Meera Sahoo', email: 'meera.sahoo@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
+      { id: '10000000-0000-4000-8000-000000000006', name: 'Priya Das', email: 'priya.das@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
+      { id: '10000000-0000-4000-8000-000000000007', name: 'Rahul Kumar', email: 'rahul.kumar@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
+      { id: '10000000-0000-4000-8000-000000000008', name: 'Priti Mohanty', email: 'priti.mohanty@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
+      { id: '10000000-0000-4000-8000-000000000009', name: 'Arjun Behera', email: 'arjun.behera@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
+      { id: '10000000-0000-4000-8000-000000000010', name: 'Sneha Mishra', email: 'sneha.mishra@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
+      { id: '10000000-0000-4000-8000-000000000011', name: 'Aditya Nayak', email: 'aditya.nayak@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
+      { id: '10000000-0000-4000-8000-000000000012', name: 'Kavya Reddy', email: 'kavya.reddy@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
+      { id: '10000000-0000-4000-8000-000000000013', name: 'Deepak Pradhan', email: 'deepak.pradhan@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
+      { id: '10000000-0000-4000-8000-000000000014', name: 'Tanvi Patra', email: 'tanvi.patra@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
+      { id: '10000000-0000-4000-8000-000000000015', name: 'Nikhil Swain', email: 'nikhil.swain@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
+      { id: '10000000-0000-4000-8000-000000000016', name: 'Isha Tripathi', email: 'isha.tripathi@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
+      { id: '10000000-0000-4000-8000-000000000017', name: 'Saurav Mahapatra', email: 'saurav.mahapatra@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
+      { id: '10000000-0000-4000-8000-000000000018', name: 'Ritika Samantray', email: 'ritika.samantray@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
+      { id: '10000000-0000-4000-8000-000000000019', name: 'Aman Sethi', email: 'aman.sethi@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
+      { id: '10000000-0000-4000-8000-000000000020', name: 'Pooja Lenka', email: 'pooja.lenka@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
     ],
     student_profiles: [
       { id: '20000000-0000-4000-8000-000000000001', user_id: '10000000-0000-4000-8000-000000000001', reg_no: 'ABIT2022CSE001', branch: 'Computer Science & Engineering', year: 2026, cgpa: 8.42, target_role: 'Data Analyst', phone: '+91 98765 43210', linkedin: 'linkedin.com/in/ananya-sharma', github: 'github.com/ananyasharma', skills: ['Python','SQL','Excel','Data Analysis','Communication','Statistics','Power BI'], certifications: ['Google Data Analytics Certificate','AWS Cloud Practitioner'], profile_completion: 91, readiness_score: 78, aptitude_score: 72, communication_score: 80, interview_score: 65, backlogs: 0, projects_count: 3, created_at: now, updated_at: now },
@@ -322,18 +324,33 @@ const memoryDb = (() => {
       return Promise.resolve({ rows: [...tables.users], rowCount: tables.users.length });
     }
 
+    // 3a. SELECT FROM users WHERE admin_verified = false (pending verifications)
+    if (q.includes('from users') && q.includes('admin_verified = false')) {
+      const pending = tables.users.filter(u => ['admin','recruiter','mentor'].includes(u.role) && u.email_verified && !u.admin_verified);
+      return Promise.resolve({ rows: pending.map(u => ({ ...u })), rowCount: pending.length });
+    }
+
+    // 3b. SELECT FROM users WHERE role IN ('admin','recruiter','mentor') (all staff)
+    if (q.includes('from users') && q.includes("role in ('admin','recruiter','mentor')")) {
+      const staff = tables.users.filter(u => ['admin','recruiter','mentor'].includes(u.role));
+      return Promise.resolve({ rows: staff.map(u => ({ ...u })), rowCount: staff.length });
+    }
+
     // 4. INSERT INTO users
     if (q.includes('insert into users')) {
-      const [id, name, email, passwordHash, role, emailVerified, verificationToken] = params;
+      const [id, name, email, passwordHash, role, emailVerified, verificationToken, adminVerified] = params;
+      const assignedRole = role || 'student';
+      const isApproved = adminVerified !== undefined ? Boolean(adminVerified) : (assignedRole === 'student');
       const newUser = {
         id: id || `u-${Date.now()}`,
         name,
         email: email.toLowerCase(),
         password_hash: passwordHash,
-        role: role || 'student',
+        role: assignedRole,
         avatar_url: null,
         email_verified: emailVerified || false,
         verification_token: verificationToken || null,
+        admin_verified: isApproved,
         reset_password_token: null,
         reset_password_expires: null,
         created_at: new Date().toISOString(),
@@ -357,6 +374,30 @@ const memoryDb = (() => {
       if (user) {
         user.email_verified = true;
         user.verification_token = null;
+        return Promise.resolve({ rows: [{ ...user }], rowCount: 1 });
+      }
+      return Promise.resolve({ rows: [], rowCount: 0 });
+    }
+
+    // 4b2. UPDATE users SET admin_verified = true (super_admin verify)
+    if (q.includes('update users') && q.includes('admin_verified = true')) {
+      const userId = params[0];
+      const user = tables.users.find(u => u.id === userId);
+      if (user) {
+        user.admin_verified = true;
+        user.updated_at = new Date().toISOString();
+        return Promise.resolve({ rows: [{ ...user }], rowCount: 1 });
+      }
+      return Promise.resolve({ rows: [], rowCount: 0 });
+    }
+
+    // 4b3. UPDATE users SET admin_verified = false (reject/revoke)
+    if (q.includes('update users') && q.includes('admin_verified = false')) {
+      const userId = params[0];
+      const user = tables.users.find(u => u.id === userId);
+      if (user) {
+        user.admin_verified = false;
+        user.updated_at = new Date().toISOString();
         return Promise.resolve({ rows: [{ ...user }], rowCount: 1 });
       }
       return Promise.resolve({ rows: [], rowCount: 0 });

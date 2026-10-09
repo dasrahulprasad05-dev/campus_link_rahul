@@ -48,6 +48,7 @@ const schedulerRoutes = require('./routes/scheduler.routes');
 const aiRoutes = require('./routes/ai.routes');
 const careerFinderRoutes = require('./routes/career-finder.routes');
 const offerRoutes = require('./routes/offer.routes');
+const superAdminRoutes = require('./routes/superadmin.routes');
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/students', studentRoutes);
@@ -61,6 +62,7 @@ app.use('/api/v1/scheduler', schedulerRoutes);
 app.use('/api/v1/ai', aiRoutes);
 app.use('/api/v1/career-finder', careerFinderRoutes);
 app.use('/api/v1/offers', offerRoutes);
+app.use('/api/v1/superadmin', superAdminRoutes);
 
 const { authenticate, authorize } = require('./middleware/auth');
 const { query, memoryDb } = require('./db/pool');
@@ -170,6 +172,29 @@ app.get('/api/v1/dashboard', authenticate, async (req, res) => {
           const user = memoryDb.tables.users.find(u => u.id === s.user_id);
           return { id: s.id, name: user?.name || '', branch: s.branch, readiness: s.readiness_score, target_role: s.target_role, status: (s.readiness_score || 0) < 60 ? 'at-risk' : 'on-track' };
         }),
+      });
+    }
+
+    if (role === 'super_admin') {
+      const users = memoryDb.tables.users;
+      const pending = users.filter(u => ['admin', 'recruiter', 'mentor'].includes(u.role) && u.email_verified && !u.admin_verified);
+      const approved = users.filter(u => ['admin', 'recruiter', 'mentor'].includes(u.role) && u.admin_verified);
+      const students = users.filter(u => u.role === 'student');
+      const drives = memoryDb.tables.drives;
+      const jobs = memoryDb.tables.jobs;
+
+      return res.json({
+        success: true,
+        kpis: [
+          { label: 'Pending Approvals', value: String(pending.length), icon: '⏳', color: 'orange' },
+          { label: 'Approved Staff', value: String(approved.length), icon: '✅', color: 'green' },
+          { label: 'Active Drives', value: String(drives.length), icon: '🏢', color: 'blue' },
+          { label: 'Total Students', value: String(students.length), icon: '🎓', color: 'purple' },
+        ],
+        pending,
+        staff: approved,
+        drives,
+        jobs,
       });
     }
 

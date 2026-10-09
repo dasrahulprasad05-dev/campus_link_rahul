@@ -38,14 +38,15 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST /api/v1/jobs — create new job posting (Strictly Recruiter / Admin only)
-router.post('/', authenticate, authorize('recruiter', 'admin'), async (req, res) => {
+// POST /api/v1/jobs — create new job posting (Strictly Recruiter / Admin / Super Admin)
+router.post('/', authenticate, authorize('recruiter', 'admin', 'super_admin'), async (req, res) => {
   try {
-    const { title, company, location, type, deadline, skills, description, min_cgpa, eligible_branches, max_backlogs } = req.body;
-    if (!title || !company) {
+    const { title, location, type, deadline, skills, description, min_cgpa, eligible_branches, max_backlogs } = req.body;
+    const company = req.body.company || req.user.company || 'TechNova Solutions';
+    if (!title) {
       return res.status(400).json({
         success: false,
-        error: { code: 'VALIDATION_ERROR', message: 'Job title and company name are required' }
+        error: { code: 'VALIDATION_ERROR', message: 'Job title is required' }
       });
     }
 

@@ -14,17 +14,20 @@ async function findByEmail(email) {
 
 async function findById(id) {
   if (!id) return null;
-  const res = await query('SELECT id, name, email, role, avatar_url, email_verified, created_at FROM users WHERE id = $1', [id]);
+  const res = await query('SELECT id, name, email, role, avatar_url, email_verified, admin_verified, created_at FROM users WHERE id = $1', [id]);
   return res.rows[0] || null;
 }
 
 async function create({ name, email, passwordHash, role = 'student', verificationToken = null }) {
   const id = uuidv4();
+  // Students are admin_verified by default (no staff approval needed)
+  // Staff roles (admin, recruiter, mentor, super_admin) require super_admin verification
+  const adminVerified = (role === 'student');
   const res = await query(
-    `INSERT INTO users (id, name, email, password_hash, role, email_verified, verification_token)
-     VALUES ($1, $2, $3, $4, $5, $6, $7)
-     RETURNING id, name, email, role, email_verified, created_at`,
-    [id, name.trim(), email.toLowerCase().trim(), passwordHash, role, false, verificationToken]
+    `INSERT INTO users (id, name, email, password_hash, role, email_verified, verification_token, admin_verified)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+     RETURNING id, name, email, role, email_verified, admin_verified, created_at`,
+    [id, name.trim(), email.toLowerCase().trim(), passwordHash, role, false, verificationToken, adminVerified]
   );
   return res.rows[0];
 }
@@ -40,7 +43,7 @@ async function markEmailVerified(userId) {
     `UPDATE users 
      SET email_verified = true, verification_token = NULL, updated_at = NOW() 
      WHERE id = $1 
-     RETURNING id, name, email, role, email_verified`,
+     RETURNING id, name, email, role, email_verified, admin_verified`,
     [userId]
   );
   return res.rows[0] || null;
@@ -90,7 +93,63 @@ async function updatePassword(userId, newPasswordHash) {
 }
 
 async function listUsers() {
-  const res = await query('SELECT id, name, email, role, email_verified, created_at FROM users ORDER BY created_at DESC');
+  const res = await query('SELECT id, name, email, role, email_verified, admin_verified, created_at FROM users ORDER BY created_at DESC');
+  return res.rows;
+}
+
+/**
+ * Admin Verification: Approve a staff user's account (super_admin only)
+ */
+async function adminVerifyUser(userId) {
+  const res = await query(
+    `UPDATE users 
+     SET admin_verified = true, updated_at = NOW() 
+     WHERE id = $1 
+     RETURNING id, name, email, role, email_verified, admin_verified`,
+    [userId]
+  );
+  return res.rows[0] || null;
+}
+
+/**
+ * Admin Verification: Reject/revoke a staff user (super_admin only)
+ */
+async function adminRejectUser(userId) {
+  const res = await query(
+    `UPDATE users 
+     SET admin_verified = false, updated_at = NOW() 
+     WHERE id = $1 
+     RETURNING id, name, email, role, email_verified, admin_verified`,
+    [userId]
+  );
+  return res.rows[0] || null;
+}
+
+/**
+ * List staff users pending admin verification (email_verified=true, admin_verified=false)
+ */
+async function listPendingVerifications() {
+  const res = await query(
+    `SELECT id, name, email, role, email_verified, admin_verified, created_at 
+     FROM users 
+     WHERE role IN ('admin','recruiter','mentor') 
+       AND email_verified = true 
+       AND admin_verified = false 
+     ORDER BY created_at ASC`
+  );
+  return res.rows;
+}
+
+/**
+ * List all staff (non-student, non-super_admin) users for super_admin management
+ */
+async function listAllStaff() {
+  const res = await query(
+    `SELECT id, name, email, role, email_verified, admin_verified, created_at 
+     FROM users 
+     WHERE role IN ('admin','recruiter','mentor') 
+     ORDER BY created_at DESC`
+  );
   return res.rows;
 }
 
@@ -105,4 +164,8 @@ module.exports = {
   findByResetToken,
   updatePassword,
   listUsers,
+  adminVerifyUser,
+  adminRejectUser,
+  listPendingVerifications,
+  listAllStaff,
 };

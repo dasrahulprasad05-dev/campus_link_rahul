@@ -223,9 +223,69 @@ async function sendPasswordResetEmail(user, token) {
   });
 }
 
+/**
+ * 4. Send Admin Approval Email (sent when super_admin approves a staff account)
+ */
+async function sendAdminApprovedEmail(user) {
+  const portalUrl = `${getAppUrl()}/#login`;
+
+  const content = `
+    <h2 style="color:#ffffff; margin-top:0;">Account Approved! ✅</h2>
+    <p>Hi <strong>${user.name}</strong>,</p>
+    <p>Great news! Your <strong>CAMPUSLINK</strong> account has been <strong style="color:#4ade80;">approved by the System Administrator</strong>.</p>
+    <p>You can now sign in to your portal and access all features associated with your role (<strong>${user.role}</strong>).</p>
+  `;
+
+  return sendEmail({
+    to: user.email,
+    subject: '✅ Your CAMPUSLINK Account Has Been Approved',
+    html: _emailWrapper({
+      title: 'Account Approved',
+      content,
+      ctaUrl: portalUrl,
+      ctaText: 'Sign In to Your Portal →',
+      footerNote: 'If you did not register for a CAMPUSLINK account, please contact the system administrator immediately.',
+    }),
+    text: `Hi ${user.name},\n\nYour CAMPUSLINK account has been approved! Sign in at:\n${portalUrl}\n\n— CAMPUSLINK Team`,
+  });
+}
+
+/**
+ * 5. Send notification to super_admin when new staff verifies email and awaits approval
+ */
+async function sendStaffPendingNotification(user) {
+  const superAdminEmail = process.env.SUPER_ADMIN_EMAIL || 'superadmin@campuslink.in';
+  const dashboardUrl = `${getAppUrl()}/#superadmin/dashboard`;
+
+  const content = `
+    <h2 style="color:#ffffff; margin-top:0;">New Staff Account Awaiting Approval</h2>
+    <p>A new staff member has verified their email and is awaiting your approval:</p>
+    <table style="width:100%;border-collapse:collapse;margin:16px 0;">
+      <tr><td style="color:#94a3b8;padding:6px 0;">Name:</td><td style="color:#e2e8f0;font-weight:600;">${user.name}</td></tr>
+      <tr><td style="color:#94a3b8;padding:6px 0;">Email:</td><td style="color:#e2e8f0;">${user.email}</td></tr>
+      <tr><td style="color:#94a3b8;padding:6px 0;">Role:</td><td style="color:#e2e8f0;text-transform:capitalize;">${user.role}</td></tr>
+    </table>
+    <p>Please review and approve or reject this account from your Super Admin dashboard.</p>
+  `;
+
+  return sendEmail({
+    to: superAdminEmail,
+    subject: `⏳ New Staff Awaiting Approval: ${user.name} (${user.role})`,
+    html: _emailWrapper({
+      title: 'Staff Approval Required',
+      content,
+      ctaUrl: dashboardUrl,
+      ctaText: 'Go to Admin Dashboard →',
+    }),
+    text: `New staff member awaiting approval:\nName: ${user.name}\nEmail: ${user.email}\nRole: ${user.role}\n\nApprove at: ${dashboardUrl}`,
+  });
+}
+
 module.exports = {
   sendEmail,
   sendVerificationEmail,
   sendWelcomeEmail,
   sendPasswordResetEmail,
+  sendAdminApprovedEmail,
+  sendStaffPendingNotification,
 };

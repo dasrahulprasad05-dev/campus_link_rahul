@@ -73,6 +73,20 @@ const Auth = (() => {
         email_verified: true,
       },
     },
+    super_admin: {
+      role: 'super_admin',
+      email: 'superadmin@campuslink.in',
+      password: 'CampusSuper@2026',
+      label: 'Super Admin',
+      user: {
+        id: '00000000-0000-4000-8000-000000000001',
+        name: 'System Super Admin',
+        email: 'superadmin@campuslink.in',
+        role: 'super_admin',
+        email_verified: true,
+        admin_verified: true,
+      },
+    },
   };
 
   function getPreseededCredentials() {
@@ -88,10 +102,7 @@ const Auth = (() => {
     );
     const demoAccount = matchedRole ? PRESEEDED_CREDENTIALS[matchedRole] : null;
 
-    // Fast resilient path for preseeded demo credentials:
-    // If Render is awake, fetch succeeds in ~1-2s.
-    // If Render is sleeping (cold start taking 20-40s), after 3.5s we activate the demo session
-    // so user is NEVER blocked or left waiting!
+    // Fast resilient path for preseeded demo credentials
     if (demoAccount && (password === demoAccount.password || password === 'demo123')) {
       try {
         const controller = new AbortController();
@@ -105,22 +116,26 @@ const Auth = (() => {
         });
         clearTimeout(timeoutId);
 
-        if (res.ok) {
-          const contentType = res.headers.get('content-type') || '';
-          if (contentType.includes('application/json')) {
-            const data = await res.json().catch(() => null);
-            if (data && data.token) {
-              Store.setMany({
-                user: data.user,
-                token: data.token,
-                role: data.user.role,
-              });
-              return { success: true };
-            }
+        const contentType = res.headers.get('content-type') || '';
+        if (contentType.includes('application/json')) {
+          const data = await res.json().catch(() => null);
+          if (res.ok && data && data.token) {
+            Store.setMany({
+              user: data.user,
+              token: data.token,
+              role: data.user.role,
+            });
+            return { success: true };
+          }
+          if (res.status === 403 || res.status === 401) {
+            return {
+              success: false,
+              code: data?.error?.code,
+              error: data?.error?.message || 'Login failed'
+            };
           }
         }
       } catch (_err) {
-        // Cold start or network delay: fall through directly to instant demo session
         console.info('[Auth] Server sleeping or slow; activating instant preseeded session.');
       }
 

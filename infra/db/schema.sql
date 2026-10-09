@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
     name VARCHAR(120) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
-    role VARCHAR(20) NOT NULL DEFAULT 'student' CHECK (role IN ('student','admin','recruiter','mentor')),
+    role VARCHAR(20) NOT NULL DEFAULT 'student' CHECK (role IN ('student','admin','recruiter','mentor','super_admin')),
     avatar_url TEXT,
     email_verified BOOLEAN DEFAULT false,
     verification_token VARCHAR(255),
@@ -153,9 +153,15 @@ ALTER TABLE student_profiles ADD COLUMN IF NOT EXISTS interview_score INTEGER DE
 ALTER TABLE student_profiles ADD COLUMN IF NOT EXISTS backlogs INTEGER DEFAULT 0;
 ALTER TABLE student_profiles ADD COLUMN IF NOT EXISTS projects_count INTEGER DEFAULT 0;
 
+-- Users: super_admin verification flow
+ALTER TABLE users ADD COLUMN IF NOT EXISTS admin_verified BOOLEAN DEFAULT false;
+
 -- Jobs: eligibility constraints for hard-filter pipeline
 ALTER TABLE jobs ADD COLUMN IF NOT EXISTS eligible_branches TEXT[] DEFAULT '{}';
 ALTER TABLE jobs ADD COLUMN IF NOT EXISTS max_backlogs INTEGER DEFAULT 0;
+
+-- Jobs: status active by default
+ALTER TABLE jobs ALTER COLUMN status SET DEFAULT 'active';
 
 -- ============================================================
 -- New Tables: Readiness, Scheduling, Offers, Audit

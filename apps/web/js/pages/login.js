@@ -63,10 +63,13 @@ const LoginPage = (() => {
                   💼 Fill Recruiter
                 </button>
                 <button type="button" class="btn btn-sm" id="btn-fill-admin" onclick="LoginPage.autoFill('admin')" style="font-size:11.5px;padding:6px 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);justify-content:center;color:var(--text-color, #fff)">
-                  🏛️ Fill Admin
+                  🏛️ Fill Admin (TPO)
                 </button>
                 <button type="button" class="btn btn-sm" id="btn-fill-mentor" onclick="LoginPage.autoFill('mentor')" style="font-size:11.5px;padding:6px 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);justify-content:center;color:var(--text-color, #fff)">
                   👨‍🏫 Fill Mentor
+                </button>
+                <button type="button" class="btn btn-sm" id="btn-fill-superadmin" onclick="LoginPage.autoFill('super_admin')" style="grid-column:1 / -1;font-size:11.5px;padding:6px 10px;background:linear-gradient(135deg, rgba(245,158,11,0.15), rgba(234,88,12,0.15));border:1px solid rgba(245,158,11,0.35);justify-content:center;color:#fde68a;font-weight:600">
+                  👑 Fill Super Admin (Master Approver)
                 </button>
               </div>
             </div>
@@ -105,6 +108,9 @@ const LoginPage = (() => {
                 <button type="button" class="btn btn-sm btn-secondary" style="font-size:12px;padding:7px 10px;justify-content:center" onclick="LoginPage.quickLogin('mentor')">
                   👨‍🏫 Mentor Instant
                 </button>
+                <button type="button" class="btn btn-sm btn-secondary" style="grid-column:1 / -1;font-size:12px;padding:7px 10px;justify-content:center;background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.3);color:#fbbf24" onclick="LoginPage.quickLogin('super_admin')">
+                  👑 Super Admin Instant
+                </button>
               </div>
             </div>
 
@@ -140,14 +146,40 @@ const LoginPage = (() => {
 
         if (result.success) {
           Toast.success('Welcome back!');
-          Router.navigate(Store.getRole() + '/dashboard');
+          const role = Store.getRole();
+          const user = Store.getUser();
+          if (role === 'super_admin') {
+            Router.navigate('superadmin/dashboard');
+          } else if (['admin', 'recruiter', 'mentor'].includes(role) && user && user.admin_verified === false) {
+            Router.navigate('pending-verification');
+          } else {
+            Router.navigate(role + '/dashboard');
+          }
         } else {
           Toast.error(result.error);
           btn.textContent = 'Sign In →';
           btn.disabled = false;
 
+          // If admin verification is pending for staff
+          if (result.code === 'ADMIN_VERIFICATION_PENDING' || (result.error && result.error.toLowerCase().includes('pending approval'))) {
+            const existing = document.getElementById('login-unverified-prompt');
+            if (existing) existing.remove();
+
+            const form = document.getElementById('login-form');
+            if (form) {
+              form.insertAdjacentHTML('beforebegin', `
+                <div id="login-unverified-prompt" class="notice mb-4 animate-fade-in-up" style="background:rgba(245, 158, 11, 0.12);border:1px solid rgba(245, 158, 11, 0.35);border-radius:var(--radius-md);padding:14px;font-size:13px;color:#fef08a">
+                  <strong>⏳ Admin Verification Not Completed:</strong><br>
+                  Your email is verified, but your account is pending approval from the System Administrator.<br>
+                  <button type="button" class="btn btn-sm btn-secondary mt-2" style="font-size:12px;padding:6px 12px" onclick="Router.navigate('pending-verification')">
+                    🔍 View Status Screen
+                  </button>
+                </div>
+              `);
+            }
+          }
           // If email is not verified, show prominent activation prompt
-          if (result.code === 'EMAIL_NOT_VERIFIED' || (result.error && result.error.toLowerCase().includes('not verified'))) {
+          else if (result.code === 'EMAIL_NOT_VERIFIED' || (result.error && result.error.toLowerCase().includes('not verified'))) {
             const existing = document.getElementById('login-unverified-prompt');
             if (existing) existing.remove();
 
@@ -171,10 +203,11 @@ const LoginPage = (() => {
 
   function autoFill(role) {
     const creds = (typeof Auth !== 'undefined' && Auth.getPreseededCredentials) ? Auth.getPreseededCredentials() : {
-      student:   { email: 'ananya.sharma@campuslink.in', password: 'demo123', label: 'Student' },
-      recruiter: { email: 'recruiter@campuslink.in',     password: 'demo123', label: 'Recruiter' },
-      admin:     { email: 'admin@campuslink.in',         password: 'demo123', label: 'Admin' },
-      mentor:    { email: 'mentor@campuslink.in',        password: 'demo123', label: 'Mentor' },
+      student:     { email: 'ananya.sharma@campuslink.in', password: 'demo123', label: 'Student' },
+      recruiter:   { email: 'recruiter@campuslink.in',     password: 'demo123', label: 'Recruiter' },
+      admin:       { email: 'admin@campuslink.in',         password: 'demo123', label: 'Admin (TPO)' },
+      mentor:      { email: 'mentor@campuslink.in',        password: 'demo123', label: 'Mentor' },
+      super_admin: { email: 'superadmin@campuslink.in',    password: 'CampusSuper@2026', label: 'Super Admin' },
     };
     const cred = creds[role];
     if (!cred) return;
@@ -237,7 +270,11 @@ const LoginPage = (() => {
       const result = await Auth.quickLogin(role);
       if (result.success) {
         Toast.success(`Signed in as ${role}`);
-        Router.navigate(role + '/dashboard');
+        if (role === 'super_admin') {
+          Router.navigate('superadmin/dashboard');
+        } else {
+          Router.navigate(role + '/dashboard');
+        }
       } else {
         Toast.error(result.error || 'Login failed. Please try again.');
         demoBtns.forEach(b => { b.disabled = false; b.style.opacity = '1'; });

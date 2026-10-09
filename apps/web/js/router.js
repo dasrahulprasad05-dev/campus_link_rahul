@@ -56,10 +56,21 @@ const Router = (() => {
       return;
     }
 
-    // Role guard
+    // Admin Verification Guard for staff (TPO, Recruiter, Mentor)
+    if (route.auth && Store.isAuthenticated() && path !== 'pending-verification') {
+      const user = Store.getUser();
+      const staffRoles = ['admin', 'recruiter', 'mentor'];
+      if (user && staffRoles.includes(user.role) && user.admin_verified === false) {
+        navigate('pending-verification');
+        return;
+      }
+    }
+
+    // Role guard (super_admin has global access)
     if (route.roles && route.roles.length > 0) {
       const role = Store.getRole();
-      if (!route.roles.includes(role)) {
+      const isSuperAdmin = (role === 'super_admin');
+      if (!isSuperAdmin && !route.roles.includes(role)) {
         if (typeof Toast !== 'undefined' && Toast.show) {
           Toast.show(`Access restricted: requires ${route.roles.join(' or ')} role`, 'warning');
         }

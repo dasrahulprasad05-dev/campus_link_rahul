@@ -97,9 +97,14 @@ async function createJob(data) {
       'u-2': 'a1b2c3d4-0001-0001-0001-000000000002',
       'u-3': 'a1b2c3d4-0001-0001-0001-000000000003',
       'u-4': 'a1b2c3d4-0001-0001-0001-000000000004',
+      // Demo token IDs → seeded PostgreSQL UUIDs
+      'u-tpo-abit': 'a1b2c3d4-0001-0001-0001-000000000002',
+      'u-recruiter-tcs': 'a1b2c3d4-0001-0001-0001-000000000003',
+      'u-mentor-rahul': 'a1b2c3d4-0001-0001-0001-000000000004',
     };
     recruiterId = idMap[recruiterId] || null;
   }
+
 
   const res = await query(
     `INSERT INTO jobs 

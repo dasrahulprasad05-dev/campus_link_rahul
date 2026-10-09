@@ -73,12 +73,17 @@ const App = (() => {
 
   // Register all routes
   function registerRoutes() {
-    // Public routes
+    // Public & Verification routes
     Router.register('landing', LandingPage.render);
     Router.register('login', LoginPage.render);
     Router.register('register', RegisterPage.render);
     Router.register('verify-email', EmailAuthPages.VerifyEmailPage.render);
     Router.register('reset-password', EmailAuthPages.ResetPasswordPage.render);
+    Router.register('pending-verification', PendingVerificationPage.render);
+
+    // Super Admin routes
+    Router.register('superadmin/dashboard', authPage(SuperAdminDashboard.render), { auth: true, roles: ['super_admin'] });
+    Router.register('superadmin/staff', authPage(SuperAdminDashboard.render), { auth: true, roles: ['super_admin'] });
 
     // Student routes
     Router.register('student/dashboard', authPage(StudentDashboard.render), { auth: true, roles: ['student'] });

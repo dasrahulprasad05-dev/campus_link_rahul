@@ -5,11 +5,16 @@
 -- ============================================================
 
 -- ========== USERS ==========
-INSERT INTO users (id, name, email, password_hash, role, email_verified) VALUES
--- Institutional
-('a1b2c3d4-0001-0001-0001-000000000002', 'Training & Placement Office ABIT', 'admin@campuslink.in', '$2a$10$7WESn6ndDPNAabWjobNCEOwVFCn4.CwILQVoGLmwKLEl/i.l3f.96', 'admin', true),
-('a1b2c3d4-0001-0001-0001-000000000003', 'TCS Campus Recruitment', 'recruiter@campuslink.in', '$2a$10$7WESn6ndDPNAabWjobNCEOwVFCn4.CwILQVoGLmwKLEl/i.l3f.96', 'recruiter', true),
-('a1b2c3d4-0001-0001-0001-000000000004', 'Faculty Mentor ABIT', 'mentor@campuslink.in', '$2a$10$7WESn6ndDPNAabWjobNCEOwVFCn4.CwILQVoGLmwKLEl/i.l3f.96', 'mentor', true),
+-- Super Admin (password: CampusSuper@2026)
+INSERT INTO users (id, name, email, password_hash, role, email_verified, admin_verified) VALUES
+('00000000-0000-4000-8000-000000000001', 'System Super Admin', 'superadmin@campuslink.in', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'super_admin', true, true)
+ON CONFLICT (email) DO UPDATE SET password_hash = EXCLUDED.password_hash, role = EXCLUDED.role, email_verified = true, admin_verified = true;
+
+-- Staff Accounts (password: CampusLink@2026, all pre-verified by super_admin)
+INSERT INTO users (id, name, email, password_hash, role, email_verified, admin_verified) VALUES
+('a1b2c3d4-0001-0001-0001-000000000002', 'Training & Placement Office ABIT', 'admin@campuslink.in', '$2a$10$7WESn6ndDPNAabWjobNCEOwVFCn4.CwILQVoGLmwKLEl/i.l3f.96', 'admin', true, true),
+('a1b2c3d4-0001-0001-0001-000000000003', 'TCS Campus Recruitment', 'recruiter@campuslink.in', '$2a$10$7WESn6ndDPNAabWjobNCEOwVFCn4.CwILQVoGLmwKLEl/i.l3f.96', 'recruiter', true, true),
+('a1b2c3d4-0001-0001-0001-000000000004', 'Faculty Mentor ABIT', 'mentor@campuslink.in', '$2a$10$7WESn6ndDPNAabWjobNCEOwVFCn4.CwILQVoGLmwKLEl/i.l3f.96', 'mentor', true, true),
 -- Students (20)
 ('10000000-0000-4000-8000-000000000001', 'Ananya Sharma',     'ananya.sharma@campuslink.in',   '$2a$10$7WESn6ndDPNAabWjobNCEOwVFCn4.CwILQVoGLmwKLEl/i.l3f.96', 'student', true),
 ('10000000-0000-4000-8000-000000000002', 'Vikram Rao',        'vikram.rao@campuslink.in',      '$2a$10$7WESn6ndDPNAabWjobNCEOwVFCn4.CwILQVoGLmwKLEl/i.l3f.96', 'student', true),

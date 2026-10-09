@@ -9,7 +9,7 @@ const crypto = require('crypto');
 const { generateToken, authenticate } = require('../middleware/auth');
 const userRepo = require('../repositories/user.repository');
 const studentRepo = require('../repositories/student.repository');
-const { sendVerificationEmail, sendWelcomeEmail, sendPasswordResetEmail } = require('../services/email.service');
+const { sendVerificationEmail, sendWelcomeEmail, sendPasswordResetEmail, sendAdminApprovedEmail, sendStaffPendingNotification } = require('../services/email.service');
 
 // POST /api/v1/auth/register
 router.post('/register', async (req, res) => {
@@ -52,9 +52,9 @@ router.post('/register', async (req, res) => {
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
-    // Architecture Freeze Rule 4: Public registration strictly creates STUDENT accounts only.
-    // Any role parameter in request body is intentionally ignored to prevent privilege escalation.
-    const assignedRole = 'student';
+    const validRoles = ['student', 'admin', 'recruiter', 'mentor'];
+    const requestedRole = (req.body.role || 'student').toLowerCase().trim();
+    const assignedRole = validRoles.includes(requestedRole) ? requestedRole : 'student';
     const verificationToken = crypto.randomBytes(32).toString('hex');
 
     const newUser = await userRepo.create({
@@ -93,6 +93,7 @@ router.post('/register', async (req, res) => {
       success: true,
       user: safeUser,
       requiresVerification: true,
+      verificationToken: process.env.NODE_ENV !== 'production' ? verificationToken : undefined,
       message: 'Account created! Please check your email inbox and spam folder and click the verification link before logging in.'
     });
   } catch (err) {
@@ -123,7 +124,16 @@ router.get('/verify-email', async (req, res) => {
       });
     }
 
+    // After email verification, check staff admin_verified status
     const verifiedUser = await userRepo.markEmailVerified(user.id);
+
+    // Notify super_admin about new staff awaiting approval
+    const staffRoles = ['admin', 'recruiter', 'mentor'];
+    if (staffRoles.includes(user.role)) {
+      sendStaffPendingNotification(user).catch(err => {
+        console.warn('[Auth] Staff pending notification error:', err.message);
+      });
+    }
 
     // Send Welcome Email upon successful email verification!
     sendWelcomeEmail(user).catch(err => {
@@ -311,6 +321,31 @@ router.post('/login', async (req, res) => {
           email: user.email,
         }
       });
+    }
+
+    // Staff roles (admin, recruiter, mentor) require email verification AND super_admin approval
+    const staffRoles = ['admin', 'recruiter', 'mentor'];
+    if (staffRoles.includes(user.role)) {
+      if (!user.email_verified) {
+        return res.status(403).json({
+          success: false,
+          error: {
+            code: 'EMAIL_NOT_VERIFIED',
+            message: 'Please verify your email address before logging in. Check your inbox and spam folder.',
+            email: user.email,
+          }
+        });
+      }
+      if (!user.admin_verified) {
+        return res.status(403).json({
+          success: false,
+          error: {
+            code: 'ADMIN_VERIFICATION_PENDING',
+            message: 'Your account is pending approval from the System Administrator. You will receive an email once your account is approved.',
+            email: user.email,
+          }
+        });
+      }
     }
 
     const safeUser = {

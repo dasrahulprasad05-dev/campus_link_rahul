@@ -128,6 +128,7 @@ const RegisterPage = (() => {
                 <div class="notice mb-6" style="background:rgba(234, 179, 8, 0.1);border:1px solid rgba(234, 179, 8, 0.3);border-radius:var(--radius-md);padding:14px;font-size:13px;color:#fef08a;text-align:left">
                   <strong>⚠️ Important Note:</strong><br>
                   • Please check your <strong>Spam / Junk folder</strong> if the email does not appear in your inbox within 1 minute.<br>
+                  ${['admin', 'recruiter', 'mentor'].includes(role) ? '• <em>Staff Account:</em> After verifying your email, your account will be reviewed & approved by the System Administrator.<br>' : ''}
                   • Official Sender: <code>rahulprasadcoding01@gmail.com</code> (CAMPUSLINK Portal).
                 </div>
 

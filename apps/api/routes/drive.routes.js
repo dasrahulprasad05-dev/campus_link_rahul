@@ -21,8 +21,8 @@ router.get('/', async (req, res) => {
   }
 });
 
-// POST /api/v1/drives — create drive (Strictly Admin only)
-router.post('/', authenticate, authorize('admin'), async (req, res) => {
+// POST /api/v1/drives — create drive (Admin & Super Admin)
+router.post('/', authenticate, authorize('admin', 'super_admin'), async (req, res) => {
   try {
     const { company, role, date, drive_date, venue, min_cgpa, branches } = req.body;
     if (!company || !role) {

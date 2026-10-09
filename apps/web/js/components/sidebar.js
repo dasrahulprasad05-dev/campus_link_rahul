@@ -63,6 +63,17 @@ const Sidebar = (() => {
         { id: 'mentor/roadmaps', icon: '🗺️', label: 'Roadmap Reviews', badge: '3' },
       ]},
     ],
+    super_admin: [
+      { section: 'Command Center', items: [
+        { id: 'superadmin/dashboard', icon: '👑', label: 'Staff Verification' },
+      ]},
+      { section: 'Placement Operations', items: [
+        { id: 'admin/drives', icon: '🎯', label: 'Placement Drives' },
+        { id: 'admin/students', icon: '👥', label: 'Students Roster' },
+        { id: 'admin/companies', icon: '🏢', label: 'Hiring Companies' },
+        { id: 'admin/analytics', icon: '📈', label: 'Institutional Analytics' },
+      ]},
+    ],
   };
 
   function render() {
@@ -88,9 +99,11 @@ const Sidebar = (() => {
       </div>
     `).join('');
 
+    const homeRoute = role === 'super_admin' ? 'superadmin/dashboard' : `${role}/dashboard`;
+
     return `
       <aside class="sidebar" id="sidebar" data-role="${role}">
-        <a class="sidebar-brand" onclick="Router.navigate('${role}/dashboard')">
+        <a class="sidebar-brand" onclick="Router.navigate('${homeRoute}')">
           <span class="sidebar-brand-icon">CL</span>
           <span class="sidebar-brand-text">CAMPUSLINK</span>
         </a>

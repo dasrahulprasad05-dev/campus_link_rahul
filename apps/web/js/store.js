@@ -107,9 +107,14 @@ const Store = (() => {
     return !!_state.token && !!_state.user;
   }
 
+  // Get current user object
+  function getUser() {
+    return _state.user || null;
+  }
+
   // Get current role
   function getRole() {
-    return _state.role || 'student';
+    return _state.role || (_state.user && _state.user.role) || 'student';
   }
 
   // Get user initials for avatar
@@ -172,5 +177,5 @@ const Store = (() => {
   // Initialize
   _hydrate();
 
-  return { get, set, setMany, subscribe, isAuthenticated, getRole, getUserInitials, getProfile, updateProfile, reset };
+  return { get, set, setMany, subscribe, isAuthenticated, getRole, getUser, getUserInitials, getProfile, updateProfile, reset };
 })();

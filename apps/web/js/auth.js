@@ -45,6 +45,7 @@ const Auth = (() => {
         role: 'recruiter',
         company: 'TechNova Solutions',
         email_verified: true,
+        admin_verified: true,
       },
     },
     admin: {
@@ -58,6 +59,7 @@ const Auth = (() => {
         email: 'admin@campuslink.in',
         role: 'admin',
         email_verified: true,
+        admin_verified: true,
       },
     },
     mentor: {
@@ -71,6 +73,7 @@ const Auth = (() => {
         email: 'mentor@campuslink.in',
         role: 'mentor',
         email_verified: true,
+        admin_verified: true,
       },
     },
     super_admin: {

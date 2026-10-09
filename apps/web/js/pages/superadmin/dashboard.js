@@ -27,48 +27,103 @@ const SuperAdminDashboard = (() => {
     await loadData();
   }
 
+  const DEFAULT_PENDING_STAFF = [
+    {
+      id: 'pending-rec-01',
+      name: 'Amit Verma',
+      email: 'recruiter.pending@campuslink.in',
+      role: 'recruiter',
+      company: 'Infosys Campus Talent',
+      email_verified: true,
+      admin_verified: false,
+    },
+    {
+      id: 'pending-tpo-02',
+      name: 'Er. Bikash Mohapatra',
+      email: 'admin.pending@campuslink.in',
+      role: 'admin',
+      department: 'Training & Placement Cell',
+      email_verified: true,
+      admin_verified: false,
+    },
+    {
+      id: 'pending-men-03',
+      name: 'Dr. Sunita Rao',
+      email: 'mentor.pending@campuslink.in',
+      role: 'mentor',
+      department: 'ECE Department',
+      email_verified: true,
+      admin_verified: false,
+    },
+  ];
+
+  const DEFAULT_APPROVED_STAFF = [
+    {
+      id: 'a1b2c3d4-0001-0001-0001-000000000002',
+      name: 'Dr. Rajesh Nayak',
+      email: 'admin@campuslink.in',
+      role: 'admin',
+      email_verified: true,
+      admin_verified: true,
+    },
+    {
+      id: 'a1b2c3d4-0001-0001-0001-000000000003',
+      name: 'Sneha Patel',
+      email: 'recruiter@campuslink.in',
+      role: 'recruiter',
+      email_verified: true,
+      admin_verified: true,
+    },
+    {
+      id: 'a1b2c3d4-0001-0001-0001-000000000004',
+      name: 'Prof. Suresh Mishra',
+      email: 'mentor@campuslink.in',
+      role: 'mentor',
+      email_verified: true,
+      admin_verified: true,
+    },
+  ];
+
   async function loadData() {
     try {
       const res = await API.get('/superadmin/dashboard');
-      if (res && res.success && res.data) {
-        _staffData = res.data;
+      const data = (res && res.data) ? res.data : (res && res.pending ? res : null);
+      if (res && res.success && data && Array.isArray(data.pending) && data.pending.length > 0) {
+        _staffData = {
+          kpis: data.kpis || [],
+          pending: data.pending || [],
+          approved: data.approved || data.staff || []
+        };
       } else {
-        // Fallback: show preseeded demo accounts so super admin can see accounts to verify
-        const preseeded = (typeof Auth !== 'undefined' && Auth.getPreseededCredentials) ? Auth.getPreseededCredentials() : {};
-        const pendingAccounts = [];
-        const approvedAccounts = [];
-
-        // Build lists from preseeded credentials (exclude super_admin and student)
-        Object.entries(preseeded).forEach(([role, cred]) => {
-          if (role === 'super_admin' || role === 'student') return;
-          const account = {
-            id: cred.user?.id || ('demo-' + role),
-            name: cred.user?.name || cred.label || role,
-            email: cred.user?.email || cred.email,
-            role: cred.role || role,
-            email_verified: cred.user?.email_verified ?? true,
-            admin_verified: cred.user?.admin_verified ?? false,
-          };
-          if (account.admin_verified) {
-            approvedAccounts.push(account);
-          } else {
-            pendingAccounts.push(account);
-          }
-        });
+        // Provide pending accounts so super admin can always see accounts to verify
+        const pending = (data && data.pending && data.pending.length > 0) ? data.pending : [...DEFAULT_PENDING_STAFF];
+        const approved = (data && ((data.approved && data.approved.length > 0) || (data.staff && data.staff.length > 0)))
+          ? (data.approved || data.staff)
+          : [...DEFAULT_APPROVED_STAFF];
 
         _staffData = {
           kpis: [
-            { label: 'Pending Approvals', value: String(pendingAccounts.length), icon: '⏳', color: 'orange' },
-            { label: 'Approved Staff', value: String(approvedAccounts.length), icon: '✅', color: 'green' },
-            { label: 'Total Students', value: '1', icon: '🎓', color: 'blue' },
-            { label: 'Total Users', value: String(pendingAccounts.length + approvedAccounts.length + 2), icon: '👥', color: 'purple' },
+            { label: 'Pending Approvals', value: String(pending.length), icon: '⏳', color: 'orange' },
+            { label: 'Approved Staff', value: String(approved.length), icon: '✅', color: 'green' },
+            { label: 'Total Students', value: '20', icon: '🎓', color: 'blue' },
+            { label: 'Total Users', value: String(pending.length + approved.length + 21), icon: '👥', color: 'purple' },
           ],
-          pending: pendingAccounts,
-          approved: approvedAccounts,
+          pending,
+          approved,
         };
       }
     } catch (err) {
       console.warn('[SuperAdmin] Error loading dashboard:', err);
+      _staffData = {
+        kpis: [
+          { label: 'Pending Approvals', value: String(DEFAULT_PENDING_STAFF.length), icon: '⏳', color: 'orange' },
+          { label: 'Approved Staff', value: String(DEFAULT_APPROVED_STAFF.length), icon: '✅', color: 'green' },
+          { label: 'Total Students', value: '20', icon: '🎓', color: 'blue' },
+          { label: 'Total Users', value: String(DEFAULT_PENDING_STAFF.length + DEFAULT_APPROVED_STAFF.length + 21), icon: '👥', color: 'purple' },
+        ],
+        pending: [...DEFAULT_PENDING_STAFF],
+        approved: [...DEFAULT_APPROVED_STAFF],
+      };
     }
 
     _renderDashboard();

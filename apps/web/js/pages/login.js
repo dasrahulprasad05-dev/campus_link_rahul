@@ -90,8 +90,10 @@ const LoginPage = (() => {
 
         if (result.success) {
           Toast.success('Welcome back!');
-          const role = Store.getRole();
-          const user = Store.getUser();
+          btn.textContent = 'Sign In →';
+          btn.disabled = false;
+          const role = (Store.getRole && Store.getRole()) || Store.get('role') || 'student';
+          const user = (Store.getUser && Store.getUser()) || Store.get('user') || {};
           if (role === 'super_admin') {
             // Super admin always goes directly to super admin dashboard
             Router.navigate('superadmin/dashboard');

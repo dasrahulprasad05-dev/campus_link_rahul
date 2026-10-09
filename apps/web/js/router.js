@@ -58,7 +58,7 @@ const Router = (() => {
 
     // Admin Verification Guard for staff (TPO, Recruiter, Mentor)
     if (route.auth && Store.isAuthenticated() && path !== 'pending-verification') {
-      const user = Store.getUser();
+      const user = (Store.getUser && Store.getUser()) || Store.get('user');
       const staffRoles = ['admin', 'recruiter', 'mentor'];
       if (user && staffRoles.includes(user.role) && user.admin_verified === false) {
         navigate('pending-verification');

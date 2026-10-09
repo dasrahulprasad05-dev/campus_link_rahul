@@ -42,38 +42,6 @@ const LoginPage = (() => {
             <h2>Sign in</h2>
             <p class="text-sm text-muted mb-4">Enter your credentials to access your portal.</p>
 
-            <!-- ⚡ 1-Click Auto-Fill Demo Credentials (Temporary) -->
-            <div class="autofill-section mb-5" style="background:linear-gradient(135deg, rgba(99,102,241,0.08), rgba(168,85,247,0.08));border:1px solid rgba(99,102,241,0.25);border-radius:var(--radius-md);padding:12px 14px;">
-              <div class="flex items-center justify-between mb-2">
-                <div class="flex items-center gap-2">
-                  <span style="font-size:14px">⚡</span>
-                  <span class="text-xs font-semibold uppercase tracking-wider" style="color:var(--primary, #6366f1);letter-spacing:0.04em">Auto-Fill Credentials</span>
-                </div>
-                <div class="flex items-center gap-2">
-                  <span class="badge badge-accent text-xs" style="padding:2px 7px;font-size:10px;font-weight:600">Auto-Write</span>
-                  <a class="text-xs text-muted" style="cursor:pointer;font-size:11px;text-decoration:underline" onclick="LoginPage.clearFields()">Clear</a>
-                </div>
-              </div>
-              <p class="text-xs text-muted mb-2" style="margin:0 0 8px 0;line-height:1.4">Click any role to automatically write the preseeded email & password into the input fields:</p>
-              <div style="display:grid;grid-template-columns:repeat(2, 1fr);gap:6px">
-                <button type="button" class="btn btn-sm" id="btn-fill-student" onclick="LoginPage.autoFill('student')" style="font-size:11.5px;padding:6px 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);justify-content:center;color:var(--text-color, #fff)">
-                  🎓 Fill Student
-                </button>
-                <button type="button" class="btn btn-sm" id="btn-fill-recruiter" onclick="LoginPage.autoFill('recruiter')" style="font-size:11.5px;padding:6px 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);justify-content:center;color:var(--text-color, #fff)">
-                  💼 Fill Recruiter
-                </button>
-                <button type="button" class="btn btn-sm" id="btn-fill-admin" onclick="LoginPage.autoFill('admin')" style="font-size:11.5px;padding:6px 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);justify-content:center;color:var(--text-color, #fff)">
-                  🏛️ Fill Admin (TPO)
-                </button>
-                <button type="button" class="btn btn-sm" id="btn-fill-mentor" onclick="LoginPage.autoFill('mentor')" style="font-size:11.5px;padding:6px 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);justify-content:center;color:var(--text-color, #fff)">
-                  👨‍🏫 Fill Mentor
-                </button>
-                <button type="button" class="btn btn-sm" id="btn-fill-superadmin" onclick="LoginPage.autoFill('super_admin')" style="grid-column:1 / -1;font-size:11.5px;padding:6px 10px;background:linear-gradient(135deg, rgba(245,158,11,0.15), rgba(234,88,12,0.15));border:1px solid rgba(245,158,11,0.35);justify-content:center;color:#fde68a;font-weight:600">
-                  👑 Fill Super Admin (Master Approver)
-                </button>
-              </div>
-            </div>
-
             <form id="login-form" onsubmit="return false">
               ${Forms.input({ id: 'login-email', label: 'Email Address', type: 'email', placeholder: 'Enter your registered email', required: true })}
               ${Forms.input({ id: 'login-password', label: 'Password', type: 'password', placeholder: '••••••••', required: true })}
@@ -89,30 +57,6 @@ const LoginPage = (() => {
                 Sign In →
               </button>
             </form>
-
-            <div class="demo-login-section mt-5 pt-4" style="border-top:1px solid var(--border-color, rgba(255,255,255,0.08))">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-semibold text-muted uppercase tracking-wider" style="letter-spacing:0.05em">⚡ Direct 1-Click Login (Bypass Form)</span>
-                <span class="badge badge-accent text-xs" style="padding:2px 8px;font-size:11px">Instant</span>
-              </div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-                <button type="button" class="btn btn-sm btn-secondary" style="font-size:12px;padding:7px 10px;justify-content:center" onclick="LoginPage.quickLogin('student')">
-                  🎓 Student Instant
-                </button>
-                <button type="button" class="btn btn-sm btn-secondary" style="font-size:12px;padding:7px 10px;justify-content:center" onclick="LoginPage.quickLogin('admin')">
-                  🏛️ Admin Instant
-                </button>
-                <button type="button" class="btn btn-sm btn-secondary" style="font-size:12px;padding:7px 10px;justify-content:center" onclick="LoginPage.quickLogin('recruiter')">
-                  💼 Recruiter Instant
-                </button>
-                <button type="button" class="btn btn-sm btn-secondary" style="font-size:12px;padding:7px 10px;justify-content:center" onclick="LoginPage.quickLogin('mentor')">
-                  👨‍🏫 Mentor Instant
-                </button>
-                <button type="button" class="btn btn-sm btn-secondary" style="grid-column:1 / -1;font-size:12px;padding:7px 10px;justify-content:center;background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.3);color:#fbbf24" onclick="LoginPage.quickLogin('super_admin')">
-                  👑 Super Admin Instant
-                </button>
-              </div>
-            </div>
 
             <div class="auth-link mt-5">
               Don't have an account? <a onclick="Router.navigate('register')">Create one</a>
@@ -134,7 +78,7 @@ const LoginPage = (() => {
         const password = document.getElementById('login-password').value;
 
         if (!email || !password) {
-          Toast.warning('Please fill in all fields or click an Auto-Fill button above');
+          Toast.warning('Please fill in all fields');
           return;
         }
 
@@ -149,6 +93,7 @@ const LoginPage = (() => {
           const role = Store.getRole();
           const user = Store.getUser();
           if (role === 'super_admin') {
+            // Super admin always goes directly to super admin dashboard
             Router.navigate('superadmin/dashboard');
           } else if (['admin', 'recruiter', 'mentor'].includes(role) && user && user.admin_verified === false) {
             Router.navigate('pending-verification');
@@ -203,10 +148,6 @@ const LoginPage = (() => {
 
   function autoFill(role) {
     const creds = (typeof Auth !== 'undefined' && Auth.getPreseededCredentials) ? Auth.getPreseededCredentials() : {
-      student:     { email: 'ananya.sharma@campuslink.in', password: 'demo123', label: 'Student' },
-      recruiter:   { email: 'recruiter@campuslink.in',     password: 'demo123', label: 'Recruiter' },
-      admin:       { email: 'admin@campuslink.in',         password: 'demo123', label: 'Admin (TPO)' },
-      mentor:      { email: 'mentor@campuslink.in',        password: 'demo123', label: 'Mentor' },
       super_admin: { email: 'superadmin@campuslink.in',    password: 'CampusSuper@2026', label: 'Super Admin' },
     };
     const cred = creds[role];
@@ -289,3 +230,4 @@ const LoginPage = (() => {
 
   return { render, quickLogin, autoFill, clearFields };
 })();
+

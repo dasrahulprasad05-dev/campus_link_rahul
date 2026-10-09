@@ -33,16 +33,38 @@ const SuperAdminDashboard = (() => {
       if (res && res.success && res.data) {
         _staffData = res.data;
       } else {
-        // Fallback to memoryDb / local mock if offline
+        // Fallback: show preseeded demo accounts so super admin can see accounts to verify
+        const preseeded = (typeof Auth !== 'undefined' && Auth.getPreseededCredentials) ? Auth.getPreseededCredentials() : {};
+        const pendingAccounts = [];
+        const approvedAccounts = [];
+
+        // Build lists from preseeded credentials (exclude super_admin and student)
+        Object.entries(preseeded).forEach(([role, cred]) => {
+          if (role === 'super_admin' || role === 'student') return;
+          const account = {
+            id: cred.user?.id || ('demo-' + role),
+            name: cred.user?.name || cred.label || role,
+            email: cred.user?.email || cred.email,
+            role: cred.role || role,
+            email_verified: cred.user?.email_verified ?? true,
+            admin_verified: cred.user?.admin_verified ?? false,
+          };
+          if (account.admin_verified) {
+            approvedAccounts.push(account);
+          } else {
+            pendingAccounts.push(account);
+          }
+        });
+
         _staffData = {
           kpis: [
-            { label: 'Pending Approvals', value: '0', icon: '⏳', color: 'orange' },
-            { label: 'Approved Staff', value: '3', icon: '✅', color: 'green' },
-            { label: 'Total Students', value: '20', icon: '🎓', color: 'blue' },
-            { label: 'Total Users', value: '24', icon: '👥', color: 'purple' },
+            { label: 'Pending Approvals', value: String(pendingAccounts.length), icon: '⏳', color: 'orange' },
+            { label: 'Approved Staff', value: String(approvedAccounts.length), icon: '✅', color: 'green' },
+            { label: 'Total Students', value: '1', icon: '🎓', color: 'blue' },
+            { label: 'Total Users', value: String(pendingAccounts.length + approvedAccounts.length + 2), icon: '👥', color: 'purple' },
           ],
-          pending: [],
-          approved: [],
+          pending: pendingAccounts,
+          approved: approvedAccounts,
         };
       }
     } catch (err) {
@@ -51,6 +73,7 @@ const SuperAdminDashboard = (() => {
 
     _renderDashboard();
   }
+
 
   function _renderDashboard() {
     const main = document.getElementById('main');
@@ -206,7 +229,22 @@ const SuperAdminDashboard = (() => {
       const res = await API.post(`/superadmin/verify/${userId}`, {});
       if (res && res.success) {
         Toast.success(`✅ ${userName} has been approved! An activation email was sent.`);
-        await loadData();
+
+        // Update local state for offline mode: move from pending to approved
+        const idx = _staffData.pending.findIndex(u => u.id === userId);
+        if (idx !== -1) {
+          const user = _staffData.pending.splice(idx, 1)[0];
+          user.admin_verified = true;
+          _staffData.approved.push(user);
+          // Update KPI counts
+          const pendingKpi = _staffData.kpis.find(k => k.label === 'Pending Approvals');
+          const approvedKpi = _staffData.kpis.find(k => k.label === 'Approved Staff');
+          if (pendingKpi) pendingKpi.value = String(_staffData.pending.length);
+          if (approvedKpi) approvedKpi.value = String(_staffData.approved.length);
+          _renderDashboard();
+        } else {
+          await loadData();
+        }
       } else {
         Toast.error(res?.error?.message || 'Failed to verify staff member');
       }
@@ -221,7 +259,17 @@ const SuperAdminDashboard = (() => {
       const res = await API.post(`/superadmin/reject/${userId}`, {});
       if (res && res.success) {
         Toast.warning(`Access rejected for ${userName}`);
-        await loadData();
+
+        // Update local state for offline mode: remove from pending
+        const idx = _staffData.pending.findIndex(u => u.id === userId);
+        if (idx !== -1) {
+          _staffData.pending.splice(idx, 1);
+          const pendingKpi = _staffData.kpis.find(k => k.label === 'Pending Approvals');
+          if (pendingKpi) pendingKpi.value = String(_staffData.pending.length);
+          _renderDashboard();
+        } else {
+          await loadData();
+        }
       } else {
         Toast.error(res?.error?.message || 'Failed to reject');
       }
@@ -236,12 +284,23 @@ const SuperAdminDashboard = (() => {
       const res = await API.post(`/superadmin/reject/${userId}`, {});
       if (res && res.success) {
         Toast.info(`Access revoked for ${userName}`);
-        await loadData();
+
+        // Update local state for offline mode: remove from approved
+        const idx = _staffData.approved.findIndex(u => u.id === userId);
+        if (idx !== -1) {
+          _staffData.approved.splice(idx, 1);
+          const approvedKpi = _staffData.kpis.find(k => k.label === 'Approved Staff');
+          if (approvedKpi) approvedKpi.value = String(_staffData.approved.length);
+          _renderDashboard();
+        } else {
+          await loadData();
+        }
       }
     } catch (err) {
       Toast.error('Error: ' + err.message);
     }
   }
+
 
   function openCreateStaffModal() {
     const modalId = 'modal-create-staff';

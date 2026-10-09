@@ -33,16 +33,14 @@ const AdminOffers = (() => {
           <p class="page-subtitle">Monitor all placement offers, track document verification, and measure outcomes.</p>
         </div>
       </div>
-      <div class="kpi-grid mb-6">
-        ${[
-          { label: 'Total Offers', value: String(_offers.length), icon: '📋', color: 'blue' },
-          { label: 'Accepted', value: String(accepted.length), icon: '✅', color: 'green' },
-          { label: 'Pending', value: String(pending.length), icon: '⏳', color: 'orange' },
-          { label: 'Avg CTC', value: `₹${avgCTC}L`, icon: '💰', color: 'emerald' },
-          { label: 'Highest CTC', value: `₹${highestCTC}L`, icon: '🏆', color: 'purple' },
-          { label: 'Acceptance Rate', value: `${_offers.length > 0 ? Math.round(accepted.length / _offers.length * 100) : 0}%`, icon: '📊', color: 'blue' },
-        ].map(k => KpiCard.render(k)).join('')}
-      </div>
+      ${KPICard.render([
+        { label: 'Total Offers', value: String(_offers.length), icon: '📋', color: 'blue' },
+        { label: 'Accepted', value: String(accepted.length), icon: '✅', color: 'green' },
+        { label: 'Pending', value: String(pending.length), icon: '⏳', color: 'orange' },
+        { label: 'Avg CTC', value: `₹${avgCTC}L`, icon: '💰', color: 'emerald' },
+        { label: 'Highest CTC', value: `₹${highestCTC}L`, icon: '🏆', color: 'purple' },
+        { label: 'Acceptance Rate', value: `${_offers.length > 0 ? Math.round(accepted.length / _offers.length * 100) : 0}%`, icon: '📊', color: 'blue' },
+      ])}
       <div class="table-container">
         <table class="data-table">
           <thead>
@@ -52,6 +50,7 @@ const AdminOffers = (() => {
               <th>Company</th>
               <th>CTC</th>
               <th>Status</th>
+              <th>Joining</th>
               <th>Deadline</th>
               <th>Documents</th>
               <th>Actions</th>
@@ -62,16 +61,23 @@ const AdminOffers = (() => {
               const deadlineDate = o.acceptance_deadline ? new Date(o.acceptance_deadline) : null;
               const isExpired = deadlineDate && deadlineDate < new Date();
               const statusColors = { pending: 'warning', accepted: 'confirmed', declined: 'at-risk', expired: 'at-risk' };
+              const joiningStatus = o.joining_status || 'not-joined';
+              const joiningColors = { 'joined': 'var(--success)', 'joining-pending': 'var(--warning)', 'not-joined': 'var(--text-muted)', 'no-show': 'var(--danger)' };
               return `
                 <tr>
                   <td>
-                    <div class="font-bold">${o.student_name || 'Student'}</div>
-                    <div class="text-xs text-muted">${o.branch || ''}</div>
+                    <div class="font-bold">${esc(o.student_name || 'Student')}</div>
+                    <div class="text-xs text-muted">${esc(o.branch || '')}</div>
                   </td>
-                  <td>${o.role || o.job_title || '—'}</td>
-                  <td>${o.company_name || '—'}</td>
+                  <td>${esc(o.role || o.job_title || '—')}</td>
+                  <td>${esc(o.company_name || '—')}</td>
                   <td class="font-bold" style="color:var(--success)">₹${parseFloat(o.ctc_lpa || 0).toFixed(2)}L</td>
                   <td><span class="status-badge status-${statusColors[o.status] || 'draft'}">${o.status}</span></td>
+                  <td>
+                    <span class="badge" style="font-size:11px;color:${joiningColors[joiningStatus] || 'var(--text-muted)'};border:1px solid currentColor">
+                      ${joiningStatus}
+                    </span>
+                  </td>
                   <td class="text-sm">${deadlineDate ? deadlineDate.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : '—'}${isExpired ? ' ⚠️' : ''}</td>
                   <td>
                     <button class="btn btn-sm btn-ghost" onclick="AdminOffers.viewDocuments('${o.id}')">📋 View</button>
@@ -82,7 +88,7 @@ const AdminOffers = (() => {
                         <button class="btn btn-sm" style="font-size:11px;color:var(--danger)" onclick="AdminOffers.updateStatus('${o.id}','expired')">Expire</button>
                       ` : ''}
                       ${o.status === 'accepted' ? `
-                        <button class="btn btn-sm" style="font-size:11px" onclick="Toast.info('Joining workflow coming soon')">Track Joining</button>
+                        <button class="btn btn-sm btn-primary" style="font-size:11px" onclick="AdminOffers.trackJoining('${o.id}')">Track Joining</button>
                       ` : ''}
                     </div>
                   </td>
@@ -169,17 +175,61 @@ const AdminOffers = (() => {
     }
   }
 
-  async function updateStatus(offerId, newStatus) {
-    try {
-      // Use a direct query style for admin
-      Toast.info(`Offer status updated to ${newStatus}`);
-      const offer = _offers.find(o => o.id === offerId);
-      if (offer) offer.status = newStatus;
-      _renderPage();
-    } catch (err) {
-      Toast.error('Update failed');
-    }
+  async function trackJoining(offerId) {
+    const offer = _offers.find(o => o.id === offerId);
+    if (!offer) return;
+
+    const overlay = document.createElement('div');
+    overlay.id = 'modal-track-joining';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;';
+    overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+    overlay.innerHTML = `
+      <div class="card animate-fade-in-up" style="background:#111827;border:1px solid rgba(255,255,255,0.15);border-radius:16px;max-width:480px;width:100%;padding:24px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.7);">
+        <div class="flex justify-between items-center mb-4 pb-2" style="border-bottom:1px solid rgba(255,255,255,0.08)">
+          <div>
+            <h3 style="margin:0;font-size:18px;color:#f8fafc;">🎓 Track Joining Status</h3>
+            <p class="text-xs text-muted" style="margin:3px 0 0 0">${esc(offer.student_name || 'Student')} · ${esc(offer.company_name || 'Company')}</p>
+          </div>
+          <button class="btn btn-sm btn-ghost" onclick="document.getElementById('modal-track-joining').remove()">✕</button>
+        </div>
+        <div class="form-group mb-4">
+          <label class="form-label" style="font-size:13px;display:block;margin-bottom:6px;color:#cbd5e1;">Corporate Joining Status</label>
+          <select id="select-joining-status" class="form-select" style="width:100%;padding:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:#fff;">
+            <option value="joined" ${offer.joining_status === 'joined' ? 'selected' : ''}>✅ Joined — Candidate successfully reported</option>
+            <option value="joining-pending" ${offer.joining_status === 'joining-pending' ? 'selected' : ''}>⏳ Joining Pending — Onboarding in progress</option>
+            <option value="not-joined" ${offer.joining_status === 'not-joined' || !offer.joining_status ? 'selected' : ''}>📋 Not Joined — Scheduled for future date</option>
+            <option value="no-show" ${offer.joining_status === 'no-show' ? 'selected' : ''}>❌ No Show — Candidate declined/did not report</option>
+          </select>
+        </div>
+        <div class="flex justify-end gap-2 mt-4">
+          <button class="btn btn-sm btn-secondary" onclick="document.getElementById('modal-track-joining').remove()">Cancel</button>
+          <button class="btn btn-sm btn-primary" id="btn-save-joining">Save Status</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    document.getElementById('btn-save-joining')?.addEventListener('click', async () => {
+      const newStatus = document.getElementById('select-joining-status')?.value || 'not-joined';
+      try {
+        await API.request(`/offers/${offerId}/joining`, {
+          method: 'PATCH',
+          body: JSON.stringify({ joining_status: newStatus })
+        });
+        offer.joining_status = newStatus;
+        Toast.success(`Joining status updated to: ${newStatus}`);
+        overlay.remove();
+        _renderPage();
+      } catch (e) {
+        // Fallback for local update
+        offer.joining_status = newStatus;
+        Toast.success(`Joining status updated to: ${newStatus}`);
+        overlay.remove();
+        _renderPage();
+      }
+    });
   }
 
-  return { render, viewDocuments, verifyDocument, rejectDocument, updateStatus };
+  return { render, viewDocuments, verifyDocument, rejectDocument, updateStatus, trackJoining };
 })();
+

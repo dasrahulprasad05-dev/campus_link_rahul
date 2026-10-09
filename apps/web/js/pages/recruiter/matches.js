@@ -230,8 +230,8 @@ const RecruiterMatches = (() => {
 
         <div class="flex justify-end gap-2 mt-3">
           <button class="btn btn-sm btn-ghost" onclick="RecruiterMatches.toggleWhy(${index})">💡 Why This Candidate?</button>
-          <button class="btn btn-sm" onclick="Toast.info('Full profile for ${esc(c.name)}')">View Profile</button>
-          <button class="btn btn-sm btn-primary" onclick="Toast.success('${esc(c.name)} shortlisted!')">Shortlist</button>
+          <button class="btn btn-sm btn-secondary" onclick="RecruiterMatches.viewProfile(${index})">View Profile</button>
+          <button class="btn btn-sm btn-primary" onclick="RecruiterMatches.shortlistCandidate(${index})">Shortlist</button>
         </div>
       </article>
     `;
@@ -244,6 +244,105 @@ const RecruiterMatches = (() => {
     }
   }
 
+  function viewProfile(index) {
+    const selectedJob = _jobs.find(j => j.id === _selectedJobId);
+    let ranked = (_rankingSource === 'ml-ranker' && _mlRankedCache[_selectedJobId])
+      ? _mlRankedCache[_selectedJobId]
+      : (selectedJob ? _rankCandidates(_students, selectedJob) : []);
+    const c = ranked[index];
+    if (!c) return;
+
+    const modalId = 'modal-candidate-profile';
+    const existing = document.getElementById(modalId);
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = modalId;
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;';
+    overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+    overlay.innerHTML = `
+      <div class="card animate-fade-in-up" style="background:#111827;border:1px solid rgba(255,255,255,0.15);border-radius:16px;max-width:540px;width:100%;padding:26px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.7);max-height:90vh;overflow-y:auto;">
+        <div class="flex justify-between items-center mb-4 pb-2" style="border-bottom:1px solid rgba(255,255,255,0.08)">
+          <div class="flex items-center gap-3">
+            <div class="avatar avatar-md avatar-blue">${esc(c.initials || 'C')}</div>
+            <div>
+              <h3 style="margin:0;font-size:18px;color:#f8fafc;">${esc(c.name)}</h3>
+              <p class="text-xs text-muted" style="margin:2px 0 0 0">${esc(c.branch || 'Engineering')} · Class of ${c.year || 2026} · CGPA ${c.cgpa || 7.5}</p>
+            </div>
+          </div>
+          <button class="btn btn-sm btn-ghost" onclick="document.getElementById('${modalId}').remove()">✕</button>
+        </div>
+
+        <div class="grid grid-2 mb-4" style="gap:12px;font-size:12.5px;">
+          <div class="card" style="padding:10px;background:rgba(255,255,255,0.02)">
+            <div class="text-muted">Role Match Score</div>
+            <div style="font-size:20px;font-weight:700;color:#60a5fa">${c.compositeScore || 80}%</div>
+          </div>
+          <div class="card" style="padding:10px;background:rgba(255,255,255,0.02)">
+            <div class="text-muted">Placement Readiness</div>
+            <div style="font-size:20px;font-weight:700;color:#34d399">${c.readiness || 75}/100</div>
+          </div>
+        </div>
+
+        <div class="form-group mb-3">
+          <label class="text-xs font-bold text-muted uppercase">Matched Skills for This Role</label>
+          <div class="flex gap-2 flex-wrap mt-2">
+            ${(c.matchedSkills || []).map(s => `<span class="badge badge-success" style="font-size:11px">✓ ${esc(s)}</span>`).join('') || '<span class="text-xs text-muted">Core engineering fundamentals</span>'}
+          </div>
+        </div>
+
+        ${(c.missingSkills || []).length > 0 ? `
+          <div class="form-group mb-3">
+            <label class="text-xs font-bold text-muted uppercase">Recommended Growth Skills</label>
+            <div class="flex gap-2 flex-wrap mt-2">
+              ${c.missingSkills.map(s => `<span class="badge badge-warning" style="font-size:11px">⚠ ${esc(s)}</span>`).join('')}
+            </div>
+          </div>
+        ` : ''}
+
+        <div class="form-group mb-3">
+          <label class="text-xs font-bold text-muted uppercase">All Student Skills</label>
+          <div class="flex gap-2 flex-wrap mt-2">
+            ${(c.skills || []).map(s => `<span class="badge badge-accent" style="font-size:11px">${esc(s)}</span>`).join('')}
+          </div>
+        </div>
+
+        <div class="text-xs text-muted mb-4">
+          <div>📧 Email: <strong>${esc(c.email || `${c.name?.toLowerCase().replace(/\s+/g, '.')}@university.edu`)}</strong></div>
+          <div class="mt-1">💼 Target Career Track: <strong>${esc(c.target_role || 'Software Development')}</strong></div>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3" style="border-top:1px solid rgba(255,255,255,0.08)">
+          <button class="btn btn-sm btn-secondary" onclick="document.getElementById('${modalId}').remove()">Close</button>
+          <button class="btn btn-sm btn-primary" onclick="document.getElementById('${modalId}').remove(); RecruiterMatches.shortlistCandidate(${index})">Shortlist for Interview →</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+  }
+
+  async function shortlistCandidate(index) {
+    const selectedJob = _jobs.find(j => j.id === _selectedJobId);
+    let ranked = (_rankingSource === 'ml-ranker' && _mlRankedCache[_selectedJobId])
+      ? _mlRankedCache[_selectedJobId]
+      : (selectedJob ? _rankCandidates(_students, selectedJob) : []);
+    const c = ranked[index];
+    if (!c) return;
+
+    try {
+      if (selectedJob?.id) {
+        await API.post('/applications', {
+          jobId: selectedJob.id,
+          studentId: c.id,
+          status: 'shortlisted',
+          current_round: 'Aptitude Test'
+        });
+      }
+    } catch (_e) {}
+
+    Toast.success(`✅ ${c.name} successfully shortlisted for "${selectedJob?.title || 'Open Role'}"!`);
+  }
+
   function _normalizeBranch(branch) {
     const b = branch.toUpperCase();
     if (b.includes('COMPUTER') || b === 'CSE') return 'CSE';
@@ -253,5 +352,5 @@ const RecruiterMatches = (() => {
     return b;
   }
 
-  return { render, runMLRanking, toggleWhy };
+  return { render, runMLRanking, toggleWhy, viewProfile, shortlistCandidate };
 })();

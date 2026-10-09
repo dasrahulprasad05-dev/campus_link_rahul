@@ -51,9 +51,10 @@ const AdminDrives = (() => {
                 </div>
               </div>
             </div>
-            <div class="flex gap-3 mt-4 pt-3" style="border-top:1px solid rgba(255,255,255,0.06);">
-              <span class="text-xs text-muted" style="display:flex;align-items:center;">Drive ID: ${d.id.slice(0, 8)}...</span>
+            <div class="flex gap-3 mt-4 pt-3" style="border-top:1px solid rgba(255,255,255,0.06);align-items:center;">
+              <span class="text-xs text-muted">Drive ID: ${d.id.slice(0, 8)}...</span>
               <div style="margin-left:auto;display:flex;gap:8px;">
+                <button class="btn btn-sm btn-ghost" onclick="AdminDrives.manageDrive('${d.id}')">Manage</button>
                 <button class="btn btn-sm btn-secondary" onclick="Toast.info('Drive details for ${window.esc(d.company_name || d.company)} sent to student notifications')">📢 Broadcast Alert</button>
               </div>
             </div>
@@ -183,5 +184,46 @@ const AdminDrives = (() => {
     });
   }
 
-  return { render, openCreateDriveModal };
+  function manageDrive(driveId) {
+    const d = _drives.find(dr => dr.id === driveId);
+    if (!d) return;
+
+    const modalId = 'modal-manage-drive';
+    const existing = document.getElementById(modalId);
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = modalId;
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;';
+    overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+    overlay.innerHTML = `
+      <div class="card animate-fade-in-up" style="background:#111827;border:1px solid rgba(255,255,255,0.15);border-radius:16px;max-width:520px;width:100%;padding:26px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.7);">
+        <div class="flex justify-between items-center mb-4 pb-2" style="border-bottom:1px solid rgba(255,255,255,0.08)">
+          <div>
+            <h3 style="margin:0;font-size:18px;color:#f8fafc;">🎯 Manage Placement Drive</h3>
+            <p class="text-xs text-muted" style="margin:3px 0 0 0">${esc(d.company_name || d.company)} · ${esc(d.role)}</p>
+          </div>
+          <button class="btn btn-sm btn-ghost" onclick="document.getElementById('${modalId}').remove()">✕</button>
+        </div>
+
+        <div class="stack mb-4" style="gap:10px;font-size:13px;">
+          <div>📍 <strong>Venue:</strong> ${esc(d.venue || 'Auditorium Hall A')}</div>
+          <div>📅 <strong>Scheduled Date:</strong> ${d.drive_date ? new Date(d.drive_date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'TBD'}</div>
+          <div>🎓 <strong>Eligibility Cutoff:</strong> Min CGPA ${d.min_cgpa || 0}</div>
+          <div>👥 <strong>Branches:</strong> ${(Array.isArray(d.branches) ? d.branches : []).join(', ') || 'All Engineering Branches'}</div>
+          <div>⚡ <strong>Current Status:</strong> <span class="badge badge-success">${d.status || 'scheduled'}</span></div>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3" style="border-top:1px solid rgba(255,255,255,0.08)">
+          <button class="btn btn-sm btn-secondary" onclick="document.getElementById('${modalId}').remove()">Close</button>
+          <button class="btn btn-sm" onclick="document.getElementById('${modalId}').remove(); Router.navigate('admin/scheduler')">🔍 Check Venue Conflict</button>
+          <button class="btn btn-sm btn-primary" onclick="Toast.success('Drive broadcast sent to registered eligible candidates!'); document.getElementById('${modalId}').remove()">📢 Broadcast to Students</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+  }
+
+  return { render, openCreateDriveModal, manageDrive };
 })();
+

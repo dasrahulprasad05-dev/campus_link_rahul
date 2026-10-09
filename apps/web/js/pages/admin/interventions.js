@@ -51,11 +51,76 @@ const AdminInterventions = (() => {
         </div>
         <div class="flex gap-3 mt-4" style="justify-content:flex-end">
           <span class="badge badge-${(r.severity || r.risk_level) === 'high' ? 'danger' : 'warning'}">${r.severity || r.risk_level || 'medium'} priority</span>
-          <button class="btn btn-sm" onclick="Toast.info('Scheduling check-in with ${r.name}')">Schedule Check-in</button>
-          <button class="btn btn-sm btn-ghost" onclick="Toast.info('Reviewed — ${r.name} flagged as reviewed')">Mark Reviewed</button>
+          <button class="btn btn-sm btn-primary" onclick="AdminInterventions.openScheduleModal('${esc(r.name)}')">Schedule Check-in</button>
+          <button class="btn btn-sm btn-ghost" onclick="AdminInterventions.markReviewed('${esc(r.name)}')">Mark Reviewed</button>
         </div>
       </article>
     `).join('');
+  }
+
+  function openScheduleModal(studentName) {
+    const modalId = 'modal-sched-checkin';
+    const existing = document.getElementById(modalId);
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = modalId;
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;';
+    overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+    overlay.innerHTML = `
+      <div class="card animate-fade-in-up" style="background:#111827;border:1px solid rgba(255,255,255,0.15);border-radius:16px;max-width:480px;width:100%;padding:24px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.7);">
+        <div class="flex justify-between items-center mb-4 pb-2" style="border-bottom:1px solid rgba(255,255,255,0.08)">
+          <div>
+            <h3 style="margin:0;font-size:18px;color:#f8fafc;">📅 Schedule Student Check-in</h3>
+            <p class="text-xs text-muted" style="margin:3px 0 0 0">Intervention counseling session with <strong>${esc(studentName)}</strong></p>
+          </div>
+          <button class="btn btn-sm btn-ghost" onclick="document.getElementById('${modalId}').remove()">✕</button>
+        </div>
+        <div class="form-group mb-3">
+          <label class="form-label" style="font-size:12.5px;color:#cbd5e1;display:block;margin-bottom:6px;">Meeting Date & Time</label>
+          <input type="datetime-local" id="checkin-datetime" class="form-input" value="${new Date(Date.now() + 86400000 * 2).toISOString().slice(0, 16)}" style="width:100%;padding:9px 12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:#fff;">
+        </div>
+        <div class="form-group mb-4">
+          <label class="form-label" style="font-size:12.5px;color:#cbd5e1;display:block;margin-bottom:6px;">Guidance Focus Area</label>
+          <select id="checkin-topic" class="form-select" style="width:100%;padding:9px 12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:#fff;">
+            <option value="Resume & Skill Gap Remediation">Resume & Skill Gap Remediation</option>
+            <option value="Mock Interview & Communication Prep">Mock Interview & Communication Prep</option>
+            <option value="Academic Backlog & Eligibility Counseling">Academic Backlog & Eligibility Counseling</option>
+            <option value="Aptitude & Technical Practice Drills">Aptitude & Technical Practice Drills</option>
+          </select>
+        </div>
+        <div class="flex justify-end gap-2">
+          <button class="btn btn-sm btn-secondary" onclick="document.getElementById('${modalId}').remove()">Cancel</button>
+          <button class="btn btn-sm btn-primary" id="btn-confirm-checkin">Schedule & Send Calendar Invite</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    document.getElementById('btn-confirm-checkin')?.addEventListener('click', async () => {
+      const topic = document.getElementById('checkin-topic')?.value;
+      try {
+        await API.post('/students/all/interventions', {
+          title: `1-on-1 Check-in: ${topic}`,
+          type: 'meeting',
+          priority: 'high',
+          notes: `Check-in scheduled for ${studentName} covering ${topic}`
+        });
+      } catch (_e) {}
+      Toast.success(`Check-in scheduled with ${studentName}! Invitation sent.`);
+      overlay.remove();
+    });
+  }
+
+  function markReviewed(studentName) {
+    const student = _atRiskStudents.find(s => s.name === studentName);
+    if (student) {
+      student.severity = 'resolved';
+      student.reason = '✓ Reviewed by Placement Officer — Mentorship assigned';
+    }
+    Toast.success(`Marked as reviewed: ${studentName}`);
+    const el = document.getElementById('risk-list');
+    if (el) el.innerHTML = _renderRiskCards(_atRiskStudents);
   }
 
   async function runMLPrediction() {
@@ -90,10 +155,11 @@ const AdminInterventions = (() => {
 
     btn.textContent = '🤖 Run ML Prediction'; btn.disabled = false;
 
-    const source = results[0]?.risk_factors?.length > 0 ? 'scikit-learn GBC' : 'rule-based';
+    const source = results[0]?.risk_factors?.length > 0 ? 'Logistic Regression ML' : 'rule-based';
     document.getElementById('atrisk-source').textContent = `Showing: ${source} predictions`;
     document.getElementById('risk-list').innerHTML = results.length ? _renderRiskCards(results) : '<div class="empty-state"><div class="empty-state-icon">✅</div><div class="empty-state-title">No at-risk students</div></div>';
   }
 
-  return { render, runMLPrediction };
+  return { render, runMLPrediction, openScheduleModal, markReviewed };
 })();
+

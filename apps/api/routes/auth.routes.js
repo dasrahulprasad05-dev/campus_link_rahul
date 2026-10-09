@@ -52,7 +52,8 @@ router.post('/register', async (req, res) => {
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
-    const validRoles = ['student', 'admin', 'recruiter', 'mentor'];
+    // Public self-registration only permits student, recruiter, or mentor. Admin accounts cannot be self-provisioned.
+    const validRoles = ['student', 'recruiter', 'mentor'];
     const requestedRole = (req.body.role || 'student').toLowerCase().trim();
     const assignedRole = validRoles.includes(requestedRole) ? requestedRole : 'student';
     const verificationToken = crypto.randomBytes(32).toString('hex');

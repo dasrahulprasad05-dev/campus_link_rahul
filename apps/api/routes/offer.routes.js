@@ -112,4 +112,26 @@ router.patch('/:id/documents/:docId', authenticate, async (req, res) => {
   }
 });
 
+// PATCH /api/v1/offers/:id/joining — update joining status (admin / recruiter)
+router.patch('/:id/joining', authenticate, authorize('admin', 'recruiter'), async (req, res) => {
+  try {
+    const { joining_status, status } = req.body;
+    const result = await query(
+      `UPDATE offers 
+       SET joining_status = COALESCE($1, joining_status),
+           status = COALESCE($2, status),
+           updated_at = NOW()
+       WHERE id = $3 RETURNING *`,
+      [joining_status, status, req.params.id]
+    );
+    if (result.rowCount === 0) {
+      return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Offer not found' } });
+    }
+    logAudit({ userId: req.user.id, userRole: req.user.role, action: 'offer.joining_update', entityType: 'offer', entityId: req.params.id, newValue: { joining_status, status } });
+    res.json({ success: true, data: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ success: false, error: { code: 'DB_ERROR', message: err.message } });
+  }
+});
+
 module.exports = router;

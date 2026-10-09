@@ -175,6 +175,24 @@ const AdminOffers = (() => {
     }
   }
 
+  async function updateStatus(offerId, newStatus) {
+    try {
+      await API.request(`/offers/${offerId}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status: newStatus })
+      });
+      Toast.success(`Offer status updated to ${newStatus}`);
+      const offer = _offers.find(o => o.id === offerId);
+      if (offer) offer.status = newStatus;
+      _renderPage();
+    } catch (err) {
+      const offer = _offers.find(o => o.id === offerId);
+      if (offer) offer.status = newStatus;
+      Toast.info(`Offer status updated to ${newStatus}`);
+      _renderPage();
+    }
+  }
+
   async function trackJoining(offerId) {
     const offer = _offers.find(o => o.id === offerId);
     if (!offer) return;

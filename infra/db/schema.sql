@@ -155,6 +155,8 @@ ALTER TABLE student_profiles ADD COLUMN IF NOT EXISTS projects_count INTEGER DEF
 
 -- Users: super_admin verification flow
 ALTER TABLE users ADD COLUMN IF NOT EXISTS admin_verified BOOLEAN DEFAULT false;
+ALTER TABLE users DROP CONSTRAINT IF EXISTS users_role_check;
+ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN ('student','admin','recruiter','mentor','super_admin'));
 
 -- Jobs: eligibility constraints for hard-filter pipeline
 ALTER TABLE jobs ADD COLUMN IF NOT EXISTS eligible_branches TEXT[] DEFAULT '{}';

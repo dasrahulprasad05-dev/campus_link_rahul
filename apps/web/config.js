@@ -16,7 +16,7 @@ const _DEFAULT_REMOTE_BACKEND = 'https://node-js-web-app.onrender.com';
 
 window.__API_URL__ = window.__API_URL__ 
   || localStorage.getItem('CAMPUSLINK_API_URL') 
-  || (window.location.hostname.includes('vercel.app') ? _DEFAULT_REMOTE_BACKEND : '');
+  || (window.location.hostname === 'localhost' && window.location.port === '3000' ? '' : _DEFAULT_REMOTE_BACKEND);
 
 // Background warm-up ping: wakes up free-tier Render container silently
 (function warmUpServer() {

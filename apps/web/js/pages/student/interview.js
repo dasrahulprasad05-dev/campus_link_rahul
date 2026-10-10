@@ -59,9 +59,11 @@ const StudentInterview = (() => {
       <div class="grid grid-main">
         <div class="stack">
           <article class="card animate-fade-in-up" id="resume-input-card">
-            <div class="card-header">
+            <div class="card-header flex justify-between items-center">
               <h2 class="card-title">📄 Step 1: Paste Your Resume</h2>
-              <span class="badge badge-accent">🧠 AI-Powered Extraction</span>
+              <button type="button" class="btn btn-xs btn-secondary" onclick="StudentInterview.loadSampleResume()" style="font-size:11px;padding:3px 8px;cursor:pointer" title="Auto-fill Ananya Sharma (Data Analyst) resume">
+                ✨ Load Ananya's Resume
+              </button>
             </div>
 
             <div class="mb-4">
@@ -1007,12 +1009,54 @@ CERTIFICATIONS: Google Data Analytics Certificate, AWS Cloud Practitioner"></tex
     });
   }
 
+  function loadSampleResume() {
+    const el = document.getElementById('resume-text-input');
+    if (el) {
+      el.value = `ANANYA SHARMA
+Email: ananya.sharma@campuslink.in | Phone: +91 98765 43210
+Location: Cuttack, Odisha | LinkedIn: linkedin.com/in/ananya-sharma | GitHub: github.com/ananyasharma
+
+EDUCATION:
+Ajay Binay Institute of Technology (ABIT), Cuttack (2022 - 2026)
+B.Tech in Computer Science & Engineering | CGPA: 8.42 / 10.0
+
+TECHNICAL SKILLS:
+Programming & Querying: Python (Pandas, NumPy, Matplotlib, Seaborn), SQL (PostgreSQL, MySQL)
+BI & Visual Analytics: Power BI (DAX, Data Modeling), Tableau, Advanced Excel (VLOOKUP, Pivot Tables, Macros)
+Analytical Concepts: Exploratory Data Analysis (EDA), Statistical Hypothesis Testing, A/B Testing, Data Cleaning & Preprocessing, Business Metrics (CAC, LTV, Churn, Retention)
+Tools: Git, GitHub, Jupyter Notebook, VS Code, Google BigQuery
+
+PROJECTS:
+1. E-Commerce Customer Churn & Retention Analytics Platform
+• Analyzed 100,000+ customer records using Python and SQL to identify key churn indicators.
+• Engineered an interactive Power BI dashboard tracking monthly recurring revenue (MRR) and customer churn rate.
+• Formulated customer segmentation cohorts resulting in an estimated 14% potential reduction in customer drop-off.
+
+2. Financial Fraud Detection & Transaction Risk Analyzer
+• Extracted and preprocessed 250,000+ credit card transactions using PostgreSQL and Pandas.
+• Applied statistical anomaly detection techniques to isolate suspicious high-velocity transaction patterns.
+• Visualized fraud probability distributions and risk clusters using Seaborn and Matplotlib.
+
+EXPERIENCE:
+Data Analytics Virtual Intern — TechNova Solutions (June 2025 - August 2025)
+• Cleaned and transformed raw ERP sales datasets with 80,000+ rows using PostgreSQL queries and Python scripts.
+• Built executive KPIs and automated weekly stakeholder dashboards in Power BI.
+
+CERTIFICATIONS:
+• Google Data Analytics Professional Certificate (Coursera)
+• AWS Certified Cloud Practitioner (Amazon Web Services)`;
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+      if (typeof Toast !== 'undefined') Toast.success('✨ Loaded Ananya Sharma (Data Analyst) sample resume!');
+    }
+  }
+
   // ─── Public API ────────────────────────────────────────
   return {
     render,
     onKeyOptionChange,
     getCustomApiKey,
     analyzeResume,
+    loadSampleResume,
     goToConfig,
     startInterview,
     submitAnswer,

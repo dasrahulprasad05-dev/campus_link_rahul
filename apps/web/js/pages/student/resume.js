@@ -9,7 +9,12 @@ const StudentResume = (() => {
       <div class="grid grid-main">
         <div class="stack">
           <article class="card animate-fade-in-up">
-            <div class="card-header"><h2 class="card-title">Job Description</h2></div>
+            <div class="card-header flex justify-between items-center">
+              <h2 class="card-title">Job Description</h2>
+              <button type="button" class="btn btn-xs btn-secondary" onclick="StudentResume.loadSampleJD()" style="font-size:11px;padding:3px 8px;cursor:pointer" title="Load TechNova Solutions Graduate Data Analyst JD">
+                ✨ Load TechNova JD
+              </button>
+            </div>
             ${Forms.textarea({ id: 'resume-jd', placeholder: 'Paste a job description here...\n\nExample: We are looking for a Data Analyst with experience in SQL, Python, Power BI, statistical analysis, communication skills, and data visualization.', rows: 8 })}
             <button class="btn btn-primary" id="resume-analyze-btn" onclick="StudentResume.analyze()">🔍 Analyze Match</button>
           </article>
@@ -59,13 +64,39 @@ const StudentResume = (() => {
     `;
   }
 
-  function openAnalyzer(jobTitle, skills) {
-    Router.navigate('student/resume');
-    setTimeout(() => {
-      const ta = document.getElementById('resume-jd');
-      if (ta) { ta.value = `Role: ${jobTitle}\nRequired Skills: ${skills}\n\nWe are looking for a candidate with strong experience in ${skills}. The ideal candidate should demonstrate practical project work, relevant certifications, and excellent communication skills.`; }
-    }, 200);
+  function loadSampleJD() {
+    const ta = document.getElementById('resume-jd');
+    if (ta) {
+      ta.value = `Role: Graduate Data Analyst
+Company: TechNova Solutions, Bhubaneswar
+
+We are looking for a Graduate Data Analyst to join our Business Intelligence team. 
+
+Responsibilities:
+- Analyze large-scale operational data and identify trends
+- Build interactive dashboards using Power BI and Tableau
+- Write complex SQL queries for data extraction and reporting
+- Perform data cleaning, transformation, and ETL processes
+- Present data-driven insights to stakeholders
+
+Required Skills:
+- Strong proficiency in SQL and Python
+- Experience with Power BI or Tableau for data visualization
+- Knowledge of Statistics and Data Analysis fundamentals
+- Familiarity with Excel for data manipulation
+- Good communication and presentation skills
+
+Preferred:
+- Google Data Analytics Certificate
+- Experience with Pandas, NumPy, or R
+- Understanding of Machine Learning basics
+
+Minimum CGPA: 7.0
+Eligible Branches: CSE, IT, ETC`;
+      ta.dispatchEvent(new Event('input', { bubbles: true }));
+      if (typeof Toast !== 'undefined') Toast.success('✨ Loaded TechNova Solutions Graduate Data Analyst JD!');
+    }
   }
 
-  return { render, analyze, openAnalyzer };
+  return { render, analyze, openAnalyzer, loadSampleJD };
 })();

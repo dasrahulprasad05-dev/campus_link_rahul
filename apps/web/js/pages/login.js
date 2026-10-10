@@ -58,8 +58,22 @@ const LoginPage = (() => {
               </button>
             </form>
 
-            <div class="auth-link mt-5">
+            <div class="auth-link mt-4">
               Don't have an account? <a onclick="Router.navigate('register')">Create one</a>
+            </div>
+
+            <div class="demo-login-section mt-5 pt-4" style="border-top:1px solid var(--border-color, rgba(255,255,255,0.08));margin-top:20px;">
+              <div class="flex justify-between items-center mb-2">
+                <span style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.6px">⚡ Quick 1-Click Demo Portals:</span>
+                <button type="button" class="btn btn-xs btn-ghost text-muted" onclick="LoginPage.clearFields()" style="font-size:11px;padding:2px 8px;cursor:pointer">Clear</button>
+              </div>
+              <div class="flex gap-2 flex-wrap" style="gap:6px">
+                <button type="button" class="btn btn-xs btn-secondary" onclick="LoginPage.autoFill('student')" style="font-size:11px;padding:5px 9px" title="Student (Ananya Sharma)">🎓 Student</button>
+                <button type="button" class="btn btn-xs btn-secondary" onclick="LoginPage.autoFill('admin')" style="font-size:11px;padding:5px 9px" title="TPO Admin (ABIT)">🏛️ TPO Admin</button>
+                <button type="button" class="btn btn-xs btn-secondary" onclick="LoginPage.autoFill('recruiter')" style="font-size:11px;padding:5px 9px" title="Recruiter (TechNova Solutions)">💼 Recruiter</button>
+                <button type="button" class="btn btn-xs btn-secondary" onclick="LoginPage.autoFill('mentor')" style="font-size:11px;padding:5px 9px" title="Faculty Mentor">👨‍🏫 Mentor</button>
+                <button type="button" class="btn btn-xs btn-secondary" onclick="LoginPage.autoFill('super_admin')" style="font-size:11px;padding:5px 9px" title="Platform Super Admin">🛡️ Super Admin</button>
+              </div>
             </div>
           </div>
         </div>

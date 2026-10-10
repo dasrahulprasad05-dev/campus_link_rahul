@@ -106,7 +106,8 @@ const Auth = (() => {
     const demoAccount = matchedRole ? PRESEEDED_CREDENTIALS[matchedRole] : null;
 
     // Fast resilient path for preseeded demo credentials
-    if (demoAccount && (password === demoAccount.password || password === 'demo123')) {
+    const validDemoPasswords = [demoAccount?.password, 'demo123', 'CampusLink@2026', 'rahul2005', 'CampusSuper@2026'];
+    if (demoAccount && validDemoPasswords.includes(password)) {
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 3500);

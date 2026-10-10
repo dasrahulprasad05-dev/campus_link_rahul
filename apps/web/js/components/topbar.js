@@ -16,6 +16,7 @@ const Topbar = (() => {
       recruiter: '🏢 Recruiter',
       mentor: '👨‍🏫 Mentor',
       student: '👩‍🎓 Student',
+      super_admin: '🛡️ Super Admin',
     };
     const roleBadge = roleLabels[role] || (role ? role.toUpperCase() : 'Student');
 

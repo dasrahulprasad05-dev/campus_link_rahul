@@ -136,7 +136,7 @@ app.get('/api/v1/dashboard', authenticate, async (req, res) => {
     }
 
     if (role === 'recruiter') {
-      const jobs = memoryDb.tables.jobs.filter(j => j.recruiter_id === req.user.id || j.recruiter_id === 'u-recruiter-tcs');
+      const jobs = memoryDb.tables.jobs.filter(j => j.recruiter_id === req.user.id || j.recruiter_id === 'a1b2c3d4-0001-0001-0001-000000000003' || j.recruiter_id === 'u-recruiter-tcs');
       const apps = memoryDb.tables.applications;
 
       return res.json({
@@ -156,7 +156,7 @@ app.get('/api/v1/dashboard', authenticate, async (req, res) => {
     }
 
     if (role === 'mentor') {
-      const assignments = memoryDb.tables.mentor_assignments.filter(a => a.mentor_id === req.user.id || a.mentor_id === 'u-mentor-rahul');
+      const assignments = memoryDb.tables.mentor_assignments.filter(a => a.mentor_id === req.user.id || a.mentor_id === 'a1b2c3d4-0001-0001-0001-000000000004' || a.mentor_id === 'u-mentor-rahul');
       const menteeIds = assignments.map(a => a.student_id);
       const mentees = memoryDb.tables.student_profiles.filter(s => menteeIds.includes(s.id));
       const atRisk = mentees.filter(s => (s.readiness_score || 0) < 60);

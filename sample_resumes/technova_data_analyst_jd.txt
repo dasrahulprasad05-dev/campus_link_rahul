@@ -1,0 +1,26 @@
+Role: Graduate Data Analyst
+Company: TechNova Solutions, Bhubaneswar
+
+We are looking for a Graduate Data Analyst to join our Business Intelligence team. 
+
+Responsibilities:
+- Analyze large-scale operational data and identify trends
+- Build interactive dashboards using Power BI and Tableau
+- Write complex SQL queries for data extraction and reporting
+- Perform data cleaning, transformation, and ETL processes
+- Present data-driven insights to stakeholders
+
+Required Skills:
+- Strong proficiency in SQL and Python
+- Experience with Power BI or Tableau for data visualization
+- Knowledge of Statistics and Data Analysis fundamentals
+- Familiarity with Excel for data manipulation
+- Good communication and presentation skills
+
+Preferred:
+- Google Data Analytics Certificate
+- Experience with Pandas, NumPy, or R
+- Understanding of Machine Learning basics
+
+Minimum CGPA: 7.0
+Eligible Branches: CSE, IT, ETC

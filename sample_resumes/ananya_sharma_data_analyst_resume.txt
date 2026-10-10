@@ -1,0 +1,52 @@
+ANANYA SHARMA
+Data Analyst | B.Tech CSE, ABIT Cuttack (2022–2026)
+
+CONTACT
+Email: ananya.sharma@campuslink.in
+Phone: +91 98765 43210
+LinkedIn: linkedin.com/in/ananya-sharma
+GitHub: github.com/ananyasharma
+
+EDUCATION
+B.Tech in Computer Science & Engineering
+Ajay Binay Institute of Technology (ABIT), Cuttack
+CGPA: 8.42/10.0 | Batch: 2022–2026
+
+SKILLS
+Technical: Python, SQL, Excel, Power BI, Statistics, Data Analysis, Data Visualization, 
+           Pandas, NumPy, Matplotlib, R, Tableau, Data Cleaning, ETL, Database Design
+Soft Skills: Communication, Problem Solving, Team Collaboration, Presentation Skills
+
+CERTIFICATIONS
+- Google Data Analytics Professional Certificate (Coursera)
+- AWS Cloud Practitioner Certification
+- Tableau Desktop Specialist
+
+PROJECTS
+1. Sales Dashboard Analytics (Python, Power BI, SQL)
+   - Built an interactive sales analytics dashboard tracking 50K+ transactions
+   - Performed data cleaning and ETL on raw CSV datasets using Python and Pandas
+   - Created 12 KPI visualizations in Power BI with drill-down filters
+   - Reduced manual reporting time by 40% for the marketing team
+
+2. Student Performance Prediction (Python, Machine Learning, Statistics)
+   - Developed a regression model to predict student exam scores
+   - Applied feature engineering and statistical analysis on 2000+ records
+   - Achieved R² score of 0.82 using Random Forest with cross-validation
+   - Presented findings with data visualization using Matplotlib and Seaborn
+
+3. COVID-19 Data Tracker (SQL, Tableau, Excel)
+   - Analyzed global COVID-19 datasets with 1M+ rows using SQL queries
+   - Built Tableau dashboards with geographic heatmaps and trend analysis
+   - Published interactive reports consumed by 200+ university students
+
+EXPERIENCE
+Data Analytics Intern — TechNova Solutions (Summer 2025, 3 months)
+- Analyzed customer churn data for 100K+ users using SQL and Python
+- Built automated weekly reports using Power BI, saving 8 hours/week
+- Collaborated with product team to identify top 5 churn risk factors
+
+ACHIEVEMENTS
+- 1st Place, Inter-College Data Science Hackathon (2025)
+- Published research paper on predictive analytics in education
+- Active contributor to college placement cell analytics committee

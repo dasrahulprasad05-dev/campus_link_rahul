@@ -64,6 +64,14 @@ const StudentResume = (() => {
     `;
   }
 
+  function openAnalyzer(jobTitle, skills) {
+    Router.navigate('student/resume');
+    setTimeout(() => {
+      const ta = document.getElementById('resume-jd');
+      if (ta) { ta.value = `Role: ${jobTitle}\nRequired Skills: ${skills}\n\nWe are looking for a candidate with strong experience in ${skills}. The ideal candidate should demonstrate practical project work, relevant certifications, and excellent communication skills.`; }
+    }, 200);
+  }
+
   function loadSampleJD() {
     const ta = document.getElementById('resume-jd');
     if (ta) {

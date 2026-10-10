@@ -41,8 +41,9 @@ const Topbar = (() => {
             ${roleBadge}
           </span>
           <div class="topbar-avatar" id="avatar-btn" title="Logged in as ${user?.name || 'User'} (${role}) — Click to Logout">${initials}</div>
-          <button class="btn btn-sm btn-ghost" onclick="Auth.logout()" title="Logout of CAMPUSLINK" style="font-size:12px;padding:var(--space-1) var(--space-2)">
-            🚪 Logout
+          <button class="btn btn-sm btn-ghost topbar-logout-btn" onclick="Auth.logout()" title="Logout of CAMPUSLINK" style="font-size:12px;padding:var(--space-1) var(--space-2)">
+            <span class="logout-text">🚪 Logout</span>
+            <span class="logout-icon" style="display:none">🚪</span>
           </button>
         </div>
       </header>

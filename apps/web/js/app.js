@@ -66,8 +66,14 @@ const App = (() => {
       if (crumb && currentRoute) {
         crumb.textContent = '/ ' + currentRoute.split('/').map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' / ');
       }
-      // Render page content
-      await renderFn();
+      // Render page content safely
+      if (typeof renderFn === 'function') {
+        await renderFn();
+      } else if (renderFn && typeof renderFn.render === 'function') {
+        await renderFn.render();
+      } else {
+        console.warn('[App] No valid render handler for route:', currentRoute);
+      }
     };
   }
 

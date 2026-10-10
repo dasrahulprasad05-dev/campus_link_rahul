@@ -9,50 +9,48 @@ const StudentReadiness = (() => {
     // Fetch real readiness data
     let d = await API.get('/students/me/readiness');
 
-    // If server returned empty factors or offline, compute explainable readiness from Store.getProfile()
-    if (!d || !d.factors || d.factors.length === 0) {
-      const p = Store.getProfile();
-      const skillCount = Array.isArray(p.skills) ? p.skills.length : 0;
-      const certCount = Array.isArray(p.certifications) ? p.certifications.length : 0;
-      const cgpa = parseFloat(p.cgpa) || 0;
-      const projectCount = Array.isArray(p.projects) ? p.projects.length : (p.projects_count || 0);
+    const p = Store.getProfile();
+    const skillCount = Math.max(Array.isArray(p.skills) ? p.skills.length : 0, 0);
+    const certCount = Math.max(Array.isArray(p.certifications) ? p.certifications.length : 0, 0);
+    const cgpa = parseFloat(p.cgpa) || 0;
+    const projectCount = Math.max(Array.isArray(p.projects) ? p.projects.length : (p.projects_count || 0), 0);
 
-      const weights = { technical: 0.25, projects: 0.15, academics: 0.15, aptitude: 0.15, certifications: 0.10, communication: 0.10, interview: 0.10 };
-      const factors = [
-        { label: 'Technical Skills', value: Math.min(100, skillCount * 12), weight: weights.technical },
-        { label: 'Projects & Portfolio', value: Math.min(100, projectCount * 25), weight: weights.projects },
-        { label: 'Academics (CGPA)', value: Math.min(100, Math.round((cgpa / 10) * 100)), weight: weights.academics },
-        { label: 'Aptitude & Reasoning', value: p.aptitude_score || (skillCount > 0 ? 65 : 0), weight: weights.aptitude },
-        { label: 'Certifications', value: Math.min(100, certCount * 35), weight: weights.certifications },
-        { label: 'Communication', value: p.communication_score || (skillCount > 0 ? 70 : 0), weight: weights.communication },
-        { label: 'Interview Performance', value: p.interview_score || (skillCount > 0 ? 60 : 0), weight: weights.interview },
-      ];
+    const weights = d?.weights || { technical: 0.25, projects: 0.15, academics: 0.15, aptitude: 0.15, certifications: 0.10, communication: 0.10, interview: 0.10 };
 
-      const score = Math.round(factors.reduce((sum, f) => sum + (f.value * f.weight), 0));
-      let statusBand;
-      if (score >= 80) statusBand = { label: 'Highly Employable', color: 'success', emoji: '🟢' };
-      else if (score >= 60) statusBand = { label: 'Ready', color: 'accent', emoji: '🔵' };
-      else if (score >= 40) statusBand = { label: 'Developing', color: 'warning', emoji: '🟡' };
-      else if (score > 0) statusBand = { label: 'Needs Improvement', color: 'danger', emoji: '🔴' };
-      else statusBand = { label: 'Profile Pending', color: 'muted', emoji: '⏳' };
+    // Compute explainable factors merging live profile with server metrics
+    const serverFactors = Array.isArray(d?.factors) ? d.factors : [];
+    const getVal = (prefix, fallback) => {
+      const sf = serverFactors.find(f => f.label.toLowerCase().includes(prefix.toLowerCase()));
+      return (sf && sf.value > 0) ? sf.value : fallback;
+    };
 
-      const sortedFactors = [...factors].sort((a, b) => a.value - b.value);
-      const recommendations = score === 0 ? [] : sortedFactors.slice(0, 3).map(f => ({
-        area: f.label,
-        score: f.value,
-        action: f.value < 40 ? `Urgently improve ${f.label} — currently at ${f.value}%` : `Continue building ${f.label} (currently ${f.value}%)`,
-        priority: f.value < 40 ? 'high' : f.value < 60 ? 'medium' : 'low',
-      }));
+    const factors = [
+      { label: 'Technical Skills', value: Math.min(100, Math.max(getVal('tech', 0), skillCount * 12)), weight: weights.technical },
+      { label: 'Projects & Portfolio', value: Math.min(100, Math.max(getVal('proj', 0), projectCount * 25)), weight: weights.projects },
+      { label: 'Academics (CGPA)', value: Math.min(100, Math.max(getVal('acad', 0), Math.round((cgpa / 10) * 100))), weight: weights.academics },
+      { label: 'Aptitude & Reasoning', value: getVal('apt', p.aptitude_score || (skillCount > 0 ? 70 : 0)), weight: weights.aptitude },
+      { label: 'Certifications', value: Math.min(100, Math.max(getVal('cert', 0), certCount * 35)), weight: weights.certifications },
+      { label: 'Communication', value: getVal('comm', p.communication_score || (skillCount > 0 ? 75 : 0)), weight: weights.communication },
+      { label: 'Interview Performance', value: getVal('inter', p.interview_score || (skillCount > 0 ? 65 : 0)), weight: weights.interview },
+    ];
 
-      d = { score, factors, weights, targetRole: p.targetRole || 'Software Engineer', statusBand, recommendations };
-    }
+    const score = Math.round(factors.reduce((sum, f) => sum + (f.value * f.weight), 0));
+    let statusBand;
+    if (score >= 80) statusBand = { label: 'Highly Employable', color: 'success', emoji: '🟢' };
+    else if (score >= 60) statusBand = { label: 'Ready', color: 'accent', emoji: '🔵' };
+    else if (score >= 40) statusBand = { label: 'Developing', color: 'warning', emoji: '🟡' };
+    else if (score > 0) statusBand = { label: 'Needs Improvement', color: 'danger', emoji: '🔴' };
+    else statusBand = { label: 'Profile Pending', color: 'muted', emoji: '⏳' };
 
-    const score = d?.score || 0;
-    const factors = d?.factors || [];
-    const weights = d?.weights || {};
-    const targetRole = d?.targetRole || 'Software Engineer';
-    const statusBand = d?.statusBand || { label: 'Unknown', emoji: '⬜' };
-    const recommendations = d?.recommendations || [];
+    const sortedFactors = [...factors].sort((a, b) => a.value - b.value);
+    const recommendations = score === 0 ? [] : sortedFactors.slice(0, 3).map(f => ({
+      area: f.label,
+      score: f.value,
+      action: f.value < 40 ? `Urgently improve ${f.label} — currently at ${f.value}%` : `Continue building ${f.label} (currently ${f.value}%)`,
+      priority: f.value < 40 ? 'high' : f.value < 60 ? 'medium' : 'low',
+    }));
+
+    const targetRole = p.targetRole || d?.targetRole || 'Software Engineer';
 
     main.innerHTML = `
       <div class="page-header"><div class="page-header-content"><div class="page-eyebrow">Placement Readiness</div><h1 class="page-title">Your Readiness Score</h1><p class="page-subtitle">A composite, explainable score built from your skills, projects, academics, aptitude, and activity.</p></div></div>

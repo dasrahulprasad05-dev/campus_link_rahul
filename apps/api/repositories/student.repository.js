@@ -49,13 +49,19 @@ async function updateProfile(userId, updates) {
   const cgpa = updates.cgpa !== undefined ? updates.cgpa : current.cgpa;
   const numCgpa = cgpa ? parseFloat(cgpa) : 0;
 
-  // Calculate readiness dynamically: 0 if no skills and no cgpa
+  const certs = updates.certifications !== undefined ? updates.certifications : current.certifications;
+  const certsArr = Array.isArray(certs) ? certs : [];
+  const projCount = updates.projects_count !== undefined ? updates.projects_count : (Array.isArray(updates.projects) ? updates.projects.length : (current.projects_count || 0));
+
+  // Calculate readiness dynamically
   let newReadiness = 0;
-  if (skillsArr.length > 0 || numCgpa > 0) {
-    const skillsPts = Math.min(50, skillsArr.length * 10);
-    const academicPts = numCgpa > 0 ? Math.min(30, Math.round((numCgpa / 10) * 30)) : 0;
-    const profilePts = 20;
-    newReadiness = Math.min(100, skillsPts + academicPts + profilePts);
+  if (skillsArr.length > 0 || numCgpa > 0 || certsArr.length > 0 || projCount > 0) {
+    const skillsPts = Math.min(25, skillsArr.length * 2.5);
+    const academicPts = numCgpa > 0 ? Math.min(15, Math.round((numCgpa / 10) * 15)) : 0;
+    const certPts = Math.min(10, certsArr.length * 3.5);
+    const projPts = Math.min(15, projCount * 5);
+    const baseline = 18;
+    newReadiness = Math.min(100, Math.round(skillsPts + academicPts + certPts + projPts + baseline));
   }
 
   const res = await query(
@@ -64,11 +70,13 @@ async function updateProfile(userId, updates) {
          skills = COALESCE($2, skills),
          cgpa = COALESCE($3, cgpa),
          phone = COALESCE($4, phone),
-         readiness_score = $5,
+         certifications = COALESCE($5, certifications),
+         projects_count = COALESCE($6, projects_count),
+         readiness_score = $7,
          updated_at = NOW()
-     WHERE user_id = $6
+     WHERE user_id = $8
      RETURNING *`,
-    [updates.target_role, updates.skills, updates.cgpa, updates.phone, newReadiness, userId]
+    [updates.target_role, updates.skills, updates.cgpa, updates.phone, updates.certifications, projCount, newReadiness, userId]
   );
   return res.rows[0];
 }

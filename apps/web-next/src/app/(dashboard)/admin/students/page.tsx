@@ -11,7 +11,10 @@ import {
   Zap, 
   Send,
   CheckCircle2,
-  AlertTriangle
+  AlertTriangle,
+  Download,
+  Upload,
+  FileSpreadsheet
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -26,6 +29,10 @@ export default function AdminStudentsPage() {
   const [selectedStudent, setSelectedStudent] = useState<any | null>(null);
   const [interventionNote, setInterventionNote] = useState('');
   const [dispatching, setDispatching] = useState(false);
+
+  // Bulk import modal (Paste text only, ₹0 storage)
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [csvText, setCsvText] = useState('');
 
   useEffect(() => {
     async function load() {
@@ -68,6 +75,66 @@ export default function AdminStudentsPage() {
     }
   };
 
+  const handleExportCSV = () => {
+    const headers = ['Name', 'Email', 'Branch', 'CGPA', 'Readiness Score', 'Skills'];
+    const rows = filtered.map(s => [
+      `"${s.name || ''}"`,
+      `"${s.email || ''}"`,
+      `"${s.branch || ''}"`,
+      s.cgpa || '',
+      s.readiness || '',
+      `"${(s.skills || []).join(', ')}"`,
+    ]);
+
+    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `campusgrid_students_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success('Downloaded student records as CSV');
+  };
+
+  const handleBulkImport = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!csvText.trim()) return;
+
+    const lines = csvText.trim().split('\n');
+    let imported = 0;
+    const newStudents: any[] = [];
+
+    lines.forEach((line, idx) => {
+      // Skip header line if present
+      if (idx === 0 && (line.toLowerCase().includes('name') || line.toLowerCase().includes('email'))) return;
+
+      const cols = line.split(',').map(c => c.trim().replace(/^["']|["']$/g, ''));
+      if (cols.length >= 2 && cols[0] && cols[1]) {
+        newStudents.push({
+          id: `imp-${Date.now()}-${idx}`,
+          name: cols[0],
+          email: cols[1],
+          branch: cols[2] || 'CSE',
+          cgpa: parseFloat(cols[3]) || 8.0,
+          readiness: parseInt(cols[4], 10) || 75,
+          skills: cols[5] ? cols[5].split(';').map(s => s.trim()) : ['Python', 'DSA'],
+        });
+        imported++;
+      }
+    });
+
+    if (imported > 0) {
+      setStudents(prev => [...newStudents, ...prev]);
+      toast.success(`Successfully imported ${imported} students! Zero cloud storage used.`);
+      setShowImportModal(false);
+      setCsvText('');
+    } else {
+      toast.error('Could not parse student records. Please check the CSV format.');
+    }
+  };
+
   const filtered = students.filter(s => {
     const matchesSearch = (s.name || '').toLowerCase().includes(search.toLowerCase()) ||
                           (s.email || '').toLowerCase().includes(search.toLowerCase());
@@ -85,15 +152,32 @@ export default function AdminStudentsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <div className="flex items-center gap-2 text-xs font-semibold text-indigo-400 mb-1">
-          <Users className="h-3.5 w-3.5" />
-          <span>Talent Pool Directory</span>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2 text-xs font-semibold text-indigo-400 mb-1">
+            <Users className="h-3.5 w-3.5" />
+            <span>Talent Pool Directory</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Registered Students</h1>
+          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+            Monitor student academic profiles, readiness scores, and assign mentor interventions.
+          </p>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Registered Students</h1>
-        <p className="text-xs sm:text-sm text-slate-400 mt-1">
-          Monitor student academic profiles, readiness scores, and assign mentor interventions.
-        </p>
+
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <button
+            onClick={() => setShowImportModal(true)}
+            className="px-3.5 py-2 rounded-xl bg-white/4 hover:bg-white/8 text-slate-300 border border-white/8 text-xs font-semibold transition-colors flex items-center gap-1.5"
+          >
+            <Upload className="h-3.5 w-3.5" /> Paste CSV
+          </button>
+          <button
+            onClick={handleExportCSV}
+            className="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md transition-colors flex items-center gap-1.5"
+          >
+            <Download className="h-3.5 w-3.5" /> Export CSV
+          </button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -196,6 +280,65 @@ export default function AdminStudentsPage() {
           </table>
         </div>
       </div>
+
+      {/* Bulk CSV Paste Modal */}
+      {showImportModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+          <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-white/10 max-w-lg w-full space-y-4 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <FileSpreadsheet className="h-5 w-5 text-indigo-400" />
+                <h2 className="text-base font-bold text-white">Bulk Student Enrollment (Paste CSV)</h2>
+              </div>
+              <button onClick={() => setShowImportModal(false)} className="text-slate-400 hover:text-white text-sm">
+                ✕
+              </button>
+            </div>
+            <p className="text-xs text-slate-400">
+              Paste comma-separated rows. Zero file uploads, 100% free tier. <br />
+              Format: <code className="text-indigo-300">Name, Email, Branch, CGPA, Readiness, Skills(semicolon-separated)</code>
+            </p>
+
+            <form onSubmit={handleBulkImport} className="space-y-4">
+              <div>
+                <textarea
+                  rows={6}
+                  value={csvText}
+                  onChange={(e) => setCsvText(e.target.value)}
+                  placeholder={`Rohit Sharma, rohit@abit.edu, CSE, 8.20, 82, Python;SQL;React\nAditi Singh, aditi@abit.edu, IT, 8.55, 88, Java;AWS;DSA`}
+                  required
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#0b0f19] border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-indigo-500/50"
+                />
+              </div>
+
+              <div className="flex items-center justify-between pt-1">
+                <button
+                  type="button"
+                  onClick={() => setCsvText(`Rohit Sharma, rohit@abit.edu, CSE, 8.20, 82, Python;SQL;React\nAditi Singh, aditi@abit.edu, IT, 8.55, 88, Java;AWS;DSA\nKaran Mehra, karan@abit.edu, ECE, 7.10, 52, C++;IoT`)}
+                  className="text-xs text-indigo-400 hover:text-indigo-300"
+                >
+                  Load Sample CSV
+                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowImportModal(false)}
+                    className="px-3.5 py-2 rounded-xl bg-white/4 hover:bg-white/8 text-slate-300 text-xs font-semibold"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md"
+                  >
+                    Import Students
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Intervention Modal */}
       {selectedStudent && (

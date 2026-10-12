@@ -18,18 +18,51 @@ export default function AdminOffersPage() {
     toast.success('Offer successfully verified in university records!');
   };
 
+  const handleExportOffers = () => {
+    const headers = ['Student Name', 'Company', 'Role', 'CTC Package', 'Tier', 'Status', 'Date'];
+    const rows = offers.map(o => [
+      `"${o.student_name || ''}"`,
+      `"${o.company || ''}"`,
+      `"${o.role || ''}"`,
+      `"${o.ctc || ''}"`,
+      `"${o.tier || ''}"`,
+      `"${o.status || ''}"`,
+      `"${o.date || ''}"`,
+    ]);
+
+    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `campusgrid_offers_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success('Downloaded offers report as CSV');
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400 mb-1">
-          <Award className="h-3.5 w-3.5" />
-          <span>Placement Outcomes</span>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400 mb-1">
+            <Award className="h-3.5 w-3.5" />
+            <span>Placement Outcomes</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Offer Tracker</h1>
+          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+            Record, verify, and track campus job offer letters and compensation packages.
+          </p>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Offer Tracker</h1>
-        <p className="text-xs sm:text-sm text-slate-400 mt-1">
-          Record, verify, and track campus job offer letters and compensation packages.
-        </p>
+
+        <button
+          onClick={handleExportOffers}
+          className="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md transition-colors flex items-center gap-1.5 self-start sm:self-auto"
+        >
+          Export Offers Report (CSV)
+        </button>
       </div>
 
       {/* Summary KPI Banner */}

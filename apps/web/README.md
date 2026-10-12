@@ -21,7 +21,7 @@ Next.js 16 + React 19 + TypeScript + Tailwind CSS v4 frontend for CampusGrid 2.0
 ## Getting Started
 
 ```bash
-cd apps/web-next
+cd apps/web
 npm install
 npm run dev
 ```

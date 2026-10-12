@@ -4,9 +4,14 @@
   "private": true,
   "description": "CAMPUSLINK — AI-Powered Campus-to-Corporate Placement Management Platform",
   "workspaces": [
-    "apps/api"
+    "apps/api",
+    "apps/web"
   ],
   "scripts": {
+    "build": "npm --prefix apps/web run build",
+    "dev:web": "npm --prefix apps/web run dev",
+    "start:web": "npm --prefix apps/web start",
+    "build:web": "npm --prefix apps/web run build",
     "dev": "npm --prefix apps/api run dev",
     "start": "npm --prefix apps/api start",
     "test": "npm --prefix apps/api test",

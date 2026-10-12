@@ -1,5 +1,5 @@
 /* ============================================================
-   CAMPUSLINK — Multi-Round Company Hiring Pipeline Service
+   CAMPUSGRID — Multi-Round Company Hiring Pipeline Service
    Tracks candidate progress through company-specific hiring rounds:
    Aptitude Test → Tech Round 1 → Tech Round 2 → HR Round → Offer.
    ============================================================ */

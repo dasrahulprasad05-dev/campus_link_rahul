@@ -1,5 +1,5 @@
 /* ============================================================
-   CAMPUSLINK — Job Repository
+   CAMPUSGRID — Job Repository
    Data access methods for job opportunities.
    Strictly aligned with PostgreSQL schema.
    ============================================================ */

@@ -1,4 +1,4 @@
-/* CAMPUSLINK — Interview Service
+/* CAMPUSGRID — Interview Service
    Hybrid AI / Rule-Based mock interview evaluation engine.
    Attempts connection to Python FastAPI AI microservice (port 8000),
    falling back to STAR framework heuristic evaluator.

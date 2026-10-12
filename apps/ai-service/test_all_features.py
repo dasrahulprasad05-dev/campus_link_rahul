@@ -13,7 +13,7 @@ client = TestClient(app)
 
 def run_tests():
     print("==================================================")
-    print("CAMPUSLINK AI SERVICE — 9 FEATURE INTEGRATION TEST")
+    print("CAMPUSGRID AI SERVICE — 9 FEATURE INTEGRATION TEST")
     print("==================================================\n")
 
     # 0. Health

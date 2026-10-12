@@ -1,5 +1,5 @@
 /* ============================================================
-   CAMPUSLINK — Analytics Routes
+   CAMPUSGRID — Analytics Routes
    Institution placement analytics — all data from DB.
    ============================================================ */
 

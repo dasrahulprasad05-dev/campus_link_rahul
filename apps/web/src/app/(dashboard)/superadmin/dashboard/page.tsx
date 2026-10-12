@@ -33,7 +33,7 @@ export default function SuperAdminDashboardPage() {
     {
       id: 'pending-rec-01',
       name: 'Amit Verma',
-      email: 'recruiter.pending@campuslink.in',
+      email: 'recruiter.pending@campusgrid.online',
       role: 'recruiter',
       organization: 'Infosys Campus Talent',
       admin_verified: false,
@@ -42,7 +42,7 @@ export default function SuperAdminDashboardPage() {
     {
       id: 'pending-tpo-02',
       name: 'Er. Bikash Mohapatra',
-      email: 'admin.pending@campuslink.in',
+      email: 'admin.pending@campusgrid.online',
       role: 'admin',
       organization: 'Training & Placement Cell',
       admin_verified: false,
@@ -51,7 +51,7 @@ export default function SuperAdminDashboardPage() {
     {
       id: 'pending-men-03',
       name: 'Dr. Sunita Rao',
-      email: 'mentor.pending@campuslink.in',
+      email: 'mentor.pending@campusgrid.online',
       role: 'mentor',
       organization: 'ECE Department',
       admin_verified: false,
@@ -63,7 +63,7 @@ export default function SuperAdminDashboardPage() {
     {
       id: 'a1b2c3d4-0001-0001-0001-000000000002',
       name: 'Dr. Rajesh Nayak',
-      email: 'admin@campuslink.in',
+      email: 'admin@campusgrid.online',
       role: 'admin',
       organization: 'ABIT Placement Cell',
       admin_verified: true,
@@ -72,7 +72,7 @@ export default function SuperAdminDashboardPage() {
     {
       id: 'a1b2c3d4-0001-0001-0001-000000000003',
       name: 'Sneha Patel',
-      email: 'recruiter@campuslink.in',
+      email: 'recruiter@campusgrid.online',
       role: 'recruiter',
       organization: 'TechNova Solutions',
       admin_verified: true,
@@ -81,7 +81,7 @@ export default function SuperAdminDashboardPage() {
     {
       id: 'a1b2c3d4-0001-0001-0001-000000000004',
       name: 'Prof. Suresh Mishra',
-      email: 'mentor@campuslink.in',
+      email: 'mentor@campusgrid.online',
       role: 'mentor',
       organization: 'Computer Science Department',
       admin_verified: true,

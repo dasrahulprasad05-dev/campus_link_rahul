@@ -1,5 +1,5 @@
 /* ============================================================
-   CAMPUSLINK — Student Repository
+   CAMPUSGRID — Student Repository
    Data access methods for student profiles and readiness.
    ============================================================ */
 

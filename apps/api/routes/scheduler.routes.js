@@ -1,4 +1,4 @@
-/* CAMPUSLINK — Scheduler Routes */
+/* CAMPUSGRID — Scheduler Routes */
 const router = require('express').Router();
 const { checkConflicts } = require('../services/scheduler.service');
 

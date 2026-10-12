@@ -1,4 +1,4 @@
-/* CAMPUSLINK — Scheduler Service */
+/* CAMPUSGRID — Scheduler Service */
 
 function checkConflicts(events = []) {
   const conflicts = [];

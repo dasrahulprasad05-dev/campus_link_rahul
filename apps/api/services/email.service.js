@@ -1,5 +1,5 @@
 /* ============================================================
-   CAMPUSLINK — Email Service
+   CAMPUSGRID — Email Service
    Supports:
    1. Twilio SendGrid REST API (via SENDGRID_API_KEY)
    2. Custom SMTP (via SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS)
@@ -38,7 +38,7 @@ async function sendEmail({ to, subject, html, text }) {
         personalizations: [{ to: [{ email: to }] }],
         from: {
           email: fromEmail,
-          name: 'CAMPUSLINK Placement Portal',
+          name: 'CAMPUSGRID Placement Portal',
         },
         subject,
         content: contentList,
@@ -105,7 +105,7 @@ function _emailWrapper({ title, preview, content, ctaUrl, ctaText, footerNote })
 <body>
   <div class="wrapper">
     <div class="header">
-      <h1>CAMPUSLINK</h1>
+      <h1>CAMPUSGRID</h1>
       <p>AI Placement Intelligence & Career Automation</p>
     </div>
     <div class="body">
@@ -122,7 +122,7 @@ function _emailWrapper({ title, preview, content, ctaUrl, ctaText, footerNote })
       ${footerNote ? `<div class="notice">${footerNote}</div>` : ''}
     </div>
     <div class="footer">
-      © 2026 CAMPUSLINK. All rights reserved.<br>
+      © 2026 CAMPUSGRID. All rights reserved.<br>
       This is an automated system email. Please do not reply directly.
     </div>
   </div>
@@ -140,16 +140,16 @@ async function sendVerificationEmail(user, token) {
   const content = `
     <h2 style="color:#ffffff; margin-top:0;">Verify Your Email Address</h2>
     <p>Hi <strong>${user.name}</strong>,</p>
-    <p>Welcome to <strong>CAMPUSLINK</strong>! Please verify your email address to activate your account and start your placement preparation journey.</p>
+    <p>Welcome to <strong>CAMPUSGRID</strong>! Please verify your email address to activate your account and start your placement preparation journey.</p>
   `;
 
   const footerNote = `
-    <strong>Important:</strong> If you don't find our emails in your inbox in the future, please check your <strong>Spam or Junk folder</strong> and mark CAMPUSLINK as "Not Spam" to ensure you never miss recruitment drive updates and interview schedules.
+    <strong>Important:</strong> If you don't find our emails in your inbox in the future, please check your <strong>Spam or Junk folder</strong> and mark CAMPUSGRID as "Not Spam" to ensure you never miss recruitment drive updates and interview schedules.
   `;
 
   return sendEmail({
     to: user.email,
-    subject: 'Action Required: Verify your CAMPUSLINK Account',
+    subject: 'Action Required: Verify your CAMPUSGRID Account',
     html: _emailWrapper({
       title: 'Verify Your Email',
       content,
@@ -157,7 +157,7 @@ async function sendVerificationEmail(user, token) {
       ctaText: 'Verify My Account →',
       footerNote,
     }),
-    text: `Hi ${user.name},\n\nPlease verify your CAMPUSLINK account by visiting:\n${verifyUrl}\n\nNote: If you don't see this in your inbox, please check your spam folder.\n\n— CAMPUSLINK Team`,
+    text: `Hi ${user.name},\n\nPlease verify your CAMPUSGRID account by visiting:\n${verifyUrl}\n\nNote: If you don't see this in your inbox, please check your spam folder.\n\n— CAMPUSGRID Team`,
   });
 }
 
@@ -168,7 +168,7 @@ async function sendWelcomeEmail(user) {
   const portalUrl = `${getAppUrl()}/#${user.role || 'student'}/dashboard`;
 
   const content = `
-    <h2 style="color:#ffffff; margin-top:0;">Welcome to CAMPUSLINK 🎉</h2>
+    <h2 style="color:#ffffff; margin-top:0;">Welcome to CAMPUSGRID 🎉</h2>
     <p>Hi <strong>${user.name}</strong>,</p>
     <p>Your account is now fully verified and active! You're ready to leverage our 10 AI-powered placement intelligence features:</p>
     <ul style="padding-left: 20px; color: #94a3b8;">
@@ -181,15 +181,15 @@ async function sendWelcomeEmail(user) {
 
   return sendEmail({
     to: user.email,
-    subject: 'Welcome to CAMPUSLINK — Your Placement Intelligence Portal',
+    subject: 'Welcome to CAMPUSGRID — Your Placement Intelligence Portal',
     html: _emailWrapper({
-      title: 'Welcome to CAMPUSLINK',
+      title: 'Welcome to CAMPUSGRID',
       content,
       ctaUrl: portalUrl,
       ctaText: 'Access Your Dashboard →',
       footerNote: 'Tip: Add this sender address to your contacts so drive announcements and interview invites always reach your primary inbox.',
     }),
-    text: `Hi ${user.name},\n\nWelcome to CAMPUSLINK! Your account is active. Access your portal at:\n${portalUrl}\n\n— CAMPUSLINK Team`,
+    text: `Hi ${user.name},\n\nWelcome to CAMPUSGRID! Your account is active. Access your portal at:\n${portalUrl}\n\n— CAMPUSGRID Team`,
   });
 }
 
@@ -202,7 +202,7 @@ async function sendPasswordResetEmail(user, token) {
   const content = `
     <h2 style="color:#ffffff; margin-top:0;">Reset Your Password</h2>
     <p>Hi <strong>${user.name}</strong>,</p>
-    <p>We received a request to reset your password for your CAMPUSLINK account. Click the button below to choose a new password:</p>
+    <p>We received a request to reset your password for your CAMPUSGRID account. Click the button below to choose a new password:</p>
   `;
 
   const footerNote = `
@@ -211,7 +211,7 @@ async function sendPasswordResetEmail(user, token) {
 
   return sendEmail({
     to: user.email,
-    subject: 'Password Reset Request — CAMPUSLINK',
+    subject: 'Password Reset Request — CAMPUSGRID',
     html: _emailWrapper({
       title: 'Reset Password',
       content,
@@ -219,7 +219,7 @@ async function sendPasswordResetEmail(user, token) {
       ctaText: 'Reset My Password →',
       footerNote,
     }),
-    text: `Hi ${user.name},\n\nReset your CAMPUSLINK password using this link:\n${resetUrl}\n\nThis link expires in 1 hour.\n\n— CAMPUSLINK Team`,
+    text: `Hi ${user.name},\n\nReset your CAMPUSGRID password using this link:\n${resetUrl}\n\nThis link expires in 1 hour.\n\n— CAMPUSGRID Team`,
   });
 }
 
@@ -232,21 +232,21 @@ async function sendAdminApprovedEmail(user) {
   const content = `
     <h2 style="color:#ffffff; margin-top:0;">Account Approved! ✅</h2>
     <p>Hi <strong>${user.name}</strong>,</p>
-    <p>Great news! Your <strong>CAMPUSLINK</strong> account has been <strong style="color:#4ade80;">approved by the System Administrator</strong>.</p>
+    <p>Great news! Your <strong>CAMPUSGRID</strong> account has been <strong style="color:#4ade80;">approved by the System Administrator</strong>.</p>
     <p>You can now sign in to your portal and access all features associated with your role (<strong>${user.role}</strong>).</p>
   `;
 
   return sendEmail({
     to: user.email,
-    subject: '✅ Your CAMPUSLINK Account Has Been Approved',
+    subject: '✅ Your CAMPUSGRID Account Has Been Approved',
     html: _emailWrapper({
       title: 'Account Approved',
       content,
       ctaUrl: portalUrl,
       ctaText: 'Sign In to Your Portal →',
-      footerNote: 'If you did not register for a CAMPUSLINK account, please contact the system administrator immediately.',
+      footerNote: 'If you did not register for a CAMPUSGRID account, please contact the system administrator immediately.',
     }),
-    text: `Hi ${user.name},\n\nYour CAMPUSLINK account has been approved! Sign in at:\n${portalUrl}\n\n— CAMPUSLINK Team`,
+    text: `Hi ${user.name},\n\nYour CAMPUSGRID account has been approved! Sign in at:\n${portalUrl}\n\n— CAMPUSGRID Team`,
   });
 }
 
@@ -254,7 +254,7 @@ async function sendAdminApprovedEmail(user) {
  * 5. Send notification to super_admin when new staff verifies email and awaits approval
  */
 async function sendStaffPendingNotification(user) {
-  const superAdminEmail = process.env.SUPER_ADMIN_EMAIL || 'superadmin@campuslink.in';
+  const superAdminEmail = process.env.SUPER_ADMIN_EMAIL || 'superadmin@campusgrid.online';
   const dashboardUrl = `${getAppUrl()}/#superadmin/dashboard`;
 
   const content = `

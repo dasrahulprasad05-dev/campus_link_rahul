@@ -1,5 +1,5 @@
 /* ============================================================
-   CAMPUSLINK — Placement Drive Repository
+   CAMPUSGRID — Placement Drive Repository
    Data access methods for recruitment drives.
    Strictly aligned with PostgreSQL schema.
    ============================================================ */

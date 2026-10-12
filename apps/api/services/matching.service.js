@@ -1,4 +1,4 @@
-/* CAMPUSLINK — Matching Service
+/* CAMPUSGRID — Matching Service
    Hybrid AI / Rule-Based matching engine.
    Attempts connection to Python FastAPI AI microservice (port 8000),
    gracefully falling back to explainable deterministic matching.
@@ -67,7 +67,7 @@ async function matchResumeToJD(jobDescription = '', studentSkills = ['sql', 'pyt
         missing: data.missing || [],
         strengths: data.strengths || ['Semantic match verified by AI microservice'],
         improvements: data.improvements || [],
-        explanation: data.explanation || 'Evaluated by CAMPUSLINK FastAPI AI Microservice (TF-IDF & Embeddings).',
+        explanation: data.explanation || 'Evaluated by CAMPUSGRID FastAPI AI Microservice (TF-IDF & Embeddings).',
         engineVersion: data.modelVersion || 'ai-fastapi-v1',
         source: 'fastapi-ai',
         timestamp: data.timestamp || new Date().toISOString(),

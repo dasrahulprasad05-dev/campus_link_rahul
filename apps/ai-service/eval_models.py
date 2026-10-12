@@ -1,5 +1,5 @@
 """
-CampusLink ML Model Evaluation Script
+CampusGrid ML Model Evaluation Script
 Runs held-out test-set evaluation for all 3 ML models.
 Reports R², accuracy, and basic performance metrics.
 
@@ -105,7 +105,7 @@ def evaluate_at_risk():
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("CampusLink ML Model Evaluation (Held-Out Test Set)")
+    print("CampusGrid ML Model Evaluation (Held-Out Test Set)")
     print("=" * 60)
     print("NOTE: All models are trained on SYNTHETIC data.\n")
 

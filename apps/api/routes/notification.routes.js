@@ -1,5 +1,5 @@
 /* ============================================================
-   CAMPUSLINK — Notification & Notice Board Routes
+   CAMPUSGRID — Notification & Notice Board Routes
    Endpoints for student & user notifications, unread counts,
    and Server-Sent Events (SSE) live stream.
    ============================================================ */

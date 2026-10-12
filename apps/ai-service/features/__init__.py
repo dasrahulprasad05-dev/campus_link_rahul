@@ -1,1 +1,1 @@
-# CAMPUSLINK AI — Feature Modules
+# CAMPUSGRID AI — Feature Modules

@@ -1,4 +1,4 @@
-/* CAMPUSLINK — Authentication Integration Tests */
+/* CAMPUSGRID — Authentication Integration Tests */
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const request = require('supertest');

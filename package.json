@@ -1,8 +1,8 @@
 {
-  "name": "campuslink",
-  "version": "1.0.0",
+  "name": "campusgrid",
+  "version": "2.0.0",
   "private": true,
-  "description": "CAMPUSLINK — AI-Powered Campus-to-Corporate Placement Management Platform",
+  "description": "CAMPUSGRID 2.0 — AI-Powered Campus-to-Corporate Placement Management Platform",
   "workspaces": [
     "apps/api",
     "apps/web"
@@ -22,6 +22,6 @@
     "ai-service": "cd apps/ai-service && uvicorn main:app --reload --port 8000"
   },
   "keywords": ["placement", "campus-recruitment", "ai", "placement-intelligence", "career-automation"],
-  "author": "CAMPUSLINK Team",
+  "author": "CAMPUSGRID Team",
   "license": "MIT"
 }

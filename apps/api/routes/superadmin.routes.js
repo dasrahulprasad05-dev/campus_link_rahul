@@ -1,5 +1,5 @@
 /* ============================================================
-   CAMPUSLINK — Super Admin Routes
+   CAMPUSGRID — Super Admin Routes
    Endpoints for super_admin to manage and verify staff accounts.
    Only accessible to users with role 'super_admin'.
    ============================================================ */

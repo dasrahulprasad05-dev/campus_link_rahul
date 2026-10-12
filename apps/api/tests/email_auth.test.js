@@ -1,4 +1,4 @@
-/* CAMPUSLINK — Email Verification & Password Reset Integration Tests */
+/* CAMPUSGRID — Email Verification & Password Reset Integration Tests */
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const request = require('supertest');

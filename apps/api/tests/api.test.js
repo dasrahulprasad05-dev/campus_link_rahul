@@ -1,4 +1,4 @@
-/* CAMPUSLINK — API Unit Tests */
+/* CAMPUSGRID — API Unit Tests */
 const test = require('node:test');
 const assert = require('node:assert/strict');
 

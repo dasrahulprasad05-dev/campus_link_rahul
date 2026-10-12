@@ -1,5 +1,5 @@
 /* ============================================================
-   CAMPUSLINK — Audit Log Middleware
+   CAMPUSGRID — Audit Log Middleware
    Records critical actions to the audit_log table.
    ============================================================ */
 

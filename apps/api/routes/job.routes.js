@@ -1,5 +1,5 @@
 /* ============================================================
-   CAMPUSLINK — Job Routes
+   CAMPUSGRID — Job Routes
    Job discovery, search, and recruiter job postings with RBAC.
    All data comes from the database — no demo data fallbacks.
    ============================================================ */

@@ -1,4 +1,4 @@
-/* CAMPUSLINK — AI Routes
+/* CAMPUSGRID — AI Routes
    Proxy layer to Python FastAPI AI microservice.
    Each route forwards to the AI service and falls back to local services. */
 const router = require('express').Router();
@@ -131,7 +131,7 @@ function atRiskFallback(body = {}) {
 
 function policyQAFallback(question = '') {
   return {
-    answer: `CAMPUSLINK Placement Policy Overview: Students must maintain minimum 60% / 6.0 CGPA with no active backlogs to participate in campus tier-1 placement drives. A maximum of 2 offers is permitted under standard university guidelines. For specific inquiries regarding "${(question || '').slice(0, 50)}", please verify with the Training and Placement Cell (T&P).`,
+    answer: `CAMPUSGRID Placement Policy Overview: Students must maintain minimum 60% / 6.0 CGPA with no active backlogs to participate in campus tier-1 placement drives. A maximum of 2 offers is permitted under standard university guidelines. For specific inquiries regarding "${(question || '').slice(0, 50)}", please verify with the Training and Placement Cell (T&P).`,
     sources: ['University Placement Manual 2026', 'T&P Eligibility Guidelines'],
     source: 'template-fallback',
     timestamp: new Date().toISOString()

@@ -1,5 +1,5 @@
 /* ============================================================
-   CAMPUSLINK — User Repository
+   CAMPUSGRID — User Repository
    Data access methods for user accounts and authentication.
    ============================================================ */
 

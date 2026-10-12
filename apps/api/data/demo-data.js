@@ -1,5 +1,5 @@
 /* ============================================================
-   CAMPUSLINK — Demo / Seed Data
+   CAMPUSGRID — Demo / Seed Data
    Comprehensive realistic data for all roles.
    ============================================================ */
 
@@ -50,7 +50,7 @@ module.exports = {
       { id: 5, title: 'Advanced SQL & Window Functions', desc: 'Master CTEs, ranking functions, and optimization', status: 'pending', due: 'Oct 5' },
     ],
     profile: {
-      name: 'Ananya Sharma', email: 'ananya.sharma@campuslink.in', regNo: 'UNIV2022CSE1042',
+      name: 'Ananya Sharma', email: 'ananya.sharma@campusgrid.online', regNo: 'UNIV2022CSE1042',
       branch: 'Computer Science & Engineering', year: 2026, cgpa: 8.42, targetRole: 'Data Analyst',
       phone: '+91 98765 43210', linkedin: 'linkedin.com/in/ananya-sharma', github: 'github.com/ananyasharma',
       skills: ['Python', 'SQL', 'Excel', 'Data Analysis', 'Communication', 'Statistics'],

@@ -1,4 +1,4 @@
-# CAMPUSLINK
+# CAMPUSGRID 2.0
 
 > Enterprise AI Placement Intelligence Platform  
 > Scalable campus-to-corporate talent intelligence, readiness scoring, and placement automation.
@@ -18,12 +18,13 @@ http://localhost:3000
 
 ### Demo Credentials
 
-| Role       | Email                     | Password |
-|-----------|---------------------------|----------|
-| Student    | student@campuslink.in     | demo123  |
-| Admin/TPO  | admin@campuslink.in       | demo123  |
-| Recruiter  | recruiter@campuslink.in   | demo123  |
-| Mentor     | mentor@campuslink.in      | demo123  |
+| Role       | Email                      | Password |
+|-----------|----------------------------|----------|
+| Student    | ananya.sharma@campusgrid.online | demo123  |
+| Admin/TPO  | admin@campusgrid.online        | demo123  |
+| Recruiter  | recruiter@campusgrid.online    | demo123  |
+| Mentor     | mentor@campusgrid.online       | demo123  |
+| Super Admin| superadmin@campusgrid.online   | CampusSuper@2026 |
 
 Or click the quick-login buttons on the login page.
 
@@ -34,10 +35,10 @@ Or click the quick-login buttons on the login page.
 ```
 CAMPUS_LINK/
 ├── apps/
-│   ├── web/              # Vanilla SPA (HTML/CSS/JS)
-│   │   ├── css/          # Design system, layout, components
-│   │   ├── js/           # Router, store, API client, pages
-│   │   └── index.html    # App shell
+│   ├── web/              # Next.js 16 + React 19 + TypeScript App
+│   │   ├── src/app/      # App Router (Dashboard & Auth routes)
+│   │   ├── src/components# Premium UI components & layout
+│   │   └── src/stores/   # Client state & session management
 │   ├── api/              # Node.js Express API
 │   │   ├── routes/       # Modular REST routes
 │   │   ├── services/     # Business logic
@@ -82,4 +83,4 @@ uvicorn main:app --reload --port 8000
 
 ## 📝 License
 
-MIT © CAMPUSLINK Team
+MIT © CAMPUSGRID Team

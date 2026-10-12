@@ -1,5 +1,5 @@
 /* ============================================================
-   CAMPUSLINK — Real-Time Notification & Notice Board Service
+   CAMPUSGRID — Real-Time Notification & Notice Board Service
    Supports in-memory fallback, database persistence,
    and Server-Sent Events (SSE) for instantaneous real-time alerts.
    ============================================================ */

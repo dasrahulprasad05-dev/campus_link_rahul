@@ -1,5 +1,5 @@
 """
-CAMPUSLINK — Shared Groq LLM Client
+CAMPUSGRID — Shared Groq LLM Client
 Handles model discovery, client instantiation, and resilient LLM completions.
 Includes timeout, retry with exponential backoff (max 2 retries), and
 graceful fallback when Groq fails or rate-limits.

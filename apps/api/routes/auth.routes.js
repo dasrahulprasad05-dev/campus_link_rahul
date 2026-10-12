@@ -1,5 +1,5 @@
 /* ============================================================
-   CAMPUSLINK — Production Authentication Routes
+   CAMPUSGRID — Production Authentication Routes
    Database-backed user registration, login, and session validation.
    ============================================================ */
 
@@ -33,7 +33,7 @@ router.post('/register', async (req, res) => {
     const cleanEmail = email.toLowerCase().trim();
 
     // Strict Role Protection: Staff/Recruiter/TPO emails cannot be registered as student accounts
-    const RESERVED_STAFF_EMAILS = (process.env.RESERVED_STAFF_EMAILS || 'admin@campuslink.in,recruiter@campuslink.in,mentor@campuslink.in')
+    const RESERVED_STAFF_EMAILS = (process.env.RESERVED_STAFF_EMAILS || 'admin@campusgrid.online,recruiter@campusgrid.online,mentor@campusgrid.online,admin@campuslink.in,recruiter@campuslink.in,mentor@campuslink.in')
       .split(',')
       .map(e => e.trim().toLowerCase());
     if (RESERVED_STAFF_EMAILS.includes(cleanEmail)) {
@@ -226,7 +226,7 @@ router.post('/forgot-password', async (req, res) => {
     // Always respond with success to prevent email enumeration attacks
     res.json({
       success: true,
-      message: 'If your email is registered with CAMPUSLINK, you will receive password reset instructions. Please check your inbox and spam folder.'
+      message: 'If your email is registered with CAMPUSGRID, you will receive password reset instructions. Please check your inbox and spam folder.'
     });
   } catch (err) {
     console.error('[Auth Forgot Password Error]:', err);
@@ -294,13 +294,24 @@ router.post('/login', async (req, res) => {
     const cleanEmail = email.toLowerCase().trim();
     let user = await userRepo.findByEmail(cleanEmail);
 
+    // Fallback domain lookup: alias between @campusgrid.online and legacy @campuslink.in
+    if (!user && (cleanEmail.endsWith('@campusgrid.online') || cleanEmail.endsWith('@campusgrid.in'))) {
+      const altEmail = cleanEmail.replace(/@campusgrid\.(online|in)$/, '@campuslink.in');
+      user = await userRepo.findByEmail(altEmail);
+    } else if (!user && cleanEmail.endsWith('@campuslink.in')) {
+      const altEmail = cleanEmail.replace('@campuslink.in', '@campusgrid.online');
+      user = await userRepo.findByEmail(altEmail);
+    }
+
     // Auto-provision super_admin if not yet seeded in database
-    if (!user && cleanEmail === 'superadmin@campuslink.in' && (password === 'CampusSuper@2026' || password === 'demo123')) {
+    const isSuperAdminEmail = cleanEmail === 'superadmin@campusgrid.online' || cleanEmail === 'superadmin@campuslink.in';
+    const isSuperAdminPass = password === 'CampusSuper@2026' || password === 'CampusGrid@2026' || password === 'demo123';
+    if (!user && isSuperAdminEmail && isSuperAdminPass) {
       try {
         const hash = await bcrypt.hash(password, 10);
         user = await userRepo.create({
           name: 'System Super Admin',
-          email: 'superadmin@campuslink.in',
+          email: cleanEmail,
           passwordHash: hash,
           role: 'super_admin'
         });
@@ -312,7 +323,7 @@ router.post('/login', async (req, res) => {
         user = {
           id: '00000000-0000-4000-8000-000000000001',
           name: 'System Super Admin',
-          email: 'superadmin@campuslink.in',
+          email: cleanEmail,
           role: 'super_admin',
           email_verified: true,
           admin_verified: true
@@ -333,7 +344,12 @@ router.post('/login', async (req, res) => {
     }
     // Demo password fallback — ONLY in development/staging, never in production
     if (!match && process.env.NODE_ENV !== 'production') {
-      if (password === 'demo123' || password === 'CampusLink@2026' || (user.role === 'super_admin' && password === 'CampusSuper@2026')) {
+      if (
+        password === 'demo123' ||
+        password === 'CampusGrid@2026' ||
+        password === 'CampusLink@2026' ||
+        (user.role === 'super_admin' && (password === 'CampusSuper@2026' || password === 'CampusGrid@2026'))
+      ) {
         match = true;
       }
     }

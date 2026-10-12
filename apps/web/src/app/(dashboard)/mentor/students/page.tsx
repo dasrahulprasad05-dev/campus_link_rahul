@@ -7,10 +7,10 @@ import { toast } from 'sonner';
 
 export default function MentorStudentsPage() {
   const [mentees, setMentees] = useState<any[]>([
-    { id: '1', name: 'Ananya Sharma', email: 'ananya.sharma@campuslink.in', branch: 'CSE', cgpa: 8.42, readiness: 78, goal: 'Data Analyst & ML', roadmap_progress: 68, last_action: 'Completed SQL practice' },
-    { id: '2', name: 'Rohan Verma', email: 'rohan.verma@campuslink.in', branch: 'ECE', cgpa: 7.15, readiness: 54, goal: 'Embedded Software Engineer', roadmap_progress: 42, last_action: 'Needs DSA coaching' },
-    { id: '3', name: 'Priya Nair', email: 'priya.nair@campuslink.in', branch: 'IT', cgpa: 8.90, readiness: 88, goal: 'Cloud Infrastructure Associate', roadmap_progress: 85, last_action: 'AWS certified' },
-    { id: '4', name: 'Amit Kumar', email: 'amit.kumar@campuslink.in', branch: 'ME', cgpa: 6.80, readiness: 48, goal: 'Full Stack Engineer', roadmap_progress: 35, last_action: 'Overdue project submission' },
+    { id: '1', name: 'Ananya Sharma', email: 'ananya.sharma@campusgrid.online', branch: 'CSE', cgpa: 8.42, readiness: 78, goal: 'Data Analyst & ML', roadmap_progress: 68, last_action: 'Completed SQL practice' },
+    { id: '2', name: 'Rohan Verma', email: 'rohan.verma@campusgrid.online', branch: 'ECE', cgpa: 7.15, readiness: 54, goal: 'Embedded Software Engineer', roadmap_progress: 42, last_action: 'Needs DSA coaching' },
+    { id: '3', name: 'Priya Nair', email: 'priya.nair@campusgrid.online', branch: 'IT', cgpa: 8.90, readiness: 88, goal: 'Cloud Infrastructure Associate', roadmap_progress: 85, last_action: 'AWS certified' },
+    { id: '4', name: 'Amit Kumar', email: 'amit.kumar@campusgrid.online', branch: 'ME', cgpa: 6.80, readiness: 48, goal: 'Full Stack Engineer', roadmap_progress: 35, last_action: 'Overdue project submission' },
   ]);
 
   const [selectedMentee, setSelectedMentee] = useState<any | null>(null);

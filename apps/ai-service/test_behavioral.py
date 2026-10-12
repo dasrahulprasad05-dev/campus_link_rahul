@@ -1,5 +1,5 @@
 """
-CampusLink Behavioral Quality Tests
+CampusGrid Behavioral Quality Tests
 Goes beyond HTTP 200 / field-exists checks to verify the LOGIC is correct:
 - Strong candidate > weak candidate (Feature 8)
 - High-risk profile scored higher than low-risk (Feature 9)
@@ -233,7 +233,7 @@ def test_policy_qa_hallucination_guard():
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("CampusLink BEHAVIORAL Quality Tests")
+    print("CampusGrid BEHAVIORAL Quality Tests")
     print("=" * 60)
 
     test_readiness_behavioral()

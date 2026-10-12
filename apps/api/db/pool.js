@@ -1,5 +1,5 @@
 /* ============================================================
-   CAMPUSLINK — Database Pool & Connection Manager
+   CAMPUSGRID — Database Pool & Connection Manager
    Real PostgreSQL connection pooling via 'pg' with SSL support
    and fallback in-memory simulation for offline development.
    Strictly synchronized with PostgreSQL 11-table schema.
@@ -308,7 +308,14 @@ const memoryDb = (() => {
     // 1. SELECT FROM users WHERE email = $1
     if (q.includes('from users where email =')) {
       const email = String(params[0] || '').toLowerCase();
-      const user = tables.users.find(u => u.email.toLowerCase() === email);
+      let user = tables.users.find(u => u.email.toLowerCase() === email);
+      if (!user && (email.endsWith('@campusgrid.online') || email.endsWith('@campusgrid.in'))) {
+        const alt = email.replace(/@campusgrid\.(online|in)$/, '@campuslink.in');
+        user = tables.users.find(u => u.email.toLowerCase() === alt);
+      } else if (!user && email.endsWith('@campuslink.in')) {
+        const alt = email.replace('@campuslink.in', '@campusgrid.online');
+        user = tables.users.find(u => u.email.toLowerCase() === alt);
+      }
       return Promise.resolve({ rows: user ? [{ ...user }] : [], rowCount: user ? 1 : 0 });
     }
 

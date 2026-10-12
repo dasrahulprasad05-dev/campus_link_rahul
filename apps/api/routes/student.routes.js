@@ -1,5 +1,5 @@
 /* ============================================================
-   CAMPUSLINK — Student Routes
+   CAMPUSGRID — Student Routes
    Protected endpoints for student profiles, readiness, and applications.
    All data comes from the database — no demo data fallbacks.
    ============================================================ */

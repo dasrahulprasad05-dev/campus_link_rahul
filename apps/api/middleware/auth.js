@@ -1,8 +1,8 @@
-/* CAMPUSLINK — Production Auth Middleware */
+/* CAMPUSGRID — Production Auth Middleware */
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'campuslink_secure_enterprise_secret_key_2026_dev';
+const JWT_SECRET = process.env.JWT_SECRET || 'campusgrid_secure_enterprise_secret_key_2026_dev';
 
 if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
   throw new Error('[SECURITY ERROR] JWT_SECRET must be explicitly configured in environment variables for production.');
@@ -21,23 +21,23 @@ function authenticate(req, res, next) {
 
     // --- Preseeded Demo Tokens (kept for backward compatibility) ---
     if (token.startsWith('jwt-superadmin-') || token === 'demo-superadmin-token' || token === 'demo_token_super_admin') {
-      req.user = { id: '00000000-0000-4000-8000-000000000001', role: 'super_admin', name: 'System Super Admin', email: 'superadmin@campuslink.in' };
+      req.user = { id: '00000000-0000-4000-8000-000000000001', role: 'super_admin', name: 'System Super Admin', email: 'superadmin@campusgrid.online' };
       return next();
     }
     if (token.startsWith('jwt-admin-') || token === 'demo-admin-token' || token === 'demo_token_admin') {
-      req.user = { id: 'a1b2c3d4-0001-0001-0001-000000000002', role: 'admin', name: 'Training & Placement Office ABIT', email: 'admin@campuslink.in' };
+      req.user = { id: 'a1b2c3d4-0001-0001-0001-000000000002', role: 'admin', name: 'Training & Placement Office ABIT', email: 'admin@campusgrid.online' };
       return next();
     }
     if (token.startsWith('jwt-mentor-') || token === 'demo-mentor-token' || token === 'demo_token_mentor') {
-      req.user = { id: 'a1b2c3d4-0001-0001-0001-000000000004', role: 'mentor', name: 'Faculty Mentor ABIT', email: 'mentor@campuslink.in' };
+      req.user = { id: 'a1b2c3d4-0001-0001-0001-000000000004', role: 'mentor', name: 'Faculty Mentor ABIT', email: 'mentor@campusgrid.online' };
       return next();
     }
     if (token.startsWith('jwt-recruiter-') || token === 'demo-recruiter-token' || token === 'demo_token_recruiter') {
-      req.user = { id: 'a1b2c3d4-0001-0001-0001-000000000003', role: 'recruiter', name: 'TCS Campus Recruitment', email: 'recruiter@campuslink.in' };
+      req.user = { id: 'a1b2c3d4-0001-0001-0001-000000000003', role: 'recruiter', name: 'TCS Campus Recruitment', email: 'recruiter@campusgrid.online' };
       return next();
     }
     if (token.startsWith('jwt-student-') || token === 'demo-student-token' || token === 'demo_token_student') {
-      req.user = { id: 'u-student-general', role: 'student', name: 'Student', email: 'student@campuslink.in' };
+      req.user = { id: 'u-student-general', role: 'student', name: 'Student', email: 'student@campusgrid.online' };
       return next();
     }
 

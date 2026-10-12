@@ -1,5 +1,5 @@
 """
-CAMPUSLINK — AI Service (FastAPI)
+CAMPUSGRID — AI Service (FastAPI)
 Production AI/ML service with 9 real AI features:
 
   ML:  Custom NumPy models, trained on labeled/synthetic data at startup
@@ -73,7 +73,7 @@ from datetime import datetime
 async def lifespan(app: FastAPI):
     """Train ML models and initialize RAG on startup."""
     print("\n  ==========================================")
-    print("  CAMPUSLINK AI Service -- Loading Models")
+    print("  CAMPUSGRID AI Service -- Loading Models")
     print("  ==========================================\n")
 
     # Phase 1: Train custom NumPy ML models (fast, no network)
@@ -104,7 +104,7 @@ async def lifespan(app: FastAPI):
 # ---- App ----
 
 app = FastAPI(
-    title="CAMPUSLINK AI Service",
+    title="CAMPUSGRID AI Service",
     description="AI-powered placement intelligence: ML + NLP + LLM + RAG",
     version="2.0.0",
     lifespan=lifespan,
@@ -115,7 +115,7 @@ allowed_origins_env = os.getenv("ALLOWED_ORIGINS")
 if allowed_origins_env:
     origins = [o.strip() for o in allowed_origins_env.split(",") if o.strip()]
 elif os.getenv("ENVIRONMENT") == "production":
-    origins = ["https://campuslink-rahul.vercel.app"]
+    origins = ["https://campusgrid.online", "https://www.campusgrid.online", "https://campuslink-rahul.vercel.app"]
 else:
     origins = ["*"]
 
@@ -135,7 +135,7 @@ def health():
     groq_ok = bool(os.getenv("GROQ_API_KEY"))
     return {
         "status": "ok",
-        "service": "campuslink-ai",
+        "service": "campusgrid-ai",
         "version": "2.0.0",
         "synthetic_training_data": True,
         "models": {

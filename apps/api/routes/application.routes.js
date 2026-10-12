@@ -1,5 +1,5 @@
 /* ============================================================
-   CAMPUSLINK — Application Routes
+   CAMPUSGRID — Application Routes
    Track and update student job applications with RBAC.
    All data comes from the database — no demo data fallbacks.
    ============================================================ */

@@ -1,5 +1,5 @@
 /* ============================================================
-   CAMPUSLINK — Application Repository
+   CAMPUSGRID — Application Repository
    Data access methods for student job applications.
    Strictly aligned with PostgreSQL schema.
    ============================================================ */

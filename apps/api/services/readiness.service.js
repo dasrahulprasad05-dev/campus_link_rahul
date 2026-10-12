@@ -1,4 +1,4 @@
-/* CAMPUSLINK — Readiness Service
+/* CAMPUSGRID — Readiness Service
    Hybrid AI / Rule-Based student readiness and skill-gap engine.
    Attempts connection to Python FastAPI AI microservice (port 8000),
    falling back to explainable deterministic calculation.
@@ -145,7 +145,7 @@ async function calculateReadiness(profile = {}) {
       return {
         score: data.score,
         factors: data.factors,
-        explanation: data.explanation || 'Evaluated by CAMPUSLINK AI Microservice multi-factor model.',
+        explanation: data.explanation || 'Evaluated by CAMPUSGRID AI Microservice multi-factor model.',
         engineVersion: data.modelVersion || 'ai-fastapi-v1',
         source: 'fastapi-ai',
         timestamp: data.timestamp || new Date().toISOString(),

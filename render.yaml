@@ -1,10 +1,10 @@
-# Render Blueprint specification for CAMPUSLINK
+# Render Blueprint specification for CAMPUSGRID
 # https://render.com/docs/blueprint-spec
 
 services:
   # 1. Node.js Backend API + Frontend SPA
   - type: web
-    name: campuslink-web
+    name: campusgrid-web
     runtime: node
     plan: free
     region: singapore
@@ -21,7 +21,7 @@ services:
         sync: false
       - key: AI_SERVICE_URL
         fromService:
-          name: campuslink-ai
+          name: campusgrid-ai
           type: web
           property: host
       - key: SENDGRID_API_KEY
@@ -31,7 +31,7 @@ services:
 
   # 2. Python AI Microservice (FastAPI + ML + NLP + Groq LLM + RAG)
   - type: web
-    name: campuslink-ai
+    name: campusgrid-ai
     runtime: python
     plan: free
     region: singapore

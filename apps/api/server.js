@@ -1,5 +1,5 @@
 /* ============================================================
-   CAMPUSLINK — Express API Server
+   CAMPUSGRID — Express API Server
    Modular backend with middleware chain, route modules,
    and structured response format.
    ============================================================ */
@@ -325,15 +325,15 @@ app.get('/api/dashboard', authenticate, (req, res) => {
 app.get('/api/v1/health', (req, res) => {
   res.json({
     status: 'ok',
-    service: 'campuslink-api',
-    version: '1.0.0',
+    service: 'campusgrid-api',
+    version: '2.0.0',
     uptime: Math.round(process.uptime()),
     timestamp: new Date().toISOString(),
   });
 });
 
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', service: 'campuslink-api' });
+  res.json({ status: 'ok', service: 'campusgrid-api' });
 });
 
 /* ---------- Serve Frontend (Static) ---------- */
@@ -364,7 +364,7 @@ app.use((err, req, res, next) => {
 if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`\n  ╔══════════════════════════════════════════╗`);
-    console.log(`  ║  CAMPUSLINK API Server                   ║`);
+    console.log(`  ║  CAMPUSGRID API Server                   ║`);
     console.log(`  ║  http://localhost:${PORT}                    ║`);
     console.log(`  ║  Health: http://localhost:${PORT}/api/health  ║`);
     console.log(`  ╚══════════════════════════════════════════╝\n`);

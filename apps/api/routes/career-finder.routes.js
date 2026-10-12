@@ -1,5 +1,5 @@
 /* ============================================================
-   CAMPUSLINK — AI Career Path Finder
+   CAMPUSGRID — AI Career Path Finder
    Deterministic weighted rubric: 7 questions → 6 domain scores.
    No ML model. LLM used only for explanation prose.
    ============================================================ */

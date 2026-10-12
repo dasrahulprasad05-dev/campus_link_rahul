@@ -1,5 +1,5 @@
 /* ============================================================
-   CAMPUSLINK — Database Migration Runner
+   CAMPUSGRID — Database Migration Runner
    Applies schema.sql and seed.sql to PostgreSQL instance.
    ============================================================ */
 

@@ -1,4 +1,4 @@
-/* CAMPUSLINK — Role-Based Access Control (RBAC) Security Tests */
+/* CAMPUSGRID — Role-Based Access Control (RBAC) Security Tests */
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const request = require('supertest');

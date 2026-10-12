@@ -1,4 +1,4 @@
-/* CAMPUSLINK — Database Integration Tests (Strict Schema Alignment) */
+/* CAMPUSGRID — Database Integration Tests (Strict Schema Alignment) */
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { query } = require('../db/pool');

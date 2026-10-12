@@ -1,8 +1,8 @@
-# MODEL CARD — CampusLink ML Models
+# MODEL CARD — CampusGrid ML Models
 
 ## Overview
 
-CampusLink uses **three custom ML models** implemented in pure NumPy (no external ML framework dependencies). All models are trained at startup on **synthetic data** — they are NOT trained on real student placement records.
+CampusGrid uses **three custom ML models** implemented in pure NumPy (no external ML framework dependencies). All models are trained at startup on **synthetic data** — they are NOT trained on real student placement records.
 
 > **⚠️ IMPORTANT**: All training data is generated programmatically. Scores produced by these models should be treated as demo estimates, not validated predictions. Before deploying in a real campus placement scenario, models must be retrained on actual historical data.
 

@@ -21,35 +21,35 @@ import { toast } from 'sonner';
 const DEMO_CREDENTIALS: Record<string, { role: string; email: string; pass: string; label: string; icon: string }> = {
   student: {
     role: 'student',
-    email: 'ananya.sharma@campuslink.in',
+    email: 'ananya.sharma@campusgrid.online',
     pass: 'demo123',
     label: 'Student',
     icon: '🎓',
   },
   admin: {
     role: 'admin',
-    email: 'admin@campuslink.in',
+    email: 'admin@campusgrid.online',
     pass: 'demo123',
     label: 'TPO Admin',
     icon: '🏛️',
   },
   recruiter: {
     role: 'recruiter',
-    email: 'recruiter@campuslink.in',
+    email: 'recruiter@campusgrid.online',
     pass: 'demo123',
     label: 'Recruiter',
     icon: '💼',
   },
   mentor: {
     role: 'mentor',
-    email: 'mentor@campuslink.in',
+    email: 'mentor@campusgrid.online',
     pass: 'demo123',
     label: 'Mentor',
     icon: '👨‍🏫',
   },
   super_admin: {
     role: 'super_admin',
-    email: 'superadmin@campuslink.in',
+    email: 'superadmin@campusgrid.online',
     pass: 'CampusSuper@2026',
     label: 'Super Admin',
     icon: '🛡️',
@@ -170,7 +170,7 @@ function LoginForm() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@campuslink.in"
+              placeholder="you@campusgrid.online"
               required
               className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#0b0f19] border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500/50"
             />

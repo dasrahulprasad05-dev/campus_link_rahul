@@ -1,5 +1,5 @@
 /* ============================================================
-   CAMPUSLINK — Placement Drive Routes
+   CAMPUSGRID — Placement Drive Routes
    Manage recruitment drives with drive repository and RBAC.
    All data comes from the database — no demo data fallbacks.
    ============================================================ */

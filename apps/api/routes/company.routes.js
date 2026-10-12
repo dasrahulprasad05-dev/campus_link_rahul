@@ -1,5 +1,5 @@
 /* ============================================================
-   CAMPUSLINK — Company Routes
+   CAMPUSGRID — Company Routes
    Manage hiring companies with repository calls and RBAC.
    ============================================================ */
 

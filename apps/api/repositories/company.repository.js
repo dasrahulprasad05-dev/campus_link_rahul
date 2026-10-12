@@ -1,5 +1,5 @@
 /* ============================================================
-   CAMPUSLINK — Company Repository
+   CAMPUSGRID — Company Repository
    Data access methods for registered hiring companies.
    Strictly aligned with PostgreSQL schema.
    ============================================================ */

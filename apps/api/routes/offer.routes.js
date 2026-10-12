@@ -1,5 +1,5 @@
 /* ============================================================
-   CAMPUSLINK — Offer Routes
+   CAMPUSGRID — Offer Routes
    Offer lifecycle: list, accept/decline, document management.
    ============================================================ */
 

@@ -1,5 +1,5 @@
 /* ============================================================
-   CAMPUSLINK — AI Resume Interview Engine
+   CAMPUSGRID — AI Resume Interview Engine
    Resume-driven adaptive mock interview with server-side
    session state, per-answer rubric evaluation, adaptive
    follow-ups, and robust LLM JSON parsing with retry.

@@ -1,8 +1,8 @@
 {
-  "name": "campuslink-api",
+  "name": "campusgrid-api",
   "private": true,
-  "version": "1.0.0",
-  "description": "CAMPUSLINK backend API — AI-powered placement management platform",
+  "version": "2.0.0",
+  "description": "CAMPUSGRID backend API — AI-powered placement management platform",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

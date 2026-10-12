@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/stores/useAuthStore';
@@ -67,6 +67,12 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
   const [resending, setResending] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get('logged_out') === '1') {
+      toast.success('Signed out of CampusGrid successfully.');
+    }
+  }, [searchParams]);
 
   const fillDemo = (key: string) => {
     const cred = DEMO_CREDENTIALS[key];

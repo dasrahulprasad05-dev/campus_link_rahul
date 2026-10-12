@@ -3,11 +3,11 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuthStore } from '@/stores/useAuthStore';
-import { Menu, Bell, Search, ShieldCheck } from 'lucide-react';
+import { Menu, Bell, Search, ShieldCheck, LogOut } from 'lucide-react';
 
 export default function Topbar({ onToggleMobile }: { onToggleMobile?: () => void }) {
   const pathname = usePathname();
-  const { user, getRole, unreadCount } = useAuthStore();
+  const { user, getRole, unreadCount, logout } = useAuthStore();
   const role = getRole();
 
   const roleLabels: Record<string, string> = {
@@ -79,10 +79,22 @@ export default function Topbar({ onToggleMobile }: { onToggleMobile?: () => void
         {/* User Avatar */}
         <Link
           href="/student/profile"
+          title="View Profile"
           className="h-8 w-8 rounded-lg bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center font-bold text-xs text-white shadow-md shadow-indigo-500/20 hover:opacity-90 transition-opacity"
         >
           {(user?.name || 'S').charAt(0).toUpperCase()}
         </Link>
+
+        {/* Quick Logout Button */}
+        <button
+          onClick={() => logout()}
+          title="Sign out of CampusGrid"
+          aria-label="Logout"
+          className="flex items-center gap-1.5 px-2.5 py-1.5 text-slate-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg border border-transparent hover:border-rose-500/20 transition-all text-xs font-medium cursor-pointer"
+        >
+          <LogOut className="h-4 w-4" />
+          <span className="hidden sm:inline">Logout</span>
+        </button>
       </div>
     </header>
   );

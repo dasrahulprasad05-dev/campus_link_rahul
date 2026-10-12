@@ -1,9 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Sidebar from '@/components/layout/Sidebar';
 import Topbar from '@/components/layout/Topbar';
 import MobileNav from '@/components/layout/MobileNav';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 export default function DashboardLayout({
   children,
@@ -11,6 +13,18 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const router = useRouter();
+  const { token, isAuthenticated } = useAuthStore();
+
+  useEffect(() => {
+    // Verify client session token
+    if (typeof window !== 'undefined') {
+      const storedToken = localStorage.getItem('campusgrid_token') || localStorage.getItem('campuslink_token');
+      if (!storedToken && !token && !isAuthenticated()) {
+        router.replace('/login');
+      }
+    }
+  }, [token, isAuthenticated, router]);
 
   return (
     <div className="flex min-h-screen bg-[#080c14] text-slate-100 antialiased overflow-x-hidden">

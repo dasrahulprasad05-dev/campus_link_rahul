@@ -36,6 +36,9 @@ export async function apiRequest<T = any>(endpoint: string, options: RequestOpti
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
+    if (response.status === 401 && typeof window !== 'undefined') {
+      useAuthStore.getState().logout();
+    }
     const errorMsg = data?.error?.message || data?.message || `Request failed with status ${response.status}`;
     throw new Error(errorMsg);
   }

@@ -197,10 +197,9 @@ export default function Sidebar({ onCloseMobile }: { onCloseMobile?: () => void 
             </div>
           </div>
           <button
-            onClick={() => {
-              if (confirm('Logout of CampusGrid?')) logout();
-            }}
-            title="Logout"
+            onClick={() => logout()}
+            title="Sign out of CampusGrid"
+            aria-label="Logout"
             className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-md transition-colors"
           >
             <LogOut className="h-4 w-4" />

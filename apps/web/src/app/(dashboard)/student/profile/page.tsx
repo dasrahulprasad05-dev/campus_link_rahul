@@ -15,11 +15,12 @@ import {
   Save, 
   Plus, 
   X,
-  CheckCircle2
+  CheckCircle2,
+  LogOut
 } from 'lucide-react';
 
 export default function StudentProfilePage() {
-  const { user } = useAuthStore();
+  const { user, logout } = useAuthStore();
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState({
     name: user?.name || 'Rahul Prasad',
@@ -259,12 +260,21 @@ export default function StudentProfilePage() {
           </div>
         </div>
 
-        {/* Submit */}
-        <div className="flex justify-end">
+        {/* Submit & Sign Out */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
+          <button
+            type="button"
+            onClick={() => logout()}
+            className="px-5 py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 font-semibold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <LogOut className="h-4 w-4" />
+            <span>Sign Out of CampusGrid</span>
+          </button>
+
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-indigo-600/25 transition-all flex items-center gap-2 disabled:opacity-50"
+            className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-indigo-600/25 transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
           >
             {loading ? (
               <>

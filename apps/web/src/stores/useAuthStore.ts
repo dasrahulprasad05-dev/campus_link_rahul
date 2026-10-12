@@ -62,10 +62,20 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   logout: () => {
     if (typeof window !== 'undefined') {
-      localStorage.removeItem(STORAGE_KEY_USER);
-      localStorage.removeItem(STORAGE_KEY_TOKEN);
+      try {
+        localStorage.removeItem(STORAGE_KEY_USER);
+        localStorage.removeItem(STORAGE_KEY_TOKEN);
+        localStorage.removeItem('campuslink_user');
+        localStorage.removeItem('campuslink_token');
+        sessionStorage.clear();
+      } catch {
+        // ignore
+      }
+      set({ user: null, token: null, unreadCount: 0 });
+      window.location.href = '/login?logged_out=1';
+    } else {
+      set({ user: null, token: null, unreadCount: 0 });
     }
-    set({ user: null, token: null, unreadCount: 0 });
   },
 
   isAuthenticated: () => {

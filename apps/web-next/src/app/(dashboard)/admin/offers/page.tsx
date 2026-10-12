@@ -1,0 +1,113 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { api } from '@/lib/api';
+import { Award, CheckCircle2, Clock, Search, Building, User } from 'lucide-react';
+import { toast } from 'sonner';
+
+export default function AdminOffersPage() {
+  const [offers, setOffers] = useState<any[]>([
+    { id: '1', student_name: 'Ananya Sharma', company: 'TechNova Solutions', role: 'Software Development Engineer', ctc: '₹14.5 LPA', tier: 'Dream', status: 'Accepted', date: '2026-10-04' },
+    { id: '2', student_name: 'Sneha Rao', company: 'Google India', role: 'Associate Software Engineer', ctc: '₹28.0 LPA', tier: 'Super Dream', status: 'Accepted', date: '2026-10-06' },
+    { id: '3', student_name: 'Priya Nair', company: 'Microsoft', role: 'Cloud Support Engineer', ctc: '₹18.0 LPA', tier: 'Dream', status: 'Pending Verification', date: '2026-10-09' },
+    { id: '4', student_name: 'Kavita Das', company: 'Cognizant', role: 'Programmer Analyst', ctc: '₹4.8 LPA', tier: 'Regular', status: 'Accepted', date: '2026-09-28' },
+  ]);
+
+  const verifyOffer = (id: string) => {
+    setOffers(prev => prev.map(o => o.id === id ? { ...o, status: 'Verified' } : o));
+    toast.success('Offer successfully verified in university records!');
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400 mb-1">
+          <Award className="h-3.5 w-3.5" />
+          <span>Placement Outcomes</span>
+        </div>
+        <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Offer Tracker</h1>
+        <p className="text-xs sm:text-sm text-slate-400 mt-1">
+          Record, verify, and track campus job offer letters and compensation packages.
+        </p>
+      </div>
+
+      {/* Summary KPI Banner */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="glass-panel p-4 rounded-2xl border border-white/8">
+          <div className="text-xs text-slate-400 font-semibold">Total Verified Offers</div>
+          <div className="text-2xl font-bold text-white mt-1">126</div>
+          <div className="text-[11px] text-emerald-400 mt-0.5">88.4% of eligible students placed</div>
+        </div>
+        <div className="glass-panel p-4 rounded-2xl border border-white/8">
+          <div className="text-xs text-slate-400 font-semibold">Highest CTC Package</div>
+          <div className="text-2xl font-bold text-white mt-1">₹28.5 LPA</div>
+          <div className="text-[11px] text-indigo-400 mt-0.5">Google India (Super Dream)</div>
+        </div>
+        <div className="glass-panel p-4 rounded-2xl border border-white/8">
+          <div className="text-xs text-slate-400 font-semibold">Average Institutional CTC</div>
+          <div className="text-2xl font-bold text-white mt-1">₹8.92 LPA</div>
+          <div className="text-[11px] text-purple-400 mt-0.5">+18% vs previous academic batch</div>
+        </div>
+      </div>
+
+      {/* Offers Table */}
+      <div className="glass-panel rounded-2xl border border-white/8 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            <thead className="text-slate-400 border-b border-white/6 font-semibold bg-white/2">
+              <tr>
+                <th className="py-3 px-4">Student</th>
+                <th className="py-3 px-4">Company & Role</th>
+                <th className="py-3 px-4">CTC Package</th>
+                <th className="py-3 px-4">Tier</th>
+                <th className="py-3 px-4">Status</th>
+                <th className="py-3 px-4 text-right">Verification</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/6 text-slate-200">
+              {offers.map((o) => (
+                <tr key={o.id} className="hover:bg-white/2 transition-colors">
+                  <td className="py-3.5 px-4 font-semibold text-white">{o.student_name}</td>
+                  <td className="py-3.5 px-4">
+                    <div className="font-semibold text-white">{o.company}</div>
+                    <div className="text-[11px] text-slate-400">{o.role}</div>
+                  </td>
+                  <td className="py-3.5 px-4 font-mono font-bold text-emerald-400">{o.ctc}</td>
+                  <td className="py-3.5 px-4">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-slate-300">
+                      {o.tier}
+                    </span>
+                  </td>
+                  <td className="py-3.5 px-4">
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                      o.status === 'Accepted' || o.status === 'Verified'
+                        ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+                        : 'bg-amber-500/15 text-amber-300 border-amber-500/30'
+                    }`}>
+                      {o.status}
+                    </span>
+                  </td>
+                  <td className="py-3.5 px-4 text-right">
+                    {o.status === 'Pending Verification' ? (
+                      <button
+                        onClick={() => verifyOffer(o.id)}
+                        className="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-[11px] font-semibold transition-colors"
+                      >
+                        Approve Offer
+                      </button>
+                    ) : (
+                      <span className="text-emerald-400 font-semibold flex items-center justify-end gap-1 text-[11px]">
+                        <CheckCircle2 className="h-3.5 w-3.5" /> Verified
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}

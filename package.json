@@ -8,7 +8,7 @@
     "apps/web"
   ],
   "scripts": {
-    "build": "cd apps/web && npm install --include=dev && npm run build",
+    "build": "cd apps/web && npm install --include=dev && npm run build && node -e \"try{require('fs').cpSync('.next','../../.next',{recursive:true})}catch(e){}\"",
     "dev:web": "npm --prefix apps/web run dev",
     "start:web": "npm --prefix apps/web start",
     "build:web": "cd apps/web && npm install --include=dev && npm run build",
@@ -20,6 +20,17 @@
     "setup": "npm --prefix apps/api install",
     "postinstall": "npm --prefix apps/api install",
     "ai-service": "cd apps/ai-service && uvicorn main:app --reload --port 8000"
+  },
+  "dependencies": {
+    "next": "16.4.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "@tailwindcss/turbopack": "^4",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19"
   },
   "keywords": ["placement", "campus-recruitment", "ai", "placement-intelligence", "career-automation"],
   "author": "CAMPUSGRID Team",

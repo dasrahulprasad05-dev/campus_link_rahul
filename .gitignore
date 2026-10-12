@@ -11,3 +11,5 @@ __pycache__/
 *.pptx
 generate_deck.py
 *campusgrid_qr_code*
+.next/
+*.tsbuildinfo

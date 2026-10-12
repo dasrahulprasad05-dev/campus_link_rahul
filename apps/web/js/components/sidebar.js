@@ -8,6 +8,7 @@ const Sidebar = (() => {
     student: [
       { section: 'Overview', items: [
         { id: 'student/dashboard', icon: '⌂', label: 'Dashboard' },
+        { id: 'student/notice-board', icon: '📢', label: 'Notice Board', badge: 'Live' },
         { id: 'student/profile', icon: '👤', label: 'My Profile' },
       ]},
       { section: 'Readiness', items: [

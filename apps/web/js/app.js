@@ -105,6 +105,7 @@ const App = (() => {
     Router.register('student/roadmap', authPage(StudentRoadmap.render), { auth: true, roles: ['student'] });
     Router.register('student/what-if', authPage(StudentWhatIf.render), { auth: true, roles: ['student'] });
     Router.register('student/career-finder', authPage(StudentCareerFinder.render), { auth: true, roles: ['student'] });
+    Router.register('student/notice-board', authPage(StudentNoticeBoard.render), { auth: true, roles: ['student'] });
 
     // Admin routes
     Router.register('admin/dashboard', authPage(AdminDashboard.render), { auth: true, roles: ['admin'] });

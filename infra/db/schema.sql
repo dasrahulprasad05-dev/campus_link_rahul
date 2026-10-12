@@ -247,6 +247,46 @@ CREATE TABLE IF NOT EXISTS audit_log (
     timestamp TIMESTAMPTZ DEFAULT now()
 );
 
+-- Notifications (Real-time student alerts & broadcast notice board)
+CREATE TABLE IF NOT EXISTS notifications (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    type VARCHAR(50) NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    message TEXT,
+    metadata JSONB DEFAULT '{}',
+    is_read BOOLEAN DEFAULT false,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Company Hiring Stages (Custom multi-round hiring process per job/company)
+CREATE TABLE IF NOT EXISTS hiring_stages (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    company_id UUID REFERENCES companies(id) ON DELETE CASCADE,
+    job_id UUID REFERENCES jobs(id) ON DELETE CASCADE,
+    stage_name VARCHAR(100) NOT NULL,
+    stage_order INTEGER NOT NULL,
+    stage_type VARCHAR(30) DEFAULT 'interview',
+    is_eliminatory BOOLEAN DEFAULT true,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Candidate Stage Progress (Tracking candidate progress through each round)
+CREATE TABLE IF NOT EXISTS candidate_stage_progress (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    application_id UUID REFERENCES applications(id) ON DELETE CASCADE,
+    stage_id UUID REFERENCES hiring_stages(id) ON DELETE CASCADE,
+    status VARCHAR(20) DEFAULT 'pending'
+        CHECK (status IN ('pending', 'scheduled', 'in-progress', 'passed', 'failed', 'skipped')),
+    scheduled_at TIMESTAMPTZ,
+    completed_at TIMESTAMPTZ,
+    feedback TEXT,
+    score INTEGER,
+    interviewer_name VARCHAR(100),
+    created_at TIMESTAMPTZ DEFAULT now(),
+    UNIQUE(application_id, stage_id)
+);
+
 -- ============================================================
 -- Indexes
 -- ============================================================
@@ -262,3 +302,5 @@ CREATE INDEX IF NOT EXISTS idx_drive_slots_drive ON drive_slots(drive_id);
 CREATE INDEX IF NOT EXISTS idx_drive_candidates_drive ON drive_candidates(drive_id);
 CREATE INDEX IF NOT EXISTS idx_drive_candidates_student ON drive_candidates(student_id);
 CREATE INDEX IF NOT EXISTS idx_audit_log_entity ON audit_log(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id, is_read, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_stage_progress_app ON candidate_stage_progress(application_id);

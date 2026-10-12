@@ -415,11 +415,15 @@ const memoryDb = (() => {
       return Promise.resolve({ rows: [], rowCount: 0 });
     }
 
-    // 4d. SELECT FROM users WHERE reset_password_token = $1
+    // 4d. SELECT FROM users WHERE reset_password_token = $1 AND reset_password_expires > NOW()
     if (q.includes('from users') && q.includes('reset_password_token = $1')) {
       const token = params[0];
       const user = tables.users.find(u => u.reset_password_token === token);
-      return Promise.resolve({ rows: user ? [{ ...user }] : [], rowCount: user ? 1 : 0 });
+      // Mirror the real SQL: also check expiration
+      if (user && user.reset_password_expires && new Date(user.reset_password_expires) > new Date()) {
+        return Promise.resolve({ rows: [{ ...user }], rowCount: 1 });
+      }
+      return Promise.resolve({ rows: [], rowCount: 0 });
     }
 
     // 4e. UPDATE users SET password_hash = $1

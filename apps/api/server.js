@@ -19,7 +19,15 @@ if (process.env.DATABASE_URL) {
 }
 
 /* ---------- Middleware ---------- */
-app.use(cors());
+const allowedOrigins = process.env.NODE_ENV === 'production'
+  ? ['https://www.campusgrid.online', 'https://campusgrid.online']
+  : true; // Allow all origins in development
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -49,6 +57,7 @@ const aiRoutes = require('./routes/ai.routes');
 const careerFinderRoutes = require('./routes/career-finder.routes');
 const offerRoutes = require('./routes/offer.routes');
 const superAdminRoutes = require('./routes/superadmin.routes');
+const notificationRoutes = require('./routes/notification.routes');
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/students', studentRoutes);
@@ -63,6 +72,7 @@ app.use('/api/v1/ai', aiRoutes);
 app.use('/api/v1/career-finder', careerFinderRoutes);
 app.use('/api/v1/offers', offerRoutes);
 app.use('/api/v1/superadmin', superAdminRoutes);
+app.use('/api/v1/notifications', notificationRoutes);
 
 const { authenticate, authorize } = require('./middleware/auth');
 const { query, memoryDb } = require('./db/pool');

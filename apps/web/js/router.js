@@ -38,6 +38,14 @@ const Router = (() => {
 
   // Resolve the current hash
   async function _resolve(force = false) {
+    // If accessed via clean pathname (e.g. from email link without hash), redirect to hash route
+    if (window.location.pathname && window.location.pathname !== '/' && window.location.pathname !== '/index.html') {
+      const cleanPath = window.location.pathname.replace(/^\/+/, '').replace(/\/+$/, '');
+      const search = window.location.search || '';
+      window.location.replace('/#' + cleanPath + search);
+      return;
+    }
+
     const raw = (window.location.hash || '').replace(/^#\/?/, '').split('?')[0].replace(/\/+$/, '');
     const path = raw || 'landing';
 
@@ -111,9 +119,9 @@ const Router = (() => {
   function getParams() {
     const hash = window.location.hash || '';
     const qIndex = hash.indexOf('?');
-    if (qIndex === -1) return {};
-    const queryString = hash.substring(qIndex + 1);
-    return Object.fromEntries(new URLSearchParams(queryString));
+    const hashParams = qIndex !== -1 ? Object.fromEntries(new URLSearchParams(hash.substring(qIndex + 1))) : {};
+    const searchParams = Object.fromEntries(new URLSearchParams(window.location.search || ''));
+    return { ...searchParams, ...hashParams };
   }
 
   // Initialize router

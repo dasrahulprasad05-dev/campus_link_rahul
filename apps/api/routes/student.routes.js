@@ -8,6 +8,7 @@ const router = require('express').Router();
 const { authenticate, authorize } = require('../middleware/auth');
 const studentRepo = require('../repositories/student.repository');
 const appRepo = require('../repositories/application.repository');
+const notifService = require('../services/notification.service');
 const { query } = require('../db/pool');
 
 // GET /api/v1/students — list students (Admin / Mentor / Recruiter with role protection)
@@ -222,6 +223,16 @@ router.post('/:id/interventions', authenticate, authorize('admin', 'mentor'), as
     created_at: new Date().toISOString()
   };
   _interventions.unshift(newInt);
+
+  // Dispatch real-time notice to student
+  notifService.createNotification({
+    userId: studentId,
+    type: 'mentor_feedback',
+    title: `📝 Mentor Guidance: ${newInt.title}`,
+    message: `${newInt.mentor_name} created an intervention for you: "${newInt.notes || newInt.title}". Priority: ${newInt.priority}.`,
+    metadata: { interventionId: newInt.id, mentorName: newInt.mentor_name },
+  }).catch(err => console.warn('[Notif] Mentor notification error:', err.message));
+
   res.status(201).json({ success: true, data: newInt });
 });
 
@@ -232,6 +243,16 @@ router.patch('/:id/interventions/:intId', authenticate, authorize('admin', 'ment
   if (req.body.status) item.status = req.body.status;
   if (req.body.notes) item.notes = req.body.notes;
   item.updated_at = new Date().toISOString();
+
+  // Dispatch notice on update
+  notifService.createNotification({
+    userId: req.params.id,
+    type: 'mentor_feedback',
+    title: `✅ Mentor Update: ${item.title}`,
+    message: `${req.user.name || 'Your mentor'} marked your action item as "${item.status}": "${item.notes || ''}"`,
+    metadata: { interventionId: item.id },
+  }).catch(err => console.warn('[Notif] Mentor update notice error:', err.message));
+
   res.json({ success: true, data: item });
 });
 

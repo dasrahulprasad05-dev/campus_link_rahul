@@ -7,6 +7,7 @@
 const router = require('express').Router();
 const { authenticate, authorize } = require('../middleware/auth');
 const driveRepo = require('../repositories/drive.repository');
+const notifService = require('../services/notification.service');
 
 // GET /api/v1/drives — list placement drives
 router.get('/', async (req, res) => {
@@ -49,6 +50,14 @@ router.post('/', authenticate, authorize('admin', 'super_admin'), async (req, re
       branches: Array.isArray(branches) ? branches : (branches ? branches.split(',').map(b => b.trim()) : []),
       status: 'scheduled',
     });
+
+    // Real-time broadcast notice to all students
+    notifService.broadcastToStudents({
+      type: 'drive_announced',
+      title: `📅 Placement Drive Announced: ${drive.company}`,
+      message: `${drive.company} has scheduled a campus drive for ${drive.role} on ${new Date(drive.drive_date).toLocaleDateString()} at ${drive.venue}. Check Drives section.`,
+      metadata: { driveId: drive.id, company: drive.company, role: drive.role, date: drive.drive_date },
+    }).catch(err => console.warn('[Notif] Drive broadcast error:', err.message));
 
     res.status(201).json({ success: true, data: drive });
   } catch (err) {

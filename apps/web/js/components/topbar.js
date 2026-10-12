@@ -68,6 +68,26 @@ const Topbar = (() => {
       });
     }
 
+    // Notifications bell
+    const notifBtn = document.getElementById('notif-btn');
+    if (notifBtn) {
+      notifBtn.addEventListener('click', () => {
+        Router.navigate('student/notice-board');
+      });
+      // Fetch initial unread count
+      if (typeof API !== 'undefined' && Store.isAuthenticated()) {
+        API.get('/notifications/unread-count').then(res => {
+          if (res && res.success && res.count > 0) {
+            const dot = document.querySelector('.topbar-notification-dot');
+            if (dot) {
+              dot.textContent = res.count > 9 ? '9+' : res.count;
+              dot.style.cssText = 'position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;border-radius:10px;padding:1px 5px;line-height:1.2;display:block;';
+            }
+          }
+        }).catch(() => {});
+      }
+    }
+
     // Avatar — logout dropdown (simplified)
     const avatar = document.getElementById('avatar-btn');
     if (avatar) {

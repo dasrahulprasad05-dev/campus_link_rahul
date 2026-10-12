@@ -7,6 +7,7 @@
 const router = require('express').Router();
 const { authenticate, authorize } = require('../middleware/auth');
 const jobRepo = require('../repositories/job.repository');
+const notifService = require('../services/notification.service');
 
 // GET /api/v1/jobs — list jobs with optional search and type filtering
 router.get('/', async (req, res) => {
@@ -64,6 +65,14 @@ router.post('/', authenticate, authorize('recruiter', 'admin', 'super_admin'), a
       eligible_branches: Array.isArray(eligible_branches) ? eligible_branches : [],
       max_backlogs: max_backlogs || 0,
     });
+
+    // Real-time broadcast notice to all students
+    notifService.broadcastToStudents({
+      type: 'job_posted',
+      title: `📢 New Job Posted: ${job.title} at ${job.company}`,
+      message: `${job.company} posted an opening for ${job.title} (${job.location || 'Multiple Locations'}). Eligibility: Min CGPA ${job.min_cgpa || 'Any'}. Apply before deadline.`,
+      metadata: { jobId: job.id, company: job.company, role: job.title },
+    }).catch(err => console.warn('[Notif] Job broadcast error:', err.message));
 
     res.status(201).json({ success: true, data: job });
   } catch (err) {

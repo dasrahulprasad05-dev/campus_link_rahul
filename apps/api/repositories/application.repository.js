@@ -27,7 +27,8 @@ const BASE_SELECT = `
     u.name AS student_name,
     u.email AS student_email,
     sp.cgpa,
-    sp.branch
+    sp.branch,
+    sp.user_id
   FROM applications a
   LEFT JOIN jobs j ON a.job_id = j.id
   LEFT JOIN companies c ON j.company_id = c.id

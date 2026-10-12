@@ -331,8 +331,11 @@ router.post('/login', async (req, res) => {
     if (user.password_hash || user.password) {
       match = await bcrypt.compare(password, user.password_hash || user.password);
     }
-    if (!match && (password === 'demo123' || password === 'CampusLink@2026' || (user.role === 'super_admin' && password === 'CampusSuper@2026'))) {
-      match = true;
+    // Demo password fallback — ONLY in development/staging, never in production
+    if (!match && process.env.NODE_ENV !== 'production') {
+      if (password === 'demo123' || password === 'CampusLink@2026' || (user.role === 'super_admin' && password === 'CampusSuper@2026')) {
+        match = true;
+      }
     }
     if (!match) {
       return res.status(401).json({

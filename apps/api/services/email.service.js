@@ -11,7 +11,7 @@ const crypto = require('crypto');
 
 const getApiKey = () => process.env.SENDGRID_API_KEY || null;
 const getFromEmail = () => process.env.SENDGRID_FROM_EMAIL || process.env.MAIL_FROM || 'rahulprasadcoding01@gmail.com';
-const getAppUrl = () => process.env.APP_URL || 'https://campus-link-rahul.vercel.app';
+const getAppUrl = () => process.env.APP_URL || 'https://www.campusgrid.online';
 
 /**
  * Send an email via SendGrid REST API or fallback to simulated delivery

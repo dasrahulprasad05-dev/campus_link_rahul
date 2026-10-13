@@ -1,21 +1,45 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { api } from '@/lib/api';
-import { 
-  Users, 
-  Building, 
-  Target, 
-  Award, 
-  AlertTriangle, 
-  ArrowUpRight, 
-  Calendar, 
+import { useScrollAnimation, useCountUp, parseNumericValue } from '@/lib/hooks';
+import {
+  Users,
+  Building,
+  Target,
+  Award,
+  AlertTriangle,
+  ArrowUpRight,
+  Calendar,
   BarChart3,
   TrendingUp,
   Sparkles,
   Zap
 } from 'lucide-react';
+
+/* ─── Animated KPI Number ─── */
+function AnimatedKPI({ value }: { value: string | number }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setIsVisible(true); observer.unobserve(el); } },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const strVal = String(value);
+  const { num, suffix } = parseNumericValue(strVal);
+  const count = useCountUp(num, isVisible, 1500);
+
+  return <span ref={ref} className="tabular-nums">{count}{suffix}</span>;
+}
 
 export default function AdminDashboardPage() {
   const [data, setData] = useState<any>(null);
@@ -56,17 +80,25 @@ export default function AdminDashboardPage() {
     { company: 'TechNova', role: 'Data Analyst', date: '2026-10-25', status: 'Shortlisting', venue: 'Virtual' },
   ];
 
+  const headerRef = useScrollAnimation();
+  const kpiRef = useScrollAnimation();
+  const tableRef = useScrollAnimation();
+  const riskRef = useScrollAnimation();
+
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div
+        ref={headerRef.ref}
+        className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${headerRef.isVisible ? 'scroll-reveal-up' : 'scroll-hidden'}`}
+      >
         <div>
           <div className="flex items-center gap-2 text-xs font-semibold text-indigo-400 mb-1">
             <Zap className="h-3.5 w-3.5" />
             <span>TPO Command Center</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Placement Overview</h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] tracking-tight">Placement Overview</h1>
+          <p className="text-xs sm:text-sm text-[var(--text-tertiary)] mt-1">
             Real-time tracking of institutional readiness, drive stages, and interventions.
           </p>
         </div>
@@ -74,7 +106,7 @@ export default function AdminDashboardPage() {
         <div className="flex items-center gap-2">
           <Link
             href="/admin/analytics"
-            className="px-3.5 py-2 rounded-xl bg-white/4 hover:bg-white/8 text-slate-300 border border-white/8 text-xs font-semibold transition-colors flex items-center gap-1.5"
+            className="px-3.5 py-2 rounded-xl bg-[var(--surface-elevated)] hover:bg-[var(--surface-hover)] text-[var(--text-secondary)] border border-[var(--border)] text-xs font-semibold transition-colors flex items-center gap-1.5"
           >
             <BarChart3 className="h-3.5 w-3.5" /> Full Analytics
           </Link>
@@ -88,11 +120,16 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div
+        ref={kpiRef.ref}
+        className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 ${kpiRef.isVisible ? 'scroll-reveal-up' : 'scroll-hidden'}`}
+      >
         {kpis.map((kpi: any, i: number) => (
-          <div key={i} className="glass-panel p-5 rounded-2xl border border-white/8">
-            <div className="text-xs font-semibold text-slate-400">{kpi.label}</div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-white mt-1 tracking-tight">{kpi.value}</div>
+          <div key={i} className="glass-card glass-panel-hover p-5 rounded-2xl" style={{ animationDelay: `${i * 80}ms` }}>
+            <div className="text-xs font-semibold text-[var(--text-tertiary)]">{kpi.label}</div>
+            <div className="text-2xl sm:text-3xl font-extrabold text-[var(--text-primary)] mt-1 tracking-tight">
+              <AnimatedKPI value={kpi.value} />
+            </div>
             <div className="text-[11px] font-medium text-emerald-400 mt-1 flex items-center gap-1">
               <TrendingUp className="h-3 w-3" />
               <span>{kpi.delta}</span>
@@ -104,9 +141,12 @@ export default function AdminDashboardPage() {
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Drives Schedule Table */}
-        <div className="lg:col-span-2 glass-panel p-5 sm:p-6 rounded-2xl border border-white/8 space-y-4">
+        <div
+          ref={tableRef.ref}
+          className={`lg:col-span-2 glass-card p-5 sm:p-6 rounded-2xl space-y-4 ${tableRef.isVisible ? 'scroll-reveal-up' : 'scroll-hidden'}`}
+        >
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 font-bold text-base text-white">
+            <div className="flex items-center gap-2 font-bold text-base text-[var(--text-primary)]">
               <Target className="h-4 w-4 text-indigo-400" />
               <span>Upcoming Placement Drives</span>
             </div>
@@ -117,7 +157,7 @@ export default function AdminDashboardPage() {
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="text-slate-400 border-b border-white/6 font-semibold">
+              <thead className="text-[var(--text-tertiary)] border-b border-[var(--border)] font-semibold">
                 <tr>
                   <th className="pb-3">Company</th>
                   <th className="pb-3">Role</th>
@@ -125,20 +165,20 @@ export default function AdminDashboardPage() {
                   <th className="pb-3 text-right">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/6 text-slate-200">
+              <tbody className="divide-y divide-[var(--border)] text-[var(--text-secondary)]">
                 {drives.map((d: any, idx: number) => (
-                  <tr key={idx} className="hover:bg-white/2 transition-colors">
-                    <td className="py-3.5 font-semibold text-white flex items-center gap-2">
+                  <tr key={idx} className="hover:bg-[var(--table-hover)] transition-colors">
+                    <td className="py-3.5 font-semibold text-[var(--text-primary)] flex items-center gap-2">
                       <div className="h-7 w-7 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 flex items-center justify-center font-bold text-xs">
                         {(d.company || 'C')[0]}
                       </div>
                       <div>
                         <div>{d.company}</div>
-                        <div className="text-[10px] text-slate-400 font-normal">{d.venue || 'Virtual'}</div>
+                        <div className="text-[10px] text-[var(--text-tertiary)] font-normal">{d.venue || 'Virtual'}</div>
                       </div>
                     </td>
-                    <td className="py-3.5 text-slate-300">{d.role}</td>
-                    <td className="py-3.5 text-slate-400">
+                    <td className="py-3.5 text-[var(--text-secondary)]">{d.role}</td>
+                    <td className="py-3.5 text-[var(--text-tertiary)]">
                       {d.date ? new Date(d.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'TBD'}
                     </td>
                     <td className="py-3.5 text-right">
@@ -154,9 +194,13 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* At-Risk Queue & Intervention Advisory */}
-        <div className="glass-panel p-5 sm:p-6 rounded-2xl border border-white/8 space-y-4">
+        <div
+          ref={riskRef.ref}
+          className={`glass-card p-5 sm:p-6 rounded-2xl space-y-4 ${riskRef.isVisible ? 'scroll-reveal-up' : 'scroll-hidden'}`}
+          style={{ animationDelay: '120ms' }}
+        >
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 font-bold text-base text-white">
+            <div className="flex items-center gap-2 font-bold text-base text-[var(--text-primary)]">
               <AlertTriangle className="h-4 w-4 text-amber-400" />
               <span>Intervention Queue</span>
             </div>
@@ -165,26 +209,26 @@ export default function AdminDashboardPage() {
             </span>
           </div>
 
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-[var(--text-tertiary)]">
             Students whose readiness scores indicate high risk of campus drive rejection:
           </p>
 
           <div className="space-y-3">
             {atRisk.length > 0 ? (
               atRisk.map((s, idx) => (
-                <div key={idx} className="p-3 rounded-xl bg-white/3 border border-white/6 flex items-center justify-between">
+                <div key={idx} className="p-3 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border)] flex items-center justify-between">
                   <div>
-                    <div className="text-xs font-semibold text-white">{s.name}</div>
-                    <div className="text-[10px] text-slate-400">{s.branch || 'CSE'} • CGPA: {s.cgpa || '7.2'}</div>
+                    <div className="text-xs font-semibold text-[var(--text-primary)]">{s.name}</div>
+                    <div className="text-[10px] text-[var(--text-tertiary)]">{s.branch || 'CSE'} • CGPA: {s.cgpa || '7.2'}</div>
                   </div>
                   <div className="text-right">
                     <span className="text-xs font-bold text-amber-400">{s.readiness || 52}/100</span>
-                    <div className="text-[9px] text-slate-400">Readiness</div>
+                    <div className="text-[9px] text-[var(--text-tertiary)]">Readiness</div>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="text-xs text-slate-400 text-center py-6">
+              <div className="text-xs text-[var(--text-tertiary)] text-center py-6">
                 No students currently in critical risk bracket.
               </div>
             )}
@@ -192,7 +236,7 @@ export default function AdminDashboardPage() {
 
           <Link
             href="/admin/interventions"
-            className="w-full mt-2 py-2 rounded-xl bg-white/4 hover:bg-white/8 text-slate-300 border border-white/6 text-xs font-semibold transition-colors flex items-center justify-center"
+            className="w-full mt-2 py-2 rounded-xl bg-[var(--surface-elevated)] hover:bg-[var(--surface-hover)] text-[var(--text-secondary)] border border-[var(--border)] text-xs font-semibold transition-colors flex items-center justify-center"
           >
             Manage Interventions →
           </Link>

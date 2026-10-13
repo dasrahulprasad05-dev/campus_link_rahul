@@ -6,6 +6,7 @@ import Sidebar from '@/components/layout/Sidebar';
 import Topbar from '@/components/layout/Topbar';
 import MobileNav from '@/components/layout/MobileNav';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { useThemeStore } from '@/stores/useThemeStore';
 
 export default function DashboardLayout({
   children,
@@ -16,11 +17,18 @@ export default function DashboardLayout({
   const [hydrated, setHydrated] = useState(false);
   const router = useRouter();
   const { token, isAuthenticated } = useAuthStore();
+  const { theme } = useThemeStore();
 
   useEffect(() => {
     // Wait one tick for Zustand to hydrate from localStorage before checking auth
     setHydrated(true);
   }, []);
+
+  // Sync theme class
+  useEffect(() => {
+    document.documentElement.classList.remove('dark', 'light');
+    document.documentElement.classList.add(theme);
+  }, [theme]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -34,7 +42,7 @@ export default function DashboardLayout({
   }, [hydrated, token, isAuthenticated, router]);
 
   return (
-    <div className="flex min-h-screen bg-[#080c14] text-slate-100 antialiased overflow-x-hidden">
+    <div className="dashboard-layout flex min-h-screen bg-[var(--background)] text-[var(--foreground)] antialiased overflow-x-hidden">
       {/* Desktop Sidebar */}
       <div className="hidden md:block">
         <Sidebar />

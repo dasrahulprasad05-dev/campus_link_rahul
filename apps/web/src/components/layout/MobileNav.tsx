@@ -46,7 +46,7 @@ export default function MobileNav() {
   const links = getLinks();
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-[#090d16]/95 backdrop-blur-xl border-t border-white/10 px-2 flex items-center justify-around z-50">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-[var(--topbar-bg)] backdrop-blur-xl border-t border-[var(--border)] px-2 flex items-center justify-around z-50">
       {links.map(link => {
         const Icon = link.icon;
         const isActive = pathname === link.href;
@@ -55,7 +55,7 @@ export default function MobileNav() {
             key={link.href}
             href={link.href}
             className={`flex flex-col items-center justify-center flex-1 py-1 text-[11px] font-medium transition-colors relative ${
-              isActive ? 'text-indigo-400 font-semibold' : 'text-slate-400 hover:text-slate-200'
+              isActive ? 'text-indigo-400 font-semibold' : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
             }`}
           >
             <div className="relative">

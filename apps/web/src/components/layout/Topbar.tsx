@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuthStore } from '@/stores/useAuthStore';
+import ThemeToggle from '@/components/ThemeToggle';
 import { Menu, Bell, Search, ShieldCheck, LogOut } from 'lucide-react';
 
 export default function Topbar({ onToggleMobile }: { onToggleMobile?: () => void }) {
@@ -25,39 +26,42 @@ export default function Topbar({ onToggleMobile }: { onToggleMobile?: () => void
     .join(' / ') || 'Dashboard';
 
   return (
-    <header className="h-16 bg-[#090d16]/80 backdrop-blur-md border-b border-white/8 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-40">
+    <header className="topbar-container h-16 bg-[var(--topbar-bg)] backdrop-blur-md border-b border-[var(--border)] px-4 sm:px-6 flex items-center justify-between sticky top-0 z-40">
       {/* Left: Mobile Toggle & Breadcrumbs */}
       <div className="flex items-center gap-3">
         <button
           onClick={onToggleMobile}
-          className="p-2 text-slate-400 hover:text-white rounded-lg md:hidden hover:bg-white/5 transition-colors"
+          className="p-2 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] rounded-lg md:hidden hover:bg-[var(--surface-hover)] transition-colors"
           aria-label="Toggle menu"
         >
           <Menu className="h-5 w-5" />
         </button>
 
-        <div className="hidden sm:flex items-center gap-2 text-xs font-medium text-slate-400">
-          <span className="text-slate-300 font-semibold">CampusGrid</span>
+        <div className="hidden sm:flex items-center gap-2 text-xs font-medium text-[var(--text-tertiary)]">
+          <span className="text-[var(--text-secondary)] font-semibold">CampusGrid</span>
           <span>/</span>
           <span className="text-indigo-400 font-semibold">{breadcrumb}</span>
         </div>
       </div>
 
-      {/* Right: Search, Notifications, Role Badge */}
+      {/* Right: Search, Theme Toggle, Notifications, Role Badge */}
       <div className="flex items-center gap-3">
         <div className="relative hidden md:block">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-tertiary)]" />
           <input
             type="text"
             placeholder="Search drives, jobs, skills..."
-            className="w-56 lg:w-72 bg-white/4 border border-white/8 rounded-lg pl-9 pr-4 py-1.5 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500/50 focus:bg-white/6 transition-all"
+            className="w-56 lg:w-72 bg-[var(--input-bg)] border border-[var(--border)] rounded-lg pl-9 pr-4 py-1.5 text-xs text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:border-indigo-500/50 focus:bg-[var(--surface-hover)] transition-all"
           />
         </div>
+
+        {/* Theme Toggle */}
+        <ThemeToggle />
 
         {/* Real-time Notice Bell */}
         <Link
           href={role === 'student' ? '/student/notice-board' : `/${role}/dashboard`}
-          className="relative p-2 text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+          className="relative p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)] rounded-lg transition-colors"
           title="Notice Board & Real-Time Alerts"
         >
           <Bell className="h-4 w-4" />
@@ -90,7 +94,7 @@ export default function Topbar({ onToggleMobile }: { onToggleMobile?: () => void
           onClick={() => logout()}
           title="Sign out of CampusGrid"
           aria-label="Logout"
-          className="flex items-center gap-1.5 px-2.5 py-1.5 text-slate-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg border border-transparent hover:border-rose-500/20 transition-all text-xs font-medium cursor-pointer"
+          className="flex items-center gap-1.5 px-2.5 py-1.5 text-[var(--text-tertiary)] hover:text-rose-300 hover:bg-rose-500/10 rounded-lg border border-transparent hover:border-rose-500/20 transition-all text-xs font-medium cursor-pointer"
         >
           <LogOut className="h-4 w-4" />
           <span className="hidden sm:inline">Logout</span>

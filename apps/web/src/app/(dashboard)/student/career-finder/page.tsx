@@ -81,8 +81,8 @@ export default function StudentCareerFinderPage() {
           <Sparkles className="h-3.5 w-3.5" />
           <span>Industry Career Alignment Engine</span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Career Path Finder</h1>
-        <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-2xl">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] tracking-tight">Career Path Finder</h1>
+        <p className="text-xs sm:text-sm text-[var(--text-tertiary)] mt-1 max-w-2xl">
           Explore key placement domains, target compensation bands, required skill stacks, and hiring companies.
         </p>
       </div>
@@ -98,27 +98,27 @@ export default function StudentCareerFinderPage() {
               onClick={() => setSelectedDomain(d)}
               className={`p-5 rounded-3xl border transition-all cursor-pointer flex items-start gap-4 ${
                 isSelected
-                  ? 'bg-indigo-950/20 border-indigo-500/50 shadow-lg shadow-indigo-500/10'
-                  : 'glass-panel border-white/8 hover:border-white/15'
+                  ? 'bg-indigo-500/10 border-indigo-500/50 shadow-lg shadow-indigo-500/10'
+                  : 'glass-card hover:border-[var(--border-hover)]'
               }`}
             >
               <div className={`p-3 rounded-2xl shrink-0 ${
                 isSelected
                   ? 'bg-indigo-500 text-white shadow-md shadow-indigo-500/25'
-                  : 'bg-white/5 text-slate-300'
+                  : 'bg-[var(--surface-elevated)] text-[var(--text-secondary)]'
               }`}>
                 <Icon className="h-5 w-5" />
               </div>
 
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="font-bold text-sm sm:text-base text-white">{d.title}</h3>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/25">
+                  <h3 className="font-bold text-sm sm:text-base text-[var(--text-primary)]">{d.title}</h3>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 border border-emerald-500/25">
                     {d.demand}
                   </span>
                 </div>
-                <div className="text-xs text-indigo-300 font-semibold mt-1">{d.avg_ctc}</div>
-                <p className="text-xs text-slate-400 mt-2 line-clamp-2 leading-relaxed">
+                <div className="text-xs text-indigo-500 dark:text-indigo-300 font-semibold mt-1">{d.avg_ctc}</div>
+                <p className="text-xs text-[var(--text-tertiary)] mt-2 line-clamp-2 leading-relaxed">
                   {d.description}
                 </p>
               </div>
@@ -128,17 +128,17 @@ export default function StudentCareerFinderPage() {
       </div>
 
       {/* Selected Domain Deep Dive */}
-      <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-indigo-500/30 bg-gradient-to-br from-indigo-950/20 via-slate-900 to-slate-900/60 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/8">
+      <div className="glass-card p-6 sm:p-8 rounded-3xl border border-indigo-500/30 space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[var(--border)]">
           <div>
-            <span className="text-xs font-bold text-indigo-400 uppercase tracking-wider">Pathway Profile</span>
-            <h2 className="text-xl sm:text-2xl font-bold text-white mt-0.5">{selectedDomain.title}</h2>
+            <span className="text-xs font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-wider">Pathway Profile</span>
+            <h2 className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] mt-0.5">{selectedDomain.title}</h2>
           </div>
 
           <div className="flex items-center gap-3">
             <Link
               href="/student/roadmap"
-              className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md transition-all flex items-center gap-1.5"
+              className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
             >
               <span>Build 8-Week Roadmap</span>
               <ArrowRight className="h-3.5 w-3.5" />
@@ -148,12 +148,12 @@ export default function StudentCareerFinderPage() {
 
         {/* Required Skills Grid */}
         <div className="space-y-2.5">
-          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Essential Skill Requirements</h3>
+          <h3 className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider">Essential Skill Requirements</h3>
           <div className="flex flex-wrap gap-2">
             {selectedDomain.skills.map(s => (
               <span
                 key={s}
-                className="px-3 py-1.5 rounded-xl bg-white/4 border border-white/8 text-xs font-semibold text-slate-200"
+                className="px-3 py-1.5 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border)] text-xs font-semibold text-[var(--text-primary)]"
               >
                 ✓ {s}
               </span>
@@ -163,12 +163,12 @@ export default function StudentCareerFinderPage() {
 
         {/* Visiting Companies */}
         <div className="space-y-2.5">
-          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Frequent Campus Recruiters</h3>
+          <h3 className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider">Frequent Campus Recruiters</h3>
           <div className="flex flex-wrap gap-2">
             {selectedDomain.companies.map(c => (
               <span
                 key={c}
-                className="px-3 py-1.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-xs font-semibold text-indigo-300"
+                className="px-3 py-1.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-xs font-semibold text-indigo-600 dark:text-indigo-300"
               >
                 🏢 {c}
               </span>

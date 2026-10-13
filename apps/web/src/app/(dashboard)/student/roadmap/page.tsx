@@ -109,34 +109,34 @@ export default function StudentRoadmapPage() {
           <Sparkles className="h-3.5 w-3.5" />
           <span>Faculty Mentor Guided Curriculum</span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Personalized Career Roadmap</h1>
-        <p className="text-xs sm:text-sm text-slate-400 mt-1">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] tracking-tight">Personalized Career Roadmap</h1>
+        <p className="text-xs sm:text-sm text-[var(--text-tertiary)] mt-1">
           Structured 8-week placement preparation path tailored for your target role. Submit deliverables for mentor approval.
         </p>
       </div>
 
       {/* Progress Card */}
-      <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-white/8 space-y-4">
+      <div className="glass-card p-6 sm:p-8 rounded-3xl space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Roadmap Progress</span>
-            <div className="text-2xl font-black text-white mt-1">
+            <span className="text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)]">Roadmap Progress</span>
+            <div className="text-2xl font-black text-[var(--text-primary)] mt-1">
               {completedCount} of {milestones.length} Milestones Completed
             </div>
           </div>
-          <span className="text-3xl font-black text-indigo-400">{progressPercent}%</span>
+          <span className="text-3xl font-black text-indigo-600 dark:text-indigo-400">{progressPercent}%</span>
         </div>
 
-        <div className="w-full bg-white/5 h-2.5 rounded-full overflow-hidden">
+        <div className="w-full bg-[var(--surface-elevated)] border border-[var(--border)] h-2.5 rounded-full overflow-hidden">
           <div 
             className="bg-gradient-to-r from-indigo-500 via-indigo-400 to-emerald-400 h-full rounded-full transition-all duration-700"
             style={{ width: `${progressPercent}%` }}
           />
         </div>
 
-        <div className="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-white/6">
-          <span>Target Completion: <strong>4 Weeks Remaining</strong></span>
-          <span className="text-emerald-400 font-semibold flex items-center gap-1">
+        <div className="flex items-center justify-between text-xs text-[var(--text-tertiary)] pt-2 border-t border-[var(--border)]">
+          <span>Target Completion: <strong className="text-[var(--text-primary)]">4 Weeks Remaining</strong></span>
+          <span className="text-emerald-500 dark:text-emerald-400 font-semibold flex items-center gap-1">
             <CheckCircle2 className="h-3.5 w-3.5" /> 2 Milestones Approved by Mentor
           </span>
         </div>
@@ -149,20 +149,20 @@ export default function StudentRoadmapPage() {
           return (
             <div
               key={milestone.id}
-              className={`glass-panel p-5 sm:p-6 rounded-2xl border transition-all ${
+              className={`glass-card p-5 sm:p-6 rounded-2xl border transition-all ${
                 isDone
-                  ? 'border-emerald-500/30 bg-emerald-950/10'
-                  : 'border-white/8 bg-[#0f172a]/60'
+                  ? 'border-emerald-500/30 bg-emerald-500/10'
+                  : ''
               }`}
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-4">
                   <button
                     onClick={() => toggleMilestone(milestone.id)}
-                    className="mt-1 text-slate-400 hover:text-emerald-400 transition-colors"
+                    className="mt-1 text-[var(--text-tertiary)] hover:text-emerald-500 transition-colors cursor-pointer"
                   >
                     {isDone ? (
-                      <CheckCircle2 className="h-6 w-6 text-emerald-400 fill-emerald-500/20" />
+                      <CheckCircle2 className="h-6 w-6 text-emerald-500 fill-emerald-500/20" />
                     ) : (
                       <Circle className="h-6 w-6" />
                     )}
@@ -170,35 +170,35 @@ export default function StudentRoadmapPage() {
 
                   <div className="space-y-1.5">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs font-bold text-indigo-400 uppercase tracking-wider">
+                      <span className="text-xs font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-wider">
                         Week {milestone.week}
                       </span>
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full capitalize ${
                         milestone.category === 'project'
-                          ? 'bg-purple-500/15 text-purple-300 border border-purple-500/25'
+                          ? 'bg-purple-500/15 text-purple-600 dark:text-purple-300 border border-purple-500/25'
                           : milestone.category === 'interview'
-                          ? 'bg-amber-500/15 text-amber-300 border border-amber-500/25'
-                          : 'bg-sky-500/15 text-sky-300 border border-sky-500/25'
+                          ? 'bg-amber-500/15 text-amber-600 dark:text-amber-300 border border-amber-500/25'
+                          : 'bg-sky-500/15 text-sky-600 dark:text-sky-300 border border-sky-500/25'
                       }`}>
                         {milestone.category}
                       </span>
                       {milestone.mentor_approved && (
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/25">
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 border border-emerald-500/25">
                           ✓ Mentor Verified
                         </span>
                       )}
                     </div>
 
-                    <h3 className={`font-bold text-base sm:text-lg ${isDone ? 'text-slate-200 line-through opacity-85' : 'text-white'}`}>
+                    <h3 className={`font-bold text-base sm:text-lg ${isDone ? 'text-[var(--text-tertiary)] line-through' : 'text-[var(--text-primary)]'}`}>
                       {milestone.title}
                     </h3>
-                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
                       {milestone.description}
                     </p>
 
                     <div className="pt-2">
-                      <div className="p-3 rounded-xl bg-white/3 border border-white/6 text-xs text-slate-300">
-                        <strong className="text-indigo-300 block mb-0.5">Deliverable to Submit:</strong>
+                      <div className="p-3 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border)] text-xs text-[var(--text-secondary)]">
+                        <strong className="text-indigo-500 dark:text-indigo-300 block mb-0.5">Deliverable to Submit:</strong>
                         <span>{milestone.deliverable}</span>
                       </div>
                     </div>

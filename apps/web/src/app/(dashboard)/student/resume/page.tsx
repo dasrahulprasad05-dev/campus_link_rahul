@@ -96,8 +96,8 @@ export default function StudentResumePage() {
           <Cpu className="h-3.5 w-3.5" />
           <span>Zero-Cost Text-Only Matching Engine</span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Resume & JD Matcher</h1>
-        <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-2xl">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] tracking-tight">Resume & JD Matcher</h1>
+        <p className="text-xs sm:text-sm text-[var(--text-tertiary)] mt-1 max-w-2xl">
           Dense vector matching against real recruiter job descriptions. 100% text-based architecture with ₹0 cloud storage cost.
         </p>
       </div>
@@ -105,45 +105,45 @@ export default function StudentResumePage() {
       {/* Main Grid: Inputs */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left: Candidate Resume Text */}
-        <div className="glass-panel p-5 sm:p-6 rounded-3xl border border-white/8 space-y-4">
+        <div className="glass-card p-5 sm:p-6 rounded-3xl space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-white flex items-center gap-2">
+            <h2 className="text-base font-bold text-[var(--text-primary)] flex items-center gap-2">
               <FileText className="h-4 w-4 text-indigo-400" />
               <span>Candidate Resume Text</span>
             </h2>
-            <span className="text-[11px] text-slate-400 font-medium">Synced from Profile</span>
+            <span className="text-[11px] text-[var(--text-tertiary)] font-medium">Synced from Profile</span>
           </div>
 
           <textarea
             value={resumeText}
             onChange={(e) => setResumeText(e.target.value)}
             rows={10}
-            className="w-full p-4 rounded-2xl bg-white/3 border border-white/8 text-xs sm:text-sm font-mono text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500/50 resize-y leading-relaxed"
+            className="w-full p-4 rounded-2xl bg-[var(--input-bg)] border border-[var(--border)] text-xs sm:text-sm font-mono text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:border-indigo-500/50 resize-y leading-relaxed"
             placeholder="Paste plain resume text here..."
           />
-          <p className="text-[11px] text-slate-400">
+          <p className="text-[11px] text-[var(--text-tertiary)]">
             💡 <strong>Privacy First:</strong> Plain text is processed directly in memory. Zero PDF/file uploads required.
           </p>
         </div>
 
         {/* Right: Target Job Description */}
-        <div className="glass-panel p-5 sm:p-6 rounded-3xl border border-white/8 space-y-4">
+        <div className="glass-card p-5 sm:p-6 rounded-3xl space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-white flex items-center gap-2">
+            <h2 className="text-base font-bold text-[var(--text-primary)] flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-violet-400" />
               <span>Job Description (JD)</span>
             </h2>
-            <span className="text-[11px] text-slate-400 font-medium">Recruiter Criteria</span>
+            <span className="text-[11px] text-[var(--text-tertiary)] font-medium">Recruiter Criteria</span>
           </div>
 
           {/* Quick Presets */}
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[11px] font-bold text-slate-400">Sample JDs:</span>
+            <span className="text-[11px] font-bold text-[var(--text-tertiary)]">Sample JDs:</span>
             {sampleJDs.map(sample => (
               <button
                 key={sample.label}
                 onClick={() => setJdText(sample.jd)}
-                className="px-2.5 py-1 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/20 text-[11px] font-semibold transition-colors"
+                className="px-2.5 py-1 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border border-indigo-500/20 text-[11px] font-semibold transition-colors cursor-pointer"
               >
                 ✨ {sample.label}
               </button>
@@ -154,14 +154,14 @@ export default function StudentResumePage() {
             value={jdText}
             onChange={(e) => setJdText(e.target.value)}
             rows={8}
-            className="w-full p-4 rounded-2xl bg-white/3 border border-white/8 text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500/50 resize-y leading-relaxed"
+            className="w-full p-4 rounded-2xl bg-[var(--input-bg)] border border-[var(--border)] text-xs sm:text-sm text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:border-indigo-500/50 resize-y leading-relaxed"
             placeholder="Paste target Job Description text here..."
           />
 
           <button
             onClick={handleAnalyze}
             disabled={analyzing}
-            className="w-full py-3 rounded-2xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-sm shadow-lg shadow-indigo-500/25 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full py-3 rounded-2xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-sm shadow-lg shadow-indigo-500/25 transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
           >
             {analyzing ? (
               <>
@@ -180,20 +180,20 @@ export default function StudentResumePage() {
 
       {/* Analysis Results Display */}
       {result && (
-        <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-indigo-500/30 bg-gradient-to-br from-indigo-950/20 to-slate-900/60 space-y-6 animate-fade-in">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/8">
+        <div className="glass-card p-6 sm:p-8 rounded-3xl border border-indigo-500/30 space-y-6 animate-fade-in">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[var(--border)]">
             <div>
-              <div className="text-xs font-bold uppercase tracking-wider text-indigo-400">Analysis Verdict</div>
-              <h3 className="text-xl font-bold text-white mt-1">Profile Alignment Score</h3>
+              <div className="text-xs font-bold uppercase tracking-wider text-indigo-500 dark:text-indigo-400">Analysis Verdict</div>
+              <h3 className="text-xl font-bold text-[var(--text-primary)] mt-1">Profile Alignment Score</h3>
             </div>
             <div className="flex items-center gap-3">
-              <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-400">
+              <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-violet-500">
                 {result.match_score}%
               </div>
               <span className={`px-3 py-1 rounded-full text-xs font-bold ${
                 result.match_score >= 75
-                  ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
-                  : 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
+                  ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30'
+                  : 'bg-amber-500/15 text-amber-600 dark:text-amber-300 border border-amber-500/30'
               }`}>
                 {result.match_score >= 75 ? 'Strong Fit' : 'Moderate Alignment'}
               </span>
@@ -202,28 +202,28 @@ export default function StudentResumePage() {
 
           {/* Matched vs Missing Skills */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="p-4 rounded-2xl bg-emerald-950/15 border border-emerald-500/25 space-y-2.5">
-              <div className="flex items-center gap-2 text-xs font-bold text-emerald-400 uppercase tracking-wider">
+            <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 space-y-2.5">
+              <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
                 <CheckCircle2 className="h-4 w-4" />
                 <span>Matching Qualifications ({result.matched_skills?.length || 0})</span>
               </div>
               <div className="flex flex-wrap gap-2 pt-1">
                 {(result.matched_skills || []).map((skill: string) => (
-                  <span key={skill} className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 text-xs font-semibold capitalize border border-emerald-500/30">
+                  <span key={skill} className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 text-xs font-semibold capitalize border border-emerald-500/30">
                     ✓ {skill}
                   </span>
                 ))}
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-amber-950/15 border border-amber-500/25 space-y-2.5">
-              <div className="flex items-center gap-2 text-xs font-bold text-amber-400 uppercase tracking-wider">
+            <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 space-y-2.5">
+              <div className="flex items-center gap-2 text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">
                 <AlertTriangle className="h-4 w-4" />
                 <span>Identified Skill Gaps ({result.missing_skills?.length || 0})</span>
               </div>
               <div className="flex flex-wrap gap-2 pt-1">
                 {(result.missing_skills || []).map((skill: string) => (
-                  <span key={skill} className="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 text-xs font-semibold capitalize border border-amber-500/30">
+                  <span key={skill} className="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-600 dark:text-amber-300 text-xs font-semibold capitalize border border-amber-500/30">
                     + {skill}
                   </span>
                 ))}
@@ -233,11 +233,11 @@ export default function StudentResumePage() {
 
           {/* Actionable Recommendations */}
           <div className="space-y-3 pt-2">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">AI Resume Optimization Steps</h4>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)]">AI Resume Optimization Steps</h4>
             <div className="space-y-2">
               {(result.recommendations || []).map((rec: string, i: number) => (
-                <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-white/3 border border-white/6 text-xs sm:text-sm text-slate-300 leading-relaxed">
-                  <span className="font-bold text-indigo-400 shrink-0">#{i + 1}</span>
+                <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border)] text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
+                  <span className="font-bold text-indigo-500 dark:text-indigo-400 shrink-0">#{i + 1}</span>
                   <span>{rec}</span>
                 </div>
               ))}

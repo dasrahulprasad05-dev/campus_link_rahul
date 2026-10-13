@@ -103,26 +103,26 @@ export default function StudentProfilePage() {
           <Sparkles className="h-3.5 w-3.5" />
           <span>Student Candidate Profile</span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Academic & Placement Profile</h1>
-        <p className="text-xs sm:text-sm text-slate-400 mt-1">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] tracking-tight">Academic & Placement Profile</h1>
+        <p className="text-xs sm:text-sm text-[var(--text-tertiary)] mt-1">
           Recruiters and TPO view this information during automated eligibility screening and drive shortlisting.
         </p>
       </div>
 
       {/* Profile Card Header */}
-      <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-white/8 flex flex-col sm:flex-row items-center gap-6">
+      <div className="glass-card p-6 sm:p-8 rounded-3xl flex flex-col sm:flex-row items-center gap-6">
         <div className="h-20 w-20 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 flex items-center justify-center font-black text-2xl text-white shadow-xl shadow-indigo-500/25 shrink-0">
           {initials}
         </div>
         <div className="text-center sm:text-left flex-1 min-w-0">
-          <h2 className="text-xl sm:text-2xl font-bold text-white truncate">{profile.name}</h2>
-          <p className="text-xs sm:text-sm text-indigo-400 font-medium mt-0.5">{profile.target_role}</p>
-          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 mt-3 text-xs text-slate-300">
+          <h2 className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] truncate">{profile.name}</h2>
+          <p className="text-xs sm:text-sm text-indigo-500 dark:text-indigo-400 font-medium mt-0.5">{profile.target_role}</p>
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 mt-3 text-xs text-[var(--text-secondary)]">
             <span>🎓 {profile.branch}</span>
             <span>•</span>
             <span>Year {profile.year}</span>
             <span>•</span>
-            <span className="font-bold text-white">CGPA: {profile.cgpa}</span>
+            <span className="font-bold text-[var(--text-primary)]">CGPA: {profile.cgpa}</span>
           </div>
         </div>
       </div>
@@ -130,42 +130,42 @@ export default function StudentProfilePage() {
       {/* Form */}
       <form onSubmit={handleSave} className="space-y-6">
         {/* Academic & Contact Info */}
-        <div className="glass-panel p-6 rounded-3xl border border-white/8 space-y-4">
-          <h3 className="text-base font-bold text-white flex items-center gap-2">
+        <div className="glass-card p-6 rounded-3xl space-y-4">
+          <h3 className="text-base font-bold text-[var(--text-primary)] flex items-center gap-2">
             <GraduationCap className="h-4 w-4 text-indigo-400" />
             <span>Academic & Contact Details</span>
           </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">Full Name</label>
+              <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5">Full Name</label>
               <input
                 type="text"
                 value={profile.name}
                 onChange={e => setProfile({ ...profile, name: e.target.value })}
-                className="w-full bg-[#0f172a] border border-white/8 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-indigo-500/50"
+                className="w-full bg-[var(--input-bg)] border border-[var(--border)] rounded-xl px-3.5 py-2 text-xs sm:text-sm text-[var(--text-primary)] focus:outline-none focus:border-indigo-500/50"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">Registered Email</label>
+              <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5">Registered Email</label>
               <input
                 type="email"
                 disabled
                 value={profile.email}
-                className="w-full bg-[#0f172a]/50 border border-white/8 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-slate-400 cursor-not-allowed"
+                className="w-full bg-[var(--surface-elevated)] border border-[var(--border)] rounded-xl px-3.5 py-2 text-xs sm:text-sm text-[var(--text-tertiary)] cursor-not-allowed opacity-75"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">Registration Number</label>
+              <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5">Registration Number</label>
               <input
                 type="text"
                 value={profile.reg_no}
                 onChange={e => setProfile({ ...profile, reg_no: e.target.value })}
-                className="w-full bg-[#0f172a] border border-white/8 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-indigo-500/50"
+                className="w-full bg-[var(--input-bg)] border border-[var(--border)] rounded-xl px-3.5 py-2 text-xs sm:text-sm text-[var(--text-primary)] focus:outline-none focus:border-indigo-500/50"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">Cumulative CGPA</label>
+              <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5">Cumulative CGPA</label>
               <input
                 type="number"
                 step="0.01"
@@ -173,51 +173,51 @@ export default function StudentProfilePage() {
                 max="10"
                 value={profile.cgpa}
                 onChange={e => setProfile({ ...profile, cgpa: parseFloat(e.target.value) || 0 })}
-                className="w-full bg-[#0f172a] border border-white/8 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-indigo-500/50"
+                className="w-full bg-[var(--input-bg)] border border-[var(--border)] rounded-xl px-3.5 py-2 text-xs sm:text-sm text-[var(--text-primary)] focus:outline-none focus:border-indigo-500/50"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">Target Placement Role</label>
+              <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5">Target Placement Role</label>
               <input
                 type="text"
                 value={profile.target_role}
                 onChange={e => setProfile({ ...profile, target_role: e.target.value })}
-                className="w-full bg-[#0f172a] border border-white/8 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-indigo-500/50"
+                className="w-full bg-[var(--input-bg)] border border-[var(--border)] rounded-xl px-3.5 py-2 text-xs sm:text-sm text-[var(--text-primary)] focus:outline-none focus:border-indigo-500/50"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">Phone Number</label>
+              <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5">Phone Number</label>
               <input
                 type="text"
                 value={profile.phone}
                 onChange={e => setProfile({ ...profile, phone: e.target.value })}
-                className="w-full bg-[#0f172a] border border-white/8 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-indigo-500/50"
+                className="w-full bg-[var(--input-bg)] border border-[var(--border)] rounded-xl px-3.5 py-2 text-xs sm:text-sm text-[var(--text-primary)] focus:outline-none focus:border-indigo-500/50"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">LinkedIn Profile URL</label>
+              <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5">LinkedIn Profile URL</label>
               <input
                 type="text"
                 value={profile.linkedin}
                 onChange={e => setProfile({ ...profile, linkedin: e.target.value })}
-                className="w-full bg-[#0f172a] border border-white/8 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-indigo-500/50"
+                className="w-full bg-[var(--input-bg)] border border-[var(--border)] rounded-xl px-3.5 py-2 text-xs sm:text-sm text-[var(--text-primary)] focus:outline-none focus:border-indigo-500/50"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">GitHub Profile URL</label>
+              <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5">GitHub Profile URL</label>
               <input
                 type="text"
                 value={profile.github}
                 onChange={e => setProfile({ ...profile, github: e.target.value })}
-                className="w-full bg-[#0f172a] border border-white/8 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-indigo-500/50"
+                className="w-full bg-[var(--input-bg)] border border-[var(--border)] rounded-xl px-3.5 py-2 text-xs sm:text-sm text-[var(--text-primary)] focus:outline-none focus:border-indigo-500/50"
               />
             </div>
           </div>
         </div>
 
         {/* Technical Skills */}
-        <div className="glass-panel p-6 rounded-3xl border border-white/8 space-y-4">
-          <h3 className="text-base font-bold text-white flex items-center gap-2">
+        <div className="glass-card p-6 rounded-3xl space-y-4">
+          <h3 className="text-base font-bold text-[var(--text-primary)] flex items-center gap-2">
             <Award className="h-4 w-4 text-indigo-400" />
             <span>Technical Skills ({profile.skills.length})</span>
           </h3>
@@ -229,12 +229,12 @@ export default function StudentProfilePage() {
               value={newSkill}
               onChange={e => setNewSkill(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addSkill(); } }}
-              className="flex-1 bg-[#0f172a] border border-white/8 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-indigo-500/50"
+              className="flex-1 bg-[var(--input-bg)] border border-[var(--border)] rounded-xl px-3.5 py-2 text-xs sm:text-sm text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:border-indigo-500/50"
             />
             <button
               type="button"
               onClick={addSkill}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1 shadow-sm transition-colors"
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1 shadow-sm transition-colors cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5" />
               <span>Add</span>
@@ -245,7 +245,7 @@ export default function StudentProfilePage() {
             {profile.skills.map(skill => (
               <span
                 key={skill}
-                className="px-3 py-1 rounded-xl bg-indigo-500/15 text-indigo-300 border border-indigo-500/25 text-xs font-semibold flex items-center gap-1.5"
+                className="px-3 py-1 rounded-xl bg-indigo-500/15 text-indigo-600 dark:text-indigo-300 border border-indigo-500/25 text-xs font-semibold flex items-center gap-1.5"
               >
                 <span>{skill}</span>
                 <button

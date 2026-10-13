@@ -40,7 +40,7 @@ export default function Topbar({ onToggleMobile }: { onToggleMobile?: () => void
         <div className="hidden sm:flex items-center gap-2 text-xs font-medium text-[var(--text-tertiary)]">
           <span className="text-[var(--text-secondary)] font-semibold">CampusGrid</span>
           <span>/</span>
-          <span className="text-indigo-400 font-semibold">{breadcrumb}</span>
+          <span className="text-indigo-600 dark:text-indigo-400 font-semibold">{breadcrumb}</span>
         </div>
       </div>
 
@@ -75,8 +75,8 @@ export default function Topbar({ onToggleMobile }: { onToggleMobile?: () => void
         </Link>
 
         {/* Role Badge */}
-        <div className="hidden xs:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold">
-          <ShieldCheck className="h-3.5 w-3.5 text-indigo-400" />
+        <div className="hidden xs:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-700 dark:text-indigo-300 text-xs font-semibold">
+          <ShieldCheck className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
           <span>{roleLabels[role] || role}</span>
         </div>
 
@@ -94,7 +94,7 @@ export default function Topbar({ onToggleMobile }: { onToggleMobile?: () => void
           onClick={() => logout()}
           title="Sign out of CampusGrid"
           aria-label="Logout"
-          className="flex items-center gap-1.5 px-2.5 py-1.5 text-[var(--text-tertiary)] hover:text-rose-300 hover:bg-rose-500/10 rounded-lg border border-transparent hover:border-rose-500/20 transition-all text-xs font-medium cursor-pointer"
+          className="flex items-center gap-1.5 px-2.5 py-1.5 text-[var(--text-tertiary)] hover:text-rose-600 dark:hover:text-rose-300 hover:bg-rose-500/10 rounded-lg border border-transparent hover:border-rose-500/20 transition-all text-xs font-medium cursor-pointer"
         >
           <LogOut className="h-4 w-4" />
           <span className="hidden sm:inline">Logout</span>

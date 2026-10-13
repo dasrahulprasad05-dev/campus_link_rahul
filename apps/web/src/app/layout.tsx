@@ -16,7 +16,7 @@ export default function RootLayout({
     <html lang="en" className="dark antialiased" suppressHydrationWarning>
       <body className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans selection:bg-indigo-500/30 selection:text-indigo-200">
         {children}
-        <Toaster position="top-right" richColors theme="dark" />
+        <Toaster position="top-right" richColors />
       </body>
     </html>
   );

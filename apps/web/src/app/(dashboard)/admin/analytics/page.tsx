@@ -25,34 +25,34 @@ export default function AdminAnalyticsPage() {
           <BarChart3 className="h-3.5 w-3.5" />
           <span>Placement Intelligence Reports</span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Institutional Placement Analytics</h1>
-        <p className="text-xs sm:text-sm text-slate-400 mt-1">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] tracking-tight">Institutional Placement Analytics</h1>
+        <p className="text-xs sm:text-sm text-[var(--text-tertiary)] mt-1">
           Comprehensive cohort analytics, branch readiness distributions, and compensation tier splits.
         </p>
       </div>
 
       {/* Top 3 Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="glass-panel p-5 rounded-2xl border border-white/8">
-          <div className="text-xs font-semibold text-slate-400">Total Placement Rate</div>
-          <div className="text-3xl font-extrabold text-white mt-1">86.4%</div>
-          <div className="text-xs text-emerald-400 mt-1 flex items-center gap-1 font-medium">
+        <div className="glass-card glass-panel-hover p-5 rounded-2xl">
+          <div className="text-xs font-semibold text-[var(--text-tertiary)]">Total Placement Rate</div>
+          <div className="text-3xl font-extrabold text-[var(--text-primary)] mt-1">86.4%</div>
+          <div className="text-xs text-emerald-500 dark:text-emerald-400 mt-1 flex items-center gap-1 font-medium">
             <TrendingUp className="h-3.5 w-3.5" /> +4.2% increase from 2025 cycle
           </div>
         </div>
 
-        <div className="glass-panel p-5 rounded-2xl border border-white/8">
-          <div className="text-xs font-semibold text-slate-400">Median Compensation</div>
-          <div className="text-3xl font-extrabold text-white mt-1">₹8.4 LPA</div>
-          <div className="text-xs text-indigo-400 mt-1 font-medium">
+        <div className="glass-card glass-panel-hover p-5 rounded-2xl">
+          <div className="text-xs font-semibold text-[var(--text-tertiary)]">Median Compensation</div>
+          <div className="text-3xl font-extrabold text-[var(--text-primary)] mt-1">₹8.4 LPA</div>
+          <div className="text-xs text-indigo-500 dark:text-indigo-400 mt-1 font-medium">
             Super Dream Tier peak at ₹28.5 LPA
           </div>
         </div>
 
-        <div className="glass-panel p-5 rounded-2xl border border-white/8">
-          <div className="text-xs font-semibold text-slate-400">Average Student Readiness</div>
-          <div className="text-3xl font-extrabold text-white mt-1">78 / 100</div>
-          <div className="text-xs text-violet-400 mt-1 font-medium">
+        <div className="glass-card glass-panel-hover p-5 rounded-2xl">
+          <div className="text-xs font-semibold text-[var(--text-tertiary)]">Average Student Readiness</div>
+          <div className="text-3xl font-extrabold text-[var(--text-primary)] mt-1">78 / 100</div>
+          <div className="text-xs text-violet-500 dark:text-violet-400 mt-1 font-medium">
             Calculated across 842 students
           </div>
         </div>
@@ -61,16 +61,16 @@ export default function AdminAnalyticsPage() {
       {/* Grid: Branch-wise and Tier Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Branch breakdown */}
-        <div className="glass-panel p-6 rounded-2xl border border-white/8 space-y-4">
-          <h2 className="text-base font-bold text-white">Branch Placement Success</h2>
+        <div className="glass-card p-6 rounded-2xl space-y-4">
+          <h2 className="text-base font-bold text-[var(--text-primary)]">Branch Placement Success</h2>
           <div className="space-y-4">
             {branchStats.map((b, i) => (
               <div key={i} className="space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-white">{b.branch}</span>
-                  <span className="font-mono font-bold text-indigo-300">{b.placed} placed • {b.avgCtc} avg</span>
+                  <span className="font-semibold text-[var(--text-primary)]">{b.branch}</span>
+                  <span className="font-mono font-bold text-indigo-500 dark:text-indigo-300">{b.placed} placed • {b.avgCtc} avg</span>
                 </div>
-                <div className="h-2 w-full bg-white/6 rounded-full overflow-hidden">
+                <div className="h-2 w-full bg-[var(--surface-elevated)] border border-[var(--border)] rounded-full overflow-hidden">
                   <div
                     className={`h-full ${b.color} rounded-full transition-all`}
                     style={{ width: b.placed }}
@@ -82,16 +82,16 @@ export default function AdminAnalyticsPage() {
         </div>
 
         {/* Compensation Tiers */}
-        <div className="glass-panel p-6 rounded-2xl border border-white/8 space-y-4">
-          <h2 className="text-base font-bold text-white">Compensation Tier Distribution</h2>
+        <div className="glass-card p-6 rounded-2xl space-y-4">
+          <h2 className="text-base font-bold text-[var(--text-primary)]">Compensation Tier Distribution</h2>
           <div className="space-y-4">
             {tiers.map((t, i) => (
-              <div key={i} className="p-3.5 rounded-xl bg-white/3 border border-white/6 space-y-2">
+              <div key={i} className="p-3.5 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border)] space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-white">{t.tier}</span>
-                  <span className="font-mono font-bold text-slate-300">{t.count} offers ({t.pct}%)</span>
+                  <span className="font-semibold text-[var(--text-primary)]">{t.tier}</span>
+                  <span className="font-mono font-bold text-[var(--text-secondary)]">{t.count} offers ({t.pct}%)</span>
                 </div>
-                <div className="h-2 w-full bg-white/6 rounded-full overflow-hidden">
+                <div className="h-2 w-full bg-[var(--surface-elevated)] border border-[var(--border)] rounded-full overflow-hidden">
                   <div
                     className={`h-full ${t.color} rounded-full transition-all`}
                     style={{ width: `${t.pct}%` }}

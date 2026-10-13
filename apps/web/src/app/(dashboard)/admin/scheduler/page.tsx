@@ -22,53 +22,53 @@ export default function AdminSchedulerPage() {
             <CalendarIcon className="h-3.5 w-3.5" />
             <span>Placement Timeline</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Drive Scheduler</h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] tracking-tight">Drive Scheduler</h1>
+          <p className="text-xs sm:text-sm text-[var(--text-tertiary)] mt-1">
             Coordinate interview slots, online testing lab schedules, and corporate presentations.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-white/5 border border-white/8 text-slate-300">
+          <span className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border)] text-[var(--text-secondary)]">
             October 2026
           </span>
         </div>
       </div>
 
       {/* Timeline view */}
-      <div className="glass-panel p-5 sm:p-6 rounded-2xl border border-white/8 space-y-6">
-        <div className="flex items-center justify-between border-b border-white/6 pb-4">
+      <div className="glass-card p-5 sm:p-6 rounded-2xl space-y-6">
+        <div className="flex items-center justify-between border-b border-[var(--border)] pb-4">
           <div className="flex items-center gap-2">
             <Clock className="h-4 w-4 text-indigo-400" />
-            <h2 className="font-bold text-base text-white">Daily Schedule: October 25, 2026</h2>
+            <h2 className="font-bold text-base text-[var(--text-primary)]">Daily Schedule: October 25, 2026</h2>
           </div>
-          <span className="text-xs text-emerald-400 font-semibold">4 Activities Confirmed</span>
+          <span className="text-xs text-emerald-500 dark:text-emerald-400 font-semibold">4 Activities Confirmed</span>
         </div>
 
         <div className="space-y-4">
           {scheduleEvents.map((evt, i) => (
-            <div key={i} className="p-4 rounded-xl bg-white/3 border border-white/6 hover:border-indigo-500/30 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div key={i} className="p-4 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border)] hover:border-indigo-500/30 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-start gap-4">
-                <div className="px-3 py-2 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-mono font-bold shrink-0">
+                <div className="px-3 py-2 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-500 dark:text-indigo-300 text-xs font-mono font-bold shrink-0">
                   {evt.time.split(' - ')[0]}
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-white text-sm">{evt.company}</span>
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-slate-300">
+                    <span className="font-bold text-[var(--text-primary)] text-sm">{evt.company}</span>
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-[var(--surface-hover)] border border-[var(--border)] text-[var(--text-secondary)]">
                       {evt.badge}
                     </span>
                   </div>
-                  <div className="text-xs font-medium text-slate-300 mt-0.5">{evt.title}</div>
-                  <div className="text-[11px] text-slate-400 flex items-center gap-1.5 mt-1">
-                    <MapPin className="h-3 w-3 text-slate-500" />
+                  <div className="text-xs font-medium text-[var(--text-secondary)] mt-0.5">{evt.title}</div>
+                  <div className="text-[11px] text-[var(--text-tertiary)] flex items-center gap-1.5 mt-1">
+                    <MapPin className="h-3 w-3 text-[var(--text-tertiary)]" />
                     <span>{evt.venue}</span>
                   </div>
                 </div>
               </div>
 
               <div className="text-right shrink-0">
-                <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-indigo-600/20 text-indigo-300 border border-indigo-500/30">
+                <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-indigo-500/15 text-indigo-600 dark:text-indigo-300 border border-indigo-500/30">
                   {evt.type}
                 </span>
               </div>

@@ -25,12 +25,12 @@ export default function MentorRoadmapsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-amber-400 mb-1">
+          <div className="flex items-center gap-2 text-xs font-semibold text-amber-600 dark:text-amber-400 mb-1">
             <Map className="h-3.5 w-3.5" />
             <span>Curriculum & Career Progression</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Roadmap Reviews</h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] tracking-tight">Roadmap Reviews</h1>
+          <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-1">
             Audit weekly preparation milestones for assigned mentees and sign off on skill benchmarks.
           </p>
         </div>
@@ -38,7 +38,7 @@ export default function MentorRoadmapsPage() {
         <select
           value={selectedStudent}
           onChange={(e) => setSelectedStudent(e.target.value)}
-          className="px-3.5 py-2 rounded-xl bg-[#0b0f19] border border-white/8 text-white text-xs sm:text-sm focus:outline-none"
+          className="px-3.5 py-2 rounded-xl bg-[var(--input-bg)] border border-[var(--border)] text-[var(--text-primary)] text-xs sm:text-sm focus:outline-none"
         >
           <option value="Ananya Sharma">Ananya Sharma (Data Analyst)</option>
           <option value="Rohan Verma">Rohan Verma (Embedded Systems)</option>
@@ -47,13 +47,13 @@ export default function MentorRoadmapsPage() {
       </div>
 
       {/* Timeline */}
-      <div className="glass-panel p-6 rounded-2xl border border-white/8 space-y-6">
-        <div className="flex items-center justify-between border-b border-white/6 pb-3">
+      <div className="glass-card p-6 rounded-2xl border border-[var(--border)] space-y-6">
+        <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
           <div>
-            <h2 className="text-base font-bold text-white">{selectedStudent}&apos;s Preparation Roadmap</h2>
-            <div className="text-xs text-slate-400">Target Role: Data Analyst & ML Associate • 6-Week Adaptive Track</div>
+            <h2 className="text-base font-bold text-[var(--text-primary)]">{selectedStudent}&apos;s Preparation Roadmap</h2>
+            <div className="text-xs text-[var(--text-secondary)]">Target Role: Data Analyst & ML Associate • 6-Week Adaptive Track</div>
           </div>
-          <span className="text-xs font-bold text-emerald-400 px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30">
+          <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300 px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30">
             68% Completed
           </span>
         </div>
@@ -66,24 +66,24 @@ export default function MentorRoadmapsPage() {
             return (
               <div
                 key={m.week}
-                className="p-4 rounded-xl bg-white/3 border border-white/6 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                className="p-4 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border)] flex flex-col sm:flex-row sm:items-center justify-between gap-4"
               >
                 <div className="flex items-start gap-3">
                   <div className={`h-8 w-8 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 ${
                     isCompleted
-                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                      ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30'
                       : isInProgress
-                      ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
-                      : 'bg-white/5 text-slate-500 border border-white/10'
+                      ? 'bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30'
+                      : 'bg-[var(--surface-elevated)] text-[var(--text-tertiary)] border border-[var(--border)]'
                   }`}>
                     {isCompleted ? <Check className="h-4 w-4" /> : m.week}
                   </div>
 
                   <div>
-                    <h3 className="font-bold text-sm text-white">Week {m.week}: {m.title}</h3>
+                    <h3 className="font-bold text-sm text-[var(--text-primary)]">Week {m.week}: {m.title}</h3>
                     <div className="flex flex-wrap gap-1.5 mt-1.5">
                       {m.topics.map((t, i) => (
-                        <span key={i} className="px-2 py-0.5 rounded bg-white/4 text-[10px] text-slate-300 border border-white/6">
+                        <span key={i} className="px-2 py-0.5 rounded bg-[var(--surface-hover)] text-[10px] text-[var(--text-secondary)] border border-[var(--border)]">
                           {t}
                         </span>
                       ))}
@@ -95,7 +95,7 @@ export default function MentorRoadmapsPage() {
                   {isInProgress && (
                     <button
                       onClick={() => approveMilestone(m.week)}
-                      className="px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 text-xs font-semibold transition-colors flex items-center gap-1"
+                      className="px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-xs font-semibold transition-colors flex items-center gap-1"
                     >
                       <CheckCircle2 className="h-3.5 w-3.5" /> Sign Off Milestone
                     </button>
@@ -103,10 +103,10 @@ export default function MentorRoadmapsPage() {
 
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
                     isCompleted
-                      ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+                      ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30'
                       : isInProgress
-                      ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
-                      : 'bg-white/5 text-slate-400 border-white/10'
+                      ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30'
+                      : 'bg-[var(--surface-elevated)] text-[var(--text-secondary)] border-[var(--border)]'
                   }`}>
                     {m.status}
                   </span>

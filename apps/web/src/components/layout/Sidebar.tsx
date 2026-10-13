@@ -135,7 +135,7 @@ export default function Sidebar({ onCloseMobile }: { onCloseMobile?: () => void 
         </div>
         <div>
           <div className="font-bold text-base tracking-tight text-[var(--text-primary)] flex items-center gap-1.5">
-            CampusGrid <span className="text-[11px] font-extrabold px-1.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">2.0</span>
+            CampusGrid <span className="text-[11px] font-extrabold px-1.5 py-0.5 rounded-full bg-indigo-500/15 text-indigo-600 dark:text-indigo-300 border border-indigo-500/30">2.0</span>
           </div>
           <div className="text-[11px] text-[var(--text-tertiary)] font-medium">Placement Intelligence</div>
         </div>
@@ -159,19 +159,19 @@ export default function Sidebar({ onCloseMobile }: { onCloseMobile?: () => void 
                     onClick={onCloseMobile}
                     className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-all group ${
                       isActive
-                        ? 'bg-indigo-600/15 text-indigo-300 border border-indigo-500/25 shadow-sm shadow-indigo-500/10'
+                        ? 'bg-indigo-600/10 dark:bg-indigo-600/15 text-indigo-700 dark:text-indigo-300 border border-indigo-500/25 shadow-sm shadow-indigo-500/10'
                         : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)]'
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <Icon className={`h-4 w-4 transition-colors ${isActive ? 'text-indigo-400' : 'text-[var(--text-tertiary)] group-hover:text-[var(--text-secondary)]'}`} />
+                      <Icon className={`h-4 w-4 transition-colors ${isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-[var(--text-tertiary)] group-hover:text-[var(--text-secondary)]'}`} />
                       <span>{item.label}</span>
                     </div>
                     {item.badge && (
                       <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
                         item.badge === 'Live' || item.badge === 'New'
-                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                          : 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30'
+                          ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30'
+                          : 'bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-500/30'
                       }`}>
                         {item.badge}
                       </span>

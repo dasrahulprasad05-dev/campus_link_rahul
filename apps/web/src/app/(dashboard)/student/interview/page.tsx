@@ -125,32 +125,32 @@ export default function StudentInterviewPage() {
           <Cpu className="h-3.5 w-3.5" />
           <span>STAR-Method Behavioral & Technical Coach</span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">AI Mock Interview Coach</h1>
-        <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-2xl">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] tracking-tight">AI Mock Interview Coach</h1>
+        <p className="text-xs sm:text-sm text-[var(--text-tertiary)] mt-1 max-w-2xl">
           Practice interview questions with instant STAR evaluation, communication scores, and model answers tailored for campus recruiters.
         </p>
       </div>
 
       {!activeSession ? (
         /* Configuration Card */
-        <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-white/8 space-y-6">
+        <div className="glass-card p-6 sm:p-8 rounded-3xl space-y-6">
           <div className="flex items-center gap-3">
             <div className="h-12 w-12 rounded-2xl bg-indigo-500/15 text-indigo-400 border border-indigo-500/25 flex items-center justify-center">
               <Mic className="h-6 w-6" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white">Configure Interview Round</h2>
-              <p className="text-xs text-slate-400">Select interview focus area and target engineering role</p>
+              <h2 className="text-lg font-bold text-[var(--text-primary)]">Configure Interview Round</h2>
+              <p className="text-xs text-[var(--text-tertiary)]">Select interview focus area and target engineering role</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">Interview Round Type</label>
+              <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5">Interview Round Type</label>
               <select
                 value={roundType}
                 onChange={e => setRoundType(e.target.value)}
-                className="w-full bg-[#0f172a] border border-white/8 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-indigo-500/50"
+                className="w-full bg-[var(--input-bg)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-[var(--text-primary)] focus:outline-none focus:border-indigo-500/50"
               >
                 <option value="technical">Technical Round (DSA & Core CS)</option>
                 <option value="behavioral">STAR Behavioral & Situational HR</option>
@@ -159,12 +159,12 @@ export default function StudentInterviewPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">Target Job Role</label>
+              <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5">Target Job Role</label>
               <input
                 type="text"
                 value={targetRole}
                 onChange={e => setTargetRole(e.target.value)}
-                className="w-full bg-[#0f172a] border border-white/8 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-indigo-500/50"
+                className="w-full bg-[var(--input-bg)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-[var(--text-primary)] focus:outline-none focus:border-indigo-500/50"
               />
             </div>
           </div>
@@ -172,7 +172,7 @@ export default function StudentInterviewPage() {
           <div className="pt-2">
             <button
               onClick={handleStart}
-              className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-sm shadow-xl shadow-indigo-600/25 transition-all flex items-center justify-center gap-2"
+              className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-sm shadow-xl shadow-indigo-600/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <Mic className="h-4 w-4" />
               <span>Start Interactive Interview Session</span>
@@ -182,38 +182,38 @@ export default function StudentInterviewPage() {
       ) : (
         /* Active Interview Card */
         <div className="space-y-6">
-          <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-white/8 space-y-6">
-            <div className="flex items-center justify-between pb-4 border-b border-white/8">
-              <span className="text-xs font-extrabold px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+          <div className="glass-card p-6 sm:p-8 rounded-3xl space-y-6">
+            <div className="flex items-center justify-between pb-4 border-b border-[var(--border)]">
+              <span className="text-xs font-extrabold px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border border-indigo-500/30">
                 Question {currentQuestionIndex + 1} of {interviewQuestions.length} • {currentQ.round}
               </span>
               <button
                 onClick={() => setActiveSession(false)}
-                className="text-xs text-slate-400 hover:text-white transition-colors"
+                className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
               >
                 Exit Session
               </button>
             </div>
 
             <div>
-              <h3 className="text-lg sm:text-xl font-bold text-white leading-snug">
+              <h3 className="text-lg sm:text-xl font-bold text-[var(--text-primary)] leading-snug">
                 &ldquo;{currentQ.question}&rdquo;
               </h3>
-              <p className="text-xs text-indigo-300/80 mt-2 bg-indigo-500/10 border border-indigo-500/20 p-3 rounded-xl">
+              <p className="text-xs text-indigo-600 dark:text-indigo-300 mt-2 bg-indigo-500/10 border border-indigo-500/20 p-3 rounded-xl">
                 💡 <strong>Coach Tip:</strong> {currentQ.tips}
               </p>
             </div>
 
             {/* Answer Input */}
             <div className="space-y-2">
-              <label className="block text-xs font-semibold text-slate-300">Your Response (Type your answer below)</label>
+              <label className="block text-xs font-semibold text-[var(--text-secondary)]">Your Response (Type your answer below)</label>
               <textarea
                 value={answer}
                 onChange={e => setAnswer(e.target.value)}
                 rows={6}
                 disabled={evaluating || !!evaluation}
                 placeholder="Structure your answer clearly. Explain your technical reasoning or use the STAR method..."
-                className="w-full p-4 rounded-2xl bg-white/3 border border-white/8 text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500/50 resize-y leading-relaxed"
+                className="w-full p-4 rounded-2xl bg-[var(--input-bg)] border border-[var(--border)] text-xs sm:text-sm text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:border-indigo-500/50 resize-y leading-relaxed"
               />
             </div>
 
@@ -222,7 +222,7 @@ export default function StudentInterviewPage() {
                 <button
                   onClick={handleSubmitAnswer}
                   disabled={evaluating}
-                  className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center gap-2 disabled:opacity-50"
+                  className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center gap-2 disabled:opacity-50 cursor-pointer"
                 >
                   {evaluating ? (
                     <>
@@ -242,50 +242,50 @@ export default function StudentInterviewPage() {
 
           {/* Evaluation Scorecard */}
           {evaluation && (
-            <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-indigo-500/30 bg-gradient-to-br from-indigo-950/20 to-slate-900/60 space-y-6 animate-fade-in">
-              <div className="flex items-center justify-between pb-4 border-b border-white/8">
+            <div className="glass-card p-6 sm:p-8 rounded-3xl border border-indigo-500/30 space-y-6 animate-fade-in">
+              <div className="flex items-center justify-between pb-4 border-b border-[var(--border)]">
                 <div>
-                  <span className="text-xs font-bold text-indigo-400 uppercase tracking-wider">Evaluation Scorecard</span>
-                  <h4 className="text-xl font-bold text-white mt-0.5">Answer Performance</h4>
+                  <span className="text-xs font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-wider">Evaluation Scorecard</span>
+                  <h4 className="text-xl font-bold text-[var(--text-primary)] mt-0.5">Answer Performance</h4>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-400">
+                  <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-violet-500">
                     {evaluation.score}
                   </span>
-                  <span className="text-xs text-slate-400">/ 100</span>
+                  <span className="text-xs text-[var(--text-tertiary)]">/ 100</span>
                 </div>
               </div>
 
               {/* STAR Breakdown */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                <div className="p-3 rounded-xl bg-white/3 border border-white/6">
-                  <strong className="text-indigo-300 block mb-1">Situation & Context:</strong>
-                  <span className="text-slate-300">{evaluation.star_alignment.situation}</span>
+                <div className="p-3 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border)]">
+                  <strong className="text-indigo-500 dark:text-indigo-300 block mb-1">Situation & Context:</strong>
+                  <span className="text-[var(--text-secondary)]">{evaluation.star_alignment.situation}</span>
                 </div>
-                <div className="p-3 rounded-xl bg-white/3 border border-white/6">
-                  <strong className="text-indigo-300 block mb-1">Task & Objective:</strong>
-                  <span className="text-slate-300">{evaluation.star_alignment.task}</span>
+                <div className="p-3 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border)]">
+                  <strong className="text-indigo-500 dark:text-indigo-300 block mb-1">Task & Objective:</strong>
+                  <span className="text-[var(--text-secondary)]">{evaluation.star_alignment.task}</span>
                 </div>
-                <div className="p-3 rounded-xl bg-white/3 border border-white/6">
-                  <strong className="text-indigo-300 block mb-1">Action & Strategy:</strong>
-                  <span className="text-slate-300">{evaluation.star_alignment.action}</span>
+                <div className="p-3 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border)]">
+                  <strong className="text-indigo-500 dark:text-indigo-300 block mb-1">Action & Strategy:</strong>
+                  <span className="text-[var(--text-secondary)]">{evaluation.star_alignment.action}</span>
                 </div>
-                <div className="p-3 rounded-xl bg-white/3 border border-white/6">
-                  <strong className="text-indigo-300 block mb-1">Result & Impact:</strong>
-                  <span className="text-slate-300">{evaluation.star_alignment.result}</span>
+                <div className="p-3 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border)]">
+                  <strong className="text-indigo-500 dark:text-indigo-300 block mb-1">Result & Impact:</strong>
+                  <span className="text-[var(--text-secondary)]">{evaluation.star_alignment.result}</span>
                 </div>
               </div>
 
               {/* AI Feedback & Model Answer */}
               <div className="space-y-3 pt-2">
                 <div className="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
-                  <h5 className="text-xs font-bold text-indigo-300 uppercase tracking-wider mb-1">Coach Feedback</h5>
-                  <p className="text-xs sm:text-sm text-slate-200 leading-relaxed">{evaluation.feedback}</p>
+                  <h5 className="text-xs font-bold text-indigo-500 dark:text-indigo-300 uppercase tracking-wider mb-1">Coach Feedback</h5>
+                  <p className="text-xs sm:text-sm text-[var(--text-primary)] leading-relaxed">{evaluation.feedback}</p>
                 </div>
 
-                <div className="p-4 rounded-xl bg-emerald-950/15 border border-emerald-500/25">
-                  <h5 className="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1">Example Model Answer</h5>
-                  <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-mono">{evaluation.suggested_answer}</p>
+                <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/25">
+                  <h5 className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-1">Example Model Answer</h5>
+                  <p className="text-xs sm:text-sm text-[var(--text-primary)] leading-relaxed font-mono">{evaluation.suggested_answer}</p>
                 </div>
               </div>
 

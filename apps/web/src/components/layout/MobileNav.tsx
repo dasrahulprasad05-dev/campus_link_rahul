@@ -55,7 +55,7 @@ export default function MobileNav() {
             key={link.href}
             href={link.href}
             className={`flex flex-col items-center justify-center flex-1 py-1 text-[11px] font-medium transition-colors relative ${
-              isActive ? 'text-indigo-400 font-semibold' : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
+              isActive ? 'text-indigo-600 dark:text-indigo-400 font-semibold' : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
             }`}
           >
             <div className="relative">

@@ -28,6 +28,7 @@ export const useThemeStore = create<ThemeState>((set, get) => ({
       localStorage.setItem(STORAGE_KEY, next);
       document.documentElement.classList.remove('dark', 'light');
       document.documentElement.classList.add(next);
+      document.documentElement.setAttribute('data-theme', next);
     }
     set({ theme: next });
   },
@@ -37,6 +38,7 @@ export const useThemeStore = create<ThemeState>((set, get) => ({
       localStorage.setItem(STORAGE_KEY, theme);
       document.documentElement.classList.remove('dark', 'light');
       document.documentElement.classList.add(theme);
+      document.documentElement.setAttribute('data-theme', theme);
     }
     set({ theme });
   },

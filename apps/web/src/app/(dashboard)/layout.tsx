@@ -24,10 +24,11 @@ export default function DashboardLayout({
     setHydrated(true);
   }, []);
 
-  // Sync theme class
+  // Sync theme class & data attribute
   useEffect(() => {
     document.documentElement.classList.remove('dark', 'light');
     document.documentElement.classList.add(theme);
+    document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
 
   useEffect(() => {

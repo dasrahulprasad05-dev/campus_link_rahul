@@ -118,8 +118,8 @@ export default function StudentJobsPage() {
           <Sparkles className="h-3.5 w-3.5" />
           <span>Active Placement Drives & Openings</span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Job Discovery</h1>
-        <p className="text-xs sm:text-sm text-slate-400 mt-1">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] tracking-tight">Job Discovery</h1>
+        <p className="text-xs sm:text-sm text-[var(--text-tertiary)] mt-1">
           Verified company drives for 2026 graduating batch. Browse criteria, eligibility requirements, and submit applications.
         </p>
       </div>
@@ -127,13 +127,13 @@ export default function StudentJobsPage() {
       {/* Search and Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-tertiary)]" />
           <input
             type="text"
             placeholder="Search by job title, company, or required skill (e.g. Python, SQL)..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-[#0f172a] border border-white/8 rounded-2xl pl-10 pr-4 py-2.5 text-xs sm:text-sm text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500/50 transition-all"
+            className="w-full bg-[var(--input-bg)] border border-[var(--border)] rounded-2xl pl-10 pr-4 py-2.5 text-xs sm:text-sm text-[var(--text-primary)] placeholder-[var(--muted)] focus:outline-none focus:border-indigo-500/50 transition-all shadow-sm"
           />
         </div>
 
@@ -145,7 +145,7 @@ export default function StudentJobsPage() {
               className={`px-3 py-2 rounded-xl text-xs font-medium transition-all ${
                 filterType === t
                   ? 'bg-indigo-600 text-white font-semibold shadow-md'
-                  : 'bg-white/4 hover:bg-white/8 text-slate-300 border border-white/6'
+                  : 'bg-[var(--surface-elevated)] hover:bg-[var(--surface-hover)] text-[var(--text-secondary)] border border-[var(--border)]'
               }`}
             >
               {t === 'all' ? 'All Roles' : t}
@@ -163,7 +163,7 @@ export default function StudentJobsPage() {
           return (
             <div
               key={job.id}
-              className="glass-panel glass-panel-hover p-5 sm:p-6 rounded-3xl border border-white/8 flex flex-col justify-between gap-4 transition-all"
+              className="glass-panel glass-panel-hover p-5 sm:p-6 rounded-3xl border border-[var(--border)] flex flex-col justify-between gap-4 transition-all shadow-sm"
             >
               <div>
                 <div className="flex items-start justify-between gap-3">
@@ -172,15 +172,15 @@ export default function StudentJobsPage() {
                       <Building2 className="h-3.5 w-3.5" />
                       <span>{job.company}</span>
                     </span>
-                    <h3 className="font-bold text-base sm:text-lg text-white">{job.title}</h3>
+                    <h3 className="font-bold text-base sm:text-lg text-[var(--text-primary)]">{job.title}</h3>
                   </div>
 
-                  <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/6 text-slate-300 border border-white/8 shrink-0">
+                  <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[var(--surface-elevated)] text-[var(--text-secondary)] border border-[var(--border)] shrink-0">
                     {job.type || 'Full-time'}
                   </span>
                 </div>
 
-                <p className="text-xs sm:text-sm text-slate-300 mt-3 line-clamp-2 leading-relaxed">
+                <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-3 line-clamp-2 leading-relaxed">
                   {job.description}
                 </p>
 
@@ -189,7 +189,7 @@ export default function StudentJobsPage() {
                   {(job.skills_required || []).map(skill => (
                     <span
                       key={skill}
-                      className="px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-300 text-[11px] font-semibold border border-indigo-500/20"
+                      className="px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 text-[11px] font-semibold border border-indigo-500/20"
                     >
                       {skill}
                     </span>
@@ -197,19 +197,19 @@ export default function StudentJobsPage() {
                 </div>
 
                 {/* Criteria meta */}
-                <div className="flex items-center gap-4 text-[11px] text-slate-400 mt-4 pt-3 border-t border-white/6">
+                <div className="flex items-center gap-4 text-[11px] text-[var(--text-tertiary)] mt-4 pt-3 border-t border-[var(--border)]">
                   {job.location && (
                     <span className="flex items-center gap-1">
-                      <MapPin className="h-3 w-3 text-slate-400" />
+                      <MapPin className="h-3 w-3 text-[var(--text-tertiary)]" />
                       <span>{job.location}</span>
                     </span>
                   )}
                   {job.min_cgpa !== undefined && (
-                    <span>Min CGPA: <strong className="text-white">{job.min_cgpa}</strong></span>
+                    <span>Min CGPA: <strong className="text-[var(--text-primary)]">{job.min_cgpa}</strong></span>
                   )}
                   {job.deadline && (
                     <span className="flex items-center gap-1">
-                      <Clock className="h-3 w-3 text-slate-400" />
+                      <Clock className="h-3 w-3 text-[var(--text-tertiary)]" />
                       <span>Closes {new Date(job.deadline).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })}</span>
                     </span>
                   )}

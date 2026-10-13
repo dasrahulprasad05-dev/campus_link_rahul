@@ -7,10 +7,11 @@ import { Sun, Moon } from 'lucide-react';
 export default function ThemeToggle({ className = '' }: { className?: string }) {
   const { theme, toggleTheme } = useThemeStore();
 
-  // Sync the class on mount
+  // Sync the class and data-theme on mount & change
   useEffect(() => {
     document.documentElement.classList.remove('dark', 'light');
     document.documentElement.classList.add(theme);
+    document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
 
   return (

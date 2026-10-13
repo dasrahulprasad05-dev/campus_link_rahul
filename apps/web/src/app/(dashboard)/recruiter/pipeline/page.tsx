@@ -143,12 +143,12 @@ export default function RecruiterPipelinePage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <div className="flex items-center gap-2 text-xs font-semibold text-purple-400 mb-1">
+        <div className="flex items-center gap-2 text-xs font-semibold text-purple-600 dark:text-purple-400 mb-1">
           <BarChart3 className="h-3.5 w-3.5" />
           <span>Multi-Round Recruitment Funnel</span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Application Pipeline</h1>
-        <p className="text-xs sm:text-sm text-slate-400 mt-1">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] tracking-tight">Application Pipeline</h1>
+        <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-1">
           Track shortlisted candidates across multi-round technical interviews, coding challenges, HR discussions, and final offers.
         </p>
       </div>
@@ -158,13 +158,13 @@ export default function RecruiterPipelinePage() {
         {STAGES.map((stg) => {
           const stageCandidates = apps.filter(a => a.status === stg.key);
           return (
-            <div key={stg.key} className="glass-panel p-4 rounded-2xl border border-white/8 space-y-3">
-              <div className="flex items-center justify-between pb-2 border-b border-white/6">
-                <div className="flex items-center gap-1.5 font-bold text-xs text-white uppercase tracking-wider">
+            <div key={stg.key} className="glass-card p-4 rounded-2xl border border-[var(--border)] space-y-3">
+              <div className="flex items-center justify-between pb-2 border-b border-[var(--border)]">
+                <div className="flex items-center gap-1.5 font-bold text-xs text-[var(--text-primary)] uppercase tracking-wider">
                   <span>{stg.icon}</span>
                   <span>{stg.label}</span>
                 </div>
-                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-slate-300">
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[var(--surface-elevated)] border border-[var(--border)] text-[var(--text-secondary)]">
                   {stageCandidates.length}
                 </span>
               </div>
@@ -173,23 +173,23 @@ export default function RecruiterPipelinePage() {
                 {stageCandidates.map((c) => (
                   <div
                     key={c.id}
-                    className="p-3.5 rounded-xl bg-white/3 border border-white/6 hover:border-purple-500/30 transition-all space-y-2.5"
+                    className="p-3.5 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border)] hover:border-purple-500/40 transition-all space-y-2.5"
                   >
                     <div>
-                      <div className="font-bold text-xs text-white">{c.student_name}</div>
-                      <div className="text-[11px] text-purple-400 font-medium truncate">{c.job_title}</div>
-                      <div className="text-[10px] text-slate-400 mt-0.5">{c.branch} • CGPA {c.cgpa}</div>
+                      <div className="font-bold text-xs text-[var(--text-primary)]">{c.student_name}</div>
+                      <div className="text-[11px] text-purple-600 dark:text-purple-400 font-medium truncate">{c.job_title}</div>
+                      <div className="text-[10px] text-[var(--text-tertiary)] mt-0.5">{c.branch} • CGPA {c.cgpa}</div>
                     </div>
 
-                    <div className="p-2 rounded-lg bg-black/20 text-[10px] text-slate-300 flex items-center justify-between">
+                    <div className="p-2 rounded-lg bg-[var(--input-bg)] border border-[var(--border)] text-[10px] text-[var(--text-secondary)] flex items-center justify-between">
                       <span>Round:</span>
-                      <strong className="text-indigo-300">{c.current_round}</strong>
+                      <strong className="text-purple-600 dark:text-purple-300 font-semibold">{c.current_round}</strong>
                     </div>
 
                     <div className="flex items-center gap-1.5 pt-1">
                       <button
                         onClick={() => openStageManager(c)}
-                        className="flex-1 py-1 px-2 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 border border-purple-500/30 text-[10px] font-semibold transition-colors"
+                        className="flex-1 py-1 px-2 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 text-purple-700 dark:text-purple-300 border border-purple-500/30 text-[10px] font-semibold transition-colors"
                       >
                         🎯 Manage Rounds
                       </button>
@@ -197,7 +197,7 @@ export default function RecruiterPipelinePage() {
                       {stg.key === 'applied' && (
                         <button
                           onClick={() => advanceCandidate(c.id, 'shortlisted', 'Aptitude Test')}
-                          className="py-1 px-2 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 text-[10px] font-semibold"
+                          className="py-1 px-2 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-[10px] font-semibold"
                         >
                           Shortlist →
                         </button>
@@ -206,7 +206,7 @@ export default function RecruiterPipelinePage() {
                       {stg.key === 'shortlisted' && (
                         <button
                           onClick={() => advanceCandidate(c.id, 'interview', 'Technical Round 1')}
-                          className="py-1 px-2 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 text-[10px] font-semibold"
+                          className="py-1 px-2 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-[10px] font-semibold"
                         >
                           Interview →
                         </button>
@@ -215,7 +215,7 @@ export default function RecruiterPipelinePage() {
                       {stg.key === 'interview' && (
                         <button
                           onClick={() => advanceCandidate(c.id, 'offered', 'Offer Letter Released')}
-                          className="py-1 px-2 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 text-[10px] font-semibold"
+                          className="py-1 px-2 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-[10px] font-semibold"
                         >
                           Offer 🎉
                         </button>
@@ -225,7 +225,7 @@ export default function RecruiterPipelinePage() {
                 ))}
 
                 {stageCandidates.length === 0 && (
-                  <div className="text-center py-12 text-slate-500 text-xs">
+                  <div className="text-center py-12 text-[var(--text-tertiary)] text-xs">
                     No candidates in this stage
                   </div>
                 )}
@@ -237,18 +237,18 @@ export default function RecruiterPipelinePage() {
 
       {/* Multi-Round Manager Modal */}
       {activeApp && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-          <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-white/10 max-w-xl w-full space-y-5 animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between border-b border-white/8 pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-black/80 backdrop-blur-sm">
+          <div className="glass-card p-6 sm:p-8 rounded-3xl border border-[var(--border)] max-w-xl w-full space-y-5 animate-in fade-in zoom-in-95 duration-150 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
               <div>
-                <h2 className="text-base font-bold text-white">Multi-Round Hiring Stages</h2>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  Candidate: <strong className="text-white">{activeApp.student_name}</strong> • {activeApp.job_title}
+                <h2 className="text-base font-bold text-[var(--text-primary)]">Multi-Round Hiring Stages</h2>
+                <p className="text-xs text-[var(--text-secondary)] mt-0.5">
+                  Candidate: <strong className="text-[var(--text-primary)]">{activeApp.student_name}</strong> • {activeApp.job_title}
                 </p>
               </div>
               <button
                 onClick={() => setActiveApp(null)}
-                className="text-slate-400 hover:text-white text-sm"
+                className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] text-sm"
               >
                 ✕
               </button>
@@ -263,49 +263,49 @@ export default function RecruiterPipelinePage() {
                 return (
                   <div
                     key={stg.stage_order}
-                    className="p-3.5 rounded-xl bg-white/3 border border-white/6 space-y-2"
+                    className="p-3.5 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border)] space-y-2"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="h-6 w-6 rounded-lg bg-purple-500/20 text-purple-300 flex items-center justify-center font-bold text-xs">
+                        <span className="h-6 w-6 rounded-lg bg-purple-500/20 text-purple-700 dark:text-purple-300 flex items-center justify-center font-bold text-xs">
                           {stg.stage_order}
                         </span>
-                        <span className="font-semibold text-xs text-white">{stg.stage_name}</span>
+                        <span className="font-semibold text-xs text-[var(--text-primary)]">{stg.stage_name}</span>
                       </div>
 
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
                         isPassed
-                          ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+                          ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30'
                           : isScheduled
-                          ? 'bg-indigo-500/15 text-indigo-300 border-indigo-500/30'
+                          ? 'bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border-indigo-500/30'
                           : isRejected
-                          ? 'bg-rose-500/15 text-rose-300 border-rose-500/30'
-                          : 'bg-white/5 text-slate-400 border-white/10'
+                          ? 'bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-500/30'
+                          : 'bg-[var(--surface-elevated)] text-[var(--text-secondary)] border-[var(--border)]'
                       }`}>
                         {stg.status}
                       </span>
                     </div>
 
                     {stg.feedback && (
-                      <p className="text-[11px] text-slate-400 pl-8">{stg.feedback}</p>
+                      <p className="text-[11px] text-[var(--text-secondary)] pl-8">{stg.feedback}</p>
                     )}
 
                     <div className="flex items-center justify-end gap-1.5 pl-8 pt-1">
                       <button
                         onClick={() => updateStageStatus(stg.stage_order, 'scheduled')}
-                        className="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-slate-300 text-[10px] font-medium transition-colors"
+                        className="px-2 py-0.5 rounded bg-[var(--surface-elevated)] hover:bg-[var(--surface-hover)] border border-[var(--border)] text-[var(--text-secondary)] text-[10px] font-medium transition-colors"
                       >
                         Schedule
                       </button>
                       <button
                         onClick={() => updateStageStatus(stg.stage_order, 'passed')}
-                        className="px-2 py-0.5 rounded bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-[10px] font-semibold transition-colors"
+                        className="px-2 py-0.5 rounded bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-700 dark:text-emerald-300 text-[10px] font-semibold transition-colors"
                       >
                         Pass Round ✓
                       </button>
                       <button
                         onClick={() => updateStageStatus(stg.stage_order, 'rejected')}
-                        className="px-2 py-0.5 rounded bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 text-[10px] font-semibold transition-colors"
+                        className="px-2 py-0.5 rounded bg-rose-500/20 hover:bg-rose-500/30 text-rose-700 dark:text-rose-300 text-[10px] font-semibold transition-colors"
                       >
                         Eliminate ✕
                       </button>
@@ -318,7 +318,7 @@ export default function RecruiterPipelinePage() {
             <div className="pt-2 flex justify-end">
               <button
                 onClick={() => setActiveApp(null)}
-                className="px-4 py-2 rounded-xl bg-white/6 hover:bg-white/10 text-white text-xs font-semibold"
+                className="px-4 py-2 rounded-xl bg-[var(--surface-elevated)] hover:bg-[var(--surface-hover)] border border-[var(--border)] text-[var(--text-primary)] text-xs font-semibold"
               >
                 Done
               </button>

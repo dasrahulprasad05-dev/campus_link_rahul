@@ -43,12 +43,12 @@ export default function MentorStudentsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <div className="flex items-center gap-2 text-xs font-semibold text-amber-400 mb-1">
+        <div className="flex items-center gap-2 text-xs font-semibold text-amber-600 dark:text-amber-400 mb-1">
           <Users className="h-3.5 w-3.5" />
           <span>Faculty Advisory Queue</span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Mentee Roster</h1>
-        <p className="text-xs sm:text-sm text-slate-400 mt-1">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] tracking-tight">Mentee Roster</h1>
+        <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-1">
           Direct mentorship tracking, milestone completion rates, and personalized student interventions.
         </p>
       </div>
@@ -58,51 +58,51 @@ export default function MentorStudentsPage() {
         {mentees.map((m) => {
           const isRisk = m.readiness < 60;
           return (
-            <div key={m.id} className="glass-panel p-5 rounded-2xl border border-white/8 space-y-4 hover:border-amber-500/30 transition-all">
+            <div key={m.id} className="glass-card p-5 rounded-2xl border border-[var(--border)] space-y-4 hover:border-amber-500/40 transition-all">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-amber-500/15 border border-amber-500/25 text-amber-300 flex items-center justify-center font-bold text-sm">
+                  <div className="h-10 w-10 rounded-xl bg-amber-500/15 border border-amber-500/25 text-amber-700 dark:text-amber-300 flex items-center justify-center font-bold text-sm">
                     {m.name.split(' ').map((n: string) => n[0]).join('')}
                   </div>
                   <div>
-                    <h3 className="font-bold text-base text-white">{m.name}</h3>
-                    <div className="text-xs text-slate-400">{m.branch} • CGPA: {m.cgpa}</div>
+                    <h3 className="font-bold text-base text-[var(--text-primary)]">{m.name}</h3>
+                    <div className="text-xs text-[var(--text-tertiary)]">{m.branch} • CGPA: {m.cgpa}</div>
                   </div>
                 </div>
 
                 <div className="text-right">
-                  <div className={`text-base font-black ${isRisk ? 'text-rose-400' : 'text-emerald-400'}`}>
+                  <div className={`text-base font-black ${isRisk ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
                     {m.readiness}/100
                   </div>
-                  <div className="text-[10px] text-slate-500 uppercase">Readiness</div>
+                  <div className="text-[10px] text-[var(--text-tertiary)] uppercase font-semibold">Readiness</div>
                 </div>
               </div>
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-400">Target Role:</span>
-                  <span className="font-semibold text-white">{m.goal}</span>
+                  <span className="text-[var(--text-tertiary)]">Target Role:</span>
+                  <span className="font-semibold text-[var(--text-primary)]">{m.goal}</span>
                 </div>
 
                 <div className="space-y-1">
                   <div className="flex items-center justify-between text-[11px]">
-                    <span className="text-slate-400">Roadmap Progress</span>
-                    <span className="font-bold text-indigo-300">{m.roadmap_progress}%</span>
+                    <span className="text-[var(--text-tertiary)]">Roadmap Progress</span>
+                    <span className="font-bold text-amber-700 dark:text-amber-300">{m.roadmap_progress}%</span>
                   </div>
-                  <div className="h-1.5 w-full bg-white/6 rounded-full overflow-hidden">
+                  <div className="h-1.5 w-full bg-[var(--surface-elevated)] border border-[var(--border)] rounded-full overflow-hidden">
                     <div className="h-full bg-amber-500 rounded-full" style={{ width: `${m.roadmap_progress}%` }} />
                   </div>
                 </div>
 
-                <div className="p-2.5 rounded-xl bg-white/3 border border-white/6 text-xs text-slate-300">
-                  <span className="text-slate-500">Latest Note: </span>
+                <div className="p-2.5 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border)] text-xs text-[var(--text-secondary)]">
+                  <span className="text-[var(--text-tertiary)]">Latest Note: </span>
                   <span>{m.last_action}</span>
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-white/6 flex items-center justify-between">
+              <div className="pt-2 border-t border-[var(--border)] flex items-center justify-between">
                 <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
-                  isRisk ? 'bg-rose-500/15 text-rose-300 border-rose-500/30' : 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+                  isRisk ? 'bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-500/30' : 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30'
                 }`}>
                   {isRisk ? 'Priority Intervention' : 'On Track'}
                 </span>
@@ -121,28 +121,28 @@ export default function MentorStudentsPage() {
 
       {/* Modal */}
       {selectedMentee && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-          <div className="glass-panel p-6 rounded-3xl border border-white/10 max-w-md w-full space-y-4 animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-black/80 backdrop-blur-sm">
+          <div className="glass-card p-6 rounded-3xl border border-[var(--border)] max-w-md w-full space-y-4 animate-in fade-in zoom-in-95 duration-150 shadow-2xl">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-bold text-white">Send Faculty Guidance</h2>
-              <button onClick={() => setSelectedMentee(null)} className="text-slate-400 hover:text-white text-sm">
+              <h2 className="text-base font-bold text-[var(--text-primary)]">Send Faculty Guidance</h2>
+              <button onClick={() => setSelectedMentee(null)} className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] text-sm">
                 ✕
               </button>
             </div>
-            <p className="text-xs text-slate-400">
-              For mentee: <strong className="text-white">{selectedMentee.name}</strong> ({selectedMentee.goal})
+            <p className="text-xs text-[var(--text-secondary)]">
+              For mentee: <strong className="text-[var(--text-primary)]">{selectedMentee.name}</strong> ({selectedMentee.goal})
             </p>
 
             <form onSubmit={handleSendGuidance} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Mentor Guidance Note</label>
+                <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1">Mentor Guidance Note</label>
                 <textarea
                   rows={4}
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   placeholder="e.g. Schedule 30 mins to review Dynamic Programming problems before upcoming campus drive."
                   required
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#0b0f19] border border-white/10 text-white text-xs sm:text-sm focus:outline-none focus:border-amber-500/50"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[var(--input-bg)] border border-[var(--border)] text-[var(--text-primary)] placeholder-[var(--text-tertiary)] text-xs sm:text-sm focus:outline-none focus:border-amber-500/50"
                 />
               </div>
 
@@ -150,7 +150,7 @@ export default function MentorStudentsPage() {
                 <button
                   type="button"
                   onClick={() => setSelectedMentee(null)}
-                  className="px-3.5 py-2 rounded-xl bg-white/4 hover:bg-white/8 text-slate-300 text-xs font-semibold"
+                  className="px-3.5 py-2 rounded-xl bg-[var(--surface-elevated)] hover:bg-[var(--surface-hover)] border border-[var(--border)] text-[var(--text-secondary)] text-xs font-semibold"
                 >
                   Cancel
                 </button>

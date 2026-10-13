@@ -32,14 +32,14 @@ export default function StudentReadinessPage() {
           <Sparkles className="h-3.5 w-3.5" />
           <span>Explainable ML Placement Model</span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Placement Readiness Score</h1>
-        <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-2xl">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] tracking-tight">Placement Readiness Score</h1>
+        <p className="text-xs sm:text-sm text-[var(--text-tertiary)] mt-1 max-w-2xl">
           Multi-dimensional placement readiness evaluation trained on historical campus recruitment outcomes.
         </p>
       </div>
 
       {/* Main Scorecard Banner */}
-      <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-indigo-500/25 bg-gradient-to-br from-indigo-950/30 via-slate-900 to-indigo-900/10 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div className="glass-card p-6 sm:p-8 rounded-3xl border border-indigo-500/25 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-6">
           <div className="relative h-28 w-28 shrink-0 flex items-center justify-center">
             {/* SVG Radial Gauge */}
@@ -48,7 +48,7 @@ export default function StudentReadinessPage() {
                 cx="50"
                 cy="50"
                 r="40"
-                className="stroke-white/10"
+                className="stroke-[var(--border)]"
                 strokeWidth="8"
                 fill="none"
               />
@@ -65,20 +65,20 @@ export default function StudentReadinessPage() {
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-3xl font-black text-white">{readiness}</span>
-              <span className="text-[10px] text-indigo-300 font-bold uppercase tracking-wider">INDEX</span>
+              <span className="text-3xl font-black text-[var(--text-primary)]">{readiness}</span>
+              <span className="text-[10px] text-indigo-500 dark:text-indigo-300 font-bold uppercase tracking-wider">INDEX</span>
             </div>
           </div>
 
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30">
                 Tier 1 Placement Ready
               </span>
-              <span className="text-xs text-slate-400 font-medium">88th Percentile</span>
+              <span className="text-xs text-[var(--text-tertiary)] font-medium">88th Percentile</span>
             </div>
-            <h2 className="text-xl font-bold text-white mt-2">Strong Candidate Profile</h2>
-            <p className="text-xs text-slate-300 mt-1 max-w-md leading-relaxed">
+            <h2 className="text-xl font-bold text-[var(--text-primary)] mt-2">Strong Candidate Profile</h2>
+            <p className="text-xs text-[var(--text-secondary)] mt-1 max-w-md leading-relaxed">
               Based on your academic standing and project portfolio, you qualify for 90%+ of current company drives. Focusing on DSA problem speed will boost your odds.
             </p>
           </div>
@@ -86,7 +86,7 @@ export default function StudentReadinessPage() {
 
         <Link
           href="/student/interview"
-          className="px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-indigo-600/25 transition-all flex items-center gap-2 shrink-0"
+          className="px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-indigo-600/25 transition-all flex items-center gap-2 shrink-0 cursor-pointer"
         >
           <span>Boost Score with Mock</span>
           <ArrowRight className="h-4 w-4" />
@@ -94,24 +94,24 @@ export default function StudentReadinessPage() {
       </div>
 
       {/* 5 Dimensional Breakdown */}
-      <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-white/8 space-y-6">
+      <div className="glass-card p-6 sm:p-8 rounded-3xl space-y-6">
         <div>
-          <h3 className="text-base font-bold text-white">5-Factor Explainability Breakdown</h3>
-          <p className="text-xs text-slate-400 mt-0.5">How your overall readiness index is computed across key placement pillars</p>
+          <h3 className="text-base font-bold text-[var(--text-primary)]">5-Factor Explainability Breakdown</h3>
+          <p className="text-xs text-[var(--text-tertiary)] mt-0.5">How your overall readiness index is computed across key placement pillars</p>
         </div>
 
         <div className="space-y-4">
           {dimensions.map(dim => (
-            <div key={dim.name} className="p-4 rounded-2xl bg-white/3 border border-white/6 space-y-2">
+            <div key={dim.name} className="p-4 rounded-2xl bg-[var(--surface-elevated)] border border-[var(--border)] space-y-2">
               <div className="flex items-center justify-between text-xs sm:text-sm">
-                <span className="font-bold text-white">{dim.name}</span>
+                <span className="font-bold text-[var(--text-primary)]">{dim.name}</span>
                 <div className="flex items-center gap-3">
-                  <span className="text-xs text-slate-400">Benchmark: {dim.benchmark}%</span>
-                  <span className="font-black text-indigo-400 text-sm">{dim.score}%</span>
+                  <span className="text-xs text-[var(--text-tertiary)]">Benchmark: {dim.benchmark}%</span>
+                  <span className="font-black text-indigo-500 dark:text-indigo-400 text-sm">{dim.score}%</span>
                 </div>
               </div>
 
-              <div className="w-full bg-white/6 h-2 rounded-full overflow-hidden">
+              <div className="w-full bg-[var(--surface-hover)] border border-[var(--border)] h-2 rounded-full overflow-hidden">
                 <div
                   className={`h-full rounded-full transition-all duration-700 ${
                     dim.score >= dim.benchmark ? 'bg-indigo-500' : 'bg-amber-500'
@@ -120,7 +120,7 @@ export default function StudentReadinessPage() {
                 />
               </div>
 
-              <p className="text-xs text-slate-300 pt-0.5 leading-relaxed">{dim.desc}</p>
+              <p className="text-xs text-[var(--text-secondary)] pt-0.5 leading-relaxed">{dim.desc}</p>
             </div>
           ))}
         </div>

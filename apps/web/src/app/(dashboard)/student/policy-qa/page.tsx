@@ -80,8 +80,8 @@ export default function StudentPolicyQAPage() {
           <Sparkles className="h-3.5 w-3.5" />
           <span>University Placement Regulations Assistant</span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Placement Policy Q&A</h1>
-        <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-2xl">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] tracking-tight">Placement Policy Q&A</h1>
+        <p className="text-xs sm:text-sm text-[var(--text-tertiary)] mt-1 max-w-2xl">
           Ask questions about eligibility thresholds, multiple offers, drive attendance rules, and TPO guidelines.
         </p>
       </div>
@@ -92,7 +92,7 @@ export default function StudentPolicyQAPage() {
           <button
             key={i}
             onClick={() => handleSend(sq)}
-            className="px-3 py-1.5 rounded-xl bg-white/4 hover:bg-white/8 text-slate-300 border border-white/6 text-xs whitespace-nowrap transition-colors"
+            className="px-3 py-1.5 rounded-xl bg-[var(--surface-elevated)] hover:bg-[var(--surface-hover)] text-[var(--text-secondary)] border border-[var(--border)] text-xs whitespace-nowrap transition-colors cursor-pointer"
           >
             💬 {sq}
           </button>
@@ -100,7 +100,7 @@ export default function StudentPolicyQAPage() {
       </div>
 
       {/* Chat Window */}
-      <div className="glass-panel rounded-3xl border border-white/8 flex flex-col h-[520px]">
+      <div className="glass-card rounded-3xl flex flex-col h-[520px]">
         {/* Messages Scroll Area */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
           {messages.map((msg, i) => {
@@ -112,7 +112,7 @@ export default function StudentPolicyQAPage() {
               >
                 <div className={`h-8 w-8 rounded-xl flex items-center justify-center shrink-0 ${
                   isBot
-                    ? 'bg-indigo-500/15 text-indigo-400 border border-indigo-500/25'
+                    ? 'bg-indigo-500/15 text-indigo-500 dark:text-indigo-400 border border-indigo-500/25'
                     : 'bg-violet-600 text-white shadow-md'
                 }`}>
                   {isBot ? <Bot className="h-4 w-4" /> : <User className="h-4 w-4" />}
@@ -120,7 +120,7 @@ export default function StudentPolicyQAPage() {
 
                 <div className={`p-4 rounded-2xl max-w-lg text-xs sm:text-sm leading-relaxed whitespace-pre-line ${
                   isBot
-                    ? 'bg-white/4 border border-white/6 text-slate-200'
+                    ? 'bg-[var(--surface-elevated)] border border-[var(--border)] text-[var(--text-primary)]'
                     : 'bg-indigo-600 text-white font-medium shadow-md'
                 }`}>
                   {msg.text}
@@ -134,7 +134,7 @@ export default function StudentPolicyQAPage() {
               <div className="h-8 w-8 rounded-xl bg-indigo-500/15 text-indigo-400 border border-indigo-500/25 flex items-center justify-center">
                 <Bot className="h-4 w-4" />
               </div>
-              <div className="p-3.5 rounded-2xl bg-white/4 border border-white/6 text-xs text-slate-400 flex items-center gap-2">
+              <div className="p-3.5 rounded-2xl bg-[var(--surface-elevated)] border border-[var(--border)] text-xs text-[var(--text-tertiary)] flex items-center gap-2">
                 <div className="h-2 w-2 rounded-full bg-indigo-400 animate-pulse" />
                 <span>Checking campus placement guidelines...</span>
               </div>
@@ -143,7 +143,7 @@ export default function StudentPolicyQAPage() {
         </div>
 
         {/* Input Bar */}
-        <div className="p-3 sm:p-4 border-t border-white/8 bg-black/20">
+        <div className="p-3 sm:p-4 border-t border-[var(--border)] bg-[var(--surface-elevated)]">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -156,12 +156,12 @@ export default function StudentPolicyQAPage() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask any question about university placement policy..."
-              className="flex-1 bg-[#0f172a] border border-white/8 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500/50"
+              className="flex-1 bg-[var(--input-bg)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-xs sm:text-sm text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:border-indigo-500/50"
             />
             <button
               type="submit"
               disabled={loading || !input.trim()}
-              className="p-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white shadow-md transition-colors disabled:opacity-40"
+              className="p-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white shadow-md transition-colors disabled:opacity-40 cursor-pointer"
             >
               <Send className="h-4 w-4" />
             </button>

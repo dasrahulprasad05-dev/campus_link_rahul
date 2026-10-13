@@ -153,8 +153,8 @@ export default function NoticeBoardPage() {
             <span>Real-Time Broadcast Network</span>
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Notice Board</h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] tracking-tight">Notice Board</h1>
+          <p className="text-xs sm:text-sm text-[var(--text-tertiary)] mt-1">
             Live placement drives, job openings, mentor guidance, and round-by-round status alerts.
           </p>
         </div>
@@ -163,9 +163,9 @@ export default function NoticeBoardPage() {
           {unreadCount > 0 && (
             <button
               onClick={markAllRead}
-              className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-medium text-slate-300 border border-white/8 transition-colors flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-lg bg-[var(--surface-elevated)] hover:bg-[var(--surface-hover)] text-xs font-medium text-[var(--text-secondary)] border border-[var(--border)] transition-colors flex items-center gap-1.5 cursor-pointer"
             >
-              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
               <span>Mark all read</span>
             </button>
           )}
@@ -175,7 +175,7 @@ export default function NoticeBoardPage() {
               fetchNotices();
               toast.info('Refreshed notice board');
             }}
-            className="px-3 py-1.5 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 text-xs font-semibold text-indigo-300 border border-indigo-500/30 transition-colors flex items-center gap-1.5"
+            className="px-3 py-1.5 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 text-xs font-semibold text-indigo-600 dark:text-indigo-300 border border-indigo-500/30 transition-colors flex items-center gap-1.5 cursor-pointer"
           >
             <RefreshCw className="h-3.5 w-3.5" />
             <span>Refresh</span>
@@ -184,23 +184,23 @@ export default function NoticeBoardPage() {
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none border-b border-white/8">
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none border-b border-[var(--border)]">
         <button
           onClick={() => setFilter('all')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
+          className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
             filter === 'all'
               ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20 font-semibold'
-              : 'text-slate-400 hover:text-white hover:bg-white/5'
+              : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)]'
           }`}
         >
           All Notices ({notices.length})
         </button>
         <button
           onClick={() => setFilter('jobs')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 ${
+          className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
             filter === 'jobs'
               ? 'bg-indigo-600 text-white font-semibold'
-              : 'text-slate-400 hover:text-white hover:bg-white/5'
+              : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)]'
           }`}
         >
           <Briefcase className="h-3.5 w-3.5" />
@@ -208,10 +208,10 @@ export default function NoticeBoardPage() {
         </button>
         <button
           onClick={() => setFilter('drives')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 ${
+          className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
             filter === 'drives'
               ? 'bg-indigo-600 text-white font-semibold'
-              : 'text-slate-400 hover:text-white hover:bg-white/5'
+              : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)]'
           }`}
         >
           <Calendar className="h-3.5 w-3.5" />
@@ -219,10 +219,10 @@ export default function NoticeBoardPage() {
         </button>
         <button
           onClick={() => setFilter('mentor')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 ${
+          className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
             filter === 'mentor'
               ? 'bg-indigo-600 text-white font-semibold'
-              : 'text-slate-400 hover:text-white hover:bg-white/5'
+              : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)]'
           }`}
         >
           <GraduationCap className="h-3.5 w-3.5" />
@@ -230,10 +230,10 @@ export default function NoticeBoardPage() {
         </button>
         <button
           onClick={() => setFilter('pipeline')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 ${
+          className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
             filter === 'pipeline'
               ? 'bg-indigo-600 text-white font-semibold'
-              : 'text-slate-400 hover:text-white hover:bg-white/5'
+              : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)]'
           }`}
         >
           <Target className="h-3.5 w-3.5" />
@@ -244,14 +244,14 @@ export default function NoticeBoardPage() {
       {/* Notice List */}
       <div className="space-y-3">
         {loading ? (
-          <div className="p-12 text-center text-slate-400 text-sm glass-panel rounded-2xl">
+          <div className="p-12 text-center text-[var(--text-tertiary)] text-sm glass-card rounded-2xl">
             Loading real-time notices...
           </div>
         ) : filtered.length === 0 ? (
-          <div className="p-12 text-center glass-panel rounded-2xl">
-            <Bell className="h-8 w-8 text-slate-500 mx-auto mb-3" />
-            <div className="text-base font-semibold text-white">No notices in this category</div>
-            <p className="text-xs text-slate-400 mt-1">Check back later for newly announced drives and updates.</p>
+          <div className="p-12 text-center glass-card rounded-2xl">
+            <Bell className="h-8 w-8 text-[var(--text-tertiary)] mx-auto mb-3" />
+            <div className="text-base font-semibold text-[var(--text-primary)]">No notices in this category</div>
+            <p className="text-xs text-[var(--text-tertiary)] mt-1">Check back later for newly announced drives and updates.</p>
           </div>
         ) : (
           filtered.map(notice => {
@@ -259,21 +259,21 @@ export default function NoticeBoardPage() {
             return (
               <div
                 key={notice.id}
-                className={`glass-panel glass-panel-hover p-4 sm:p-5 rounded-2xl border transition-all flex flex-col sm:flex-row sm:items-start justify-between gap-4 ${
+                className={`glass-card glass-panel-hover p-4 sm:p-5 rounded-2xl border transition-all flex flex-col sm:flex-row sm:items-start justify-between gap-4 ${
                   isUnread
-                    ? 'border-indigo-500/40 bg-indigo-950/15'
-                    : 'border-white/8 bg-[#0f172a]/60'
+                    ? 'border-indigo-500/40 bg-indigo-500/10'
+                    : ''
                 }`}
               >
                 <div className="flex items-start gap-3.5 min-w-0">
                   <div className={`p-2.5 rounded-xl shrink-0 mt-0.5 ${
                     notice.type === 'job_posted'
-                      ? 'bg-sky-500/15 text-sky-400 border border-sky-500/25'
+                      ? 'bg-sky-500/15 text-sky-500 dark:text-sky-400 border border-sky-500/25'
                       : notice.type === 'drive_announced'
-                      ? 'bg-amber-500/15 text-amber-400 border border-amber-500/25'
+                      ? 'bg-amber-500/15 text-amber-500 dark:text-amber-400 border border-amber-500/25'
                       : notice.type === 'mentor_feedback'
-                      ? 'bg-violet-500/15 text-violet-400 border border-violet-500/25'
-                      : 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/25'
+                      ? 'bg-violet-500/15 text-violet-500 dark:text-violet-400 border border-violet-500/25'
+                      : 'bg-emerald-500/15 text-emerald-500 dark:text-emerald-400 border border-emerald-500/25'
                   }`}>
                     {notice.type === 'job_posted' && <Briefcase className="h-5 w-5" />}
                     {notice.type === 'drive_announced' && <Calendar className="h-5 w-5" />}
@@ -283,17 +283,17 @@ export default function NoticeBoardPage() {
 
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-semibold text-sm sm:text-base text-white">{notice.title}</h3>
+                      <h3 className="font-semibold text-sm sm:text-base text-[var(--text-primary)]">{notice.title}</h3>
                       {isUnread && (
-                        <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                        <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border border-indigo-500/30">
                           NEW
                         </span>
                       )}
                     </div>
-                    <p className="text-xs sm:text-sm text-slate-300 mt-1.5 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-1.5 leading-relaxed">
                       {notice.message}
                     </p>
-                    <div className="flex items-center gap-3 mt-3 text-[11px] text-slate-400">
+                    <div className="flex items-center gap-3 mt-3 text-[11px] text-[var(--text-tertiary)]">
                       <span>⏱️ {timeAgo(notice.created_at)}</span>
                       <span>•</span>
                       <span className="capitalize">{notice.type.replace(/_/g, ' ')}</span>
@@ -305,7 +305,7 @@ export default function NoticeBoardPage() {
                   {isUnread && (
                     <button
                       onClick={() => markRead(notice.id)}
-                      className="px-2.5 py-1 text-xs text-slate-400 hover:text-white rounded-md transition-colors"
+                      className="px-2.5 py-1 text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)] rounded-md transition-colors cursor-pointer"
                     >
                       Mark read
                     </button>

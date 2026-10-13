@@ -158,8 +158,8 @@ export default function AdminStudentsPage() {
             <Users className="h-3.5 w-3.5" />
             <span>Talent Pool Directory</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Registered Students</h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] tracking-tight">Registered Students</h1>
+          <p className="text-xs sm:text-sm text-[var(--text-tertiary)] mt-1">
             Monitor student academic profiles, readiness scores, and assign mentor interventions.
           </p>
         </div>
@@ -167,7 +167,7 @@ export default function AdminStudentsPage() {
         <div className="flex items-center gap-2 self-start sm:self-auto">
           <button
             onClick={() => setShowImportModal(true)}
-            className="px-3.5 py-2 rounded-xl bg-white/4 hover:bg-white/8 text-slate-300 border border-white/8 text-xs font-semibold transition-colors flex items-center gap-1.5"
+            className="px-3.5 py-2 rounded-xl bg-[var(--surface-elevated)] hover:bg-[var(--surface-hover)] text-[var(--text-secondary)] border border-[var(--border)] text-xs font-semibold transition-colors flex items-center gap-1.5"
           >
             <Upload className="h-3.5 w-3.5" /> Paste CSV
           </button>
@@ -183,13 +183,13 @@ export default function AdminStudentsPage() {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-tertiary)]" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by student name or email..."
-            className="w-full pl-10 pr-4 py-2 rounded-xl bg-[#0b0f19] border border-white/8 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-indigo-500/50"
+            className="w-full pl-10 pr-4 py-2 rounded-xl bg-[var(--input-bg)] border border-[var(--border)] text-[var(--text-primary)] placeholder-[var(--muted)] text-xs sm:text-sm focus:outline-none focus:border-indigo-500/50"
           />
         </div>
 
@@ -197,7 +197,7 @@ export default function AdminStudentsPage() {
           <select
             value={branchFilter}
             onChange={(e) => setBranchFilter(e.target.value)}
-            className="px-3 py-2 rounded-xl bg-[#0b0f19] border border-white/8 text-xs sm:text-sm text-slate-300 focus:outline-none"
+            className="px-3 py-2 rounded-xl bg-[var(--input-bg)] border border-[var(--border)] text-xs sm:text-sm text-[var(--text-primary)] focus:outline-none"
           >
             <option value="all">All Branches</option>
             <option value="CSE">CSE</option>
@@ -209,7 +209,7 @@ export default function AdminStudentsPage() {
           <select
             value={readinessFilter}
             onChange={(e) => setReadinessFilter(e.target.value)}
-            className="px-3 py-2 rounded-xl bg-[#0b0f19] border border-white/8 text-xs sm:text-sm text-slate-300 focus:outline-none"
+            className="px-3 py-2 rounded-xl bg-[var(--input-bg)] border border-[var(--border)] text-xs sm:text-sm text-[var(--text-primary)] focus:outline-none"
           >
             <option value="all">All Readiness</option>
             <option value="high">High (80+)</option>
@@ -220,10 +220,10 @@ export default function AdminStudentsPage() {
       </div>
 
       {/* Students Table */}
-      <div className="glass-panel rounded-2xl border border-white/8 overflow-hidden">
+      <div className="glass-panel rounded-2xl border border-[var(--border)] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="text-slate-400 border-b border-white/6 font-semibold bg-white/2">
+            <thead className="text-[var(--text-tertiary)] border-b border-[var(--border)] font-semibold bg-[var(--surface-elevated)]">
               <tr>
                 <th className="py-3 px-4">Student</th>
                 <th className="py-3 px-4">Branch</th>
@@ -233,25 +233,25 @@ export default function AdminStudentsPage() {
                 <th className="py-3 px-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/6 text-slate-200">
+            <tbody className="divide-y divide-[var(--border)] text-[var(--text-secondary)]">
               {filtered.map((s, idx) => {
                 const score = s.readiness || 0;
                 const isRisk = score < 60;
                 return (
-                  <tr key={s.id || idx} className="hover:bg-white/2 transition-colors">
+                  <tr key={s.id || idx} className="hover:bg-[var(--table-hover)] transition-colors">
                     <td className="py-3.5 px-4">
-                      <div className="font-semibold text-white">{s.name}</div>
-                      <div className="text-[11px] text-slate-400">{s.email}</div>
+                      <div className="font-semibold text-[var(--text-primary)]">{s.name}</div>
+                      <div className="text-[11px] text-[var(--text-tertiary)]">{s.email}</div>
                     </td>
-                    <td className="py-3.5 px-4 text-slate-300 font-medium">{s.branch || 'CSE'}</td>
-                    <td className="py-3.5 px-4 font-mono font-semibold text-white">{s.cgpa || '8.0'}</td>
+                    <td className="py-3.5 px-4 text-[var(--text-secondary)] font-medium">{s.branch || 'CSE'}</td>
+                    <td className="py-3.5 px-4 font-mono font-semibold text-[var(--text-primary)]">{s.cgpa || '8.0'}</td>
                     <td className="py-3.5 px-4">
                       <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
                         score >= 80 
-                          ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/25'
+                          ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/25'
                           : isRisk
-                          ? 'bg-rose-500/15 text-rose-300 border-rose-500/25'
-                          : 'bg-amber-500/15 text-amber-300 border-amber-500/25'
+                          ? 'bg-rose-500/15 text-rose-400 border-rose-500/25'
+                          : 'bg-amber-500/15 text-amber-400 border-amber-500/25'
                       }`}>
                         {score}/100
                       </span>
@@ -259,7 +259,7 @@ export default function AdminStudentsPage() {
                     <td className="py-3.5 px-4">
                       <div className="flex flex-wrap gap-1 max-w-xs">
                         {(s.skills || ['Python', 'DSA']).slice(0, 3).map((sk: string, i: number) => (
-                          <span key={i} className="px-1.5 py-0.5 rounded bg-white/4 text-[10px] text-slate-300">
+                          <span key={i} className="px-1.5 py-0.5 rounded bg-[var(--surface-elevated)] text-[10px] text-[var(--text-secondary)] border border-[var(--border)]">
                             {sk}
                           </span>
                         ))}
@@ -268,7 +268,7 @@ export default function AdminStudentsPage() {
                     <td className="py-3.5 px-4 text-right">
                       <button
                         onClick={() => setSelectedStudent(s)}
-                        className="px-2.5 py-1 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 border border-indigo-500/30 text-[11px] font-semibold transition-colors"
+                        className="px-2.5 py-1 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-400 border border-indigo-500/30 text-[11px] font-semibold transition-colors"
                       >
                         Intervene
                       </button>
@@ -307,7 +307,7 @@ export default function AdminStudentsPage() {
                   onChange={(e) => setCsvText(e.target.value)}
                   placeholder={`Rohit Sharma, rohit@abit.edu, CSE, 8.20, 82, Python;SQL;React\nAditi Singh, aditi@abit.edu, IT, 8.55, 88, Java;AWS;DSA`}
                   required
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#0b0f19] border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-indigo-500/50"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[var(--input-bg)] border border-[var(--border)] text-[var(--text-primary)] font-mono text-xs focus:outline-none focus:border-indigo-500/50"
                 />
               </div>
 
@@ -323,7 +323,7 @@ export default function AdminStudentsPage() {
                   <button
                     type="button"
                     onClick={() => setShowImportModal(false)}
-                    className="px-3.5 py-2 rounded-xl bg-white/4 hover:bg-white/8 text-slate-300 text-xs font-semibold"
+                    className="px-3.5 py-2 rounded-xl bg-[var(--surface-elevated)] hover:bg-[var(--surface-hover)] text-[var(--text-secondary)] border border-[var(--border)] text-xs font-semibold"
                   >
                     Cancel
                   </button>
@@ -343,29 +343,29 @@ export default function AdminStudentsPage() {
       {/* Intervention Modal */}
       {selectedStudent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-          <div className="glass-panel p-6 rounded-3xl border border-white/10 max-w-md w-full space-y-4 animate-in fade-in zoom-in-95 duration-150">
+          <div className="glass-panel p-6 rounded-3xl border border-[var(--border)] max-w-md w-full space-y-4 animate-in fade-in zoom-in-95 duration-150">
             <div>
               <div className="flex items-center justify-between">
-                <h2 className="text-base font-bold text-white">Assign Intervention</h2>
-                <button onClick={() => setSelectedStudent(null)} className="text-slate-400 hover:text-white text-sm">
+                <h2 className="text-base font-bold text-[var(--text-primary)]">Assign Intervention</h2>
+                <button onClick={() => setSelectedStudent(null)} className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] text-sm">
                   ✕
                 </button>
               </div>
-              <p className="text-xs text-slate-400 mt-1">
-                For student: <strong className="text-white">{selectedStudent.name}</strong> ({selectedStudent.branch})
+              <p className="text-xs text-[var(--text-tertiary)] mt-1">
+                For student: <strong className="text-[var(--text-primary)]">{selectedStudent.name}</strong> ({selectedStudent.branch})
               </p>
             </div>
 
             <form onSubmit={handleSendIntervention} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Intervention / Action Note</label>
+                <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1">Intervention / Action Note</label>
                 <textarea
                   rows={4}
                   value={interventionNote}
                   onChange={(e) => setInterventionNote(e.target.value)}
                   placeholder="e.g. Schedule mandatory 1-on-1 DSA practice session before upcoming Google drive."
                   required
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#0b0f19] border border-white/10 text-white text-xs sm:text-sm focus:outline-none focus:border-indigo-500/50"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[var(--input-bg)] border border-[var(--border)] text-[var(--text-primary)] placeholder-[var(--muted)] text-xs sm:text-sm focus:outline-none focus:border-indigo-500/50"
                 />
               </div>
 
@@ -373,7 +373,7 @@ export default function AdminStudentsPage() {
                 <button
                   type="button"
                   onClick={() => setSelectedStudent(null)}
-                  className="px-3.5 py-2 rounded-xl bg-white/4 hover:bg-white/8 text-slate-300 text-xs font-semibold"
+                  className="px-3.5 py-2 rounded-xl bg-[var(--surface-elevated)] hover:bg-[var(--surface-hover)] text-[var(--text-secondary)] border border-[var(--border)] text-xs font-semibold"
                 >
                   Cancel
                 </button>

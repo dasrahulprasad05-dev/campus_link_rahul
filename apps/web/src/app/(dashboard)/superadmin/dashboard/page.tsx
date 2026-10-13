@@ -138,7 +138,7 @@ export default function SuperAdminDashboardPage() {
         ref={headerRef.ref}
         className={headerRef.isVisible ? 'scroll-reveal-up' : 'scroll-hidden'}
       >
-        <div className="flex items-center gap-2 text-xs font-semibold text-rose-400 mb-1">
+        <div className="flex items-center gap-2 text-xs font-semibold text-rose-600 dark:text-rose-400 mb-1">
           <ShieldCheck className="h-3.5 w-3.5" />
           <span>Platform Root Administration</span>
         </div>
@@ -157,9 +157,9 @@ export default function SuperAdminDashboardPage() {
           <div>
             <div className="text-xs text-[var(--text-tertiary)] font-semibold">API Microservices</div>
             <div className="text-lg font-bold text-[var(--text-primary)] mt-0.5">Render Web Service</div>
-            <div className="text-[11px] text-emerald-400 font-medium">99.98% Healthy • Latency 142ms</div>
+            <div className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">99.98% Healthy • Latency 142ms</div>
           </div>
-          <div className="h-10 w-10 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center">
+          <div className="h-10 w-10 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
             <Server className="h-5 w-5" />
           </div>
         </div>
@@ -168,9 +168,9 @@ export default function SuperAdminDashboardPage() {
           <div>
             <div className="text-xs text-[var(--text-tertiary)] font-semibold">PostgreSQL Database</div>
             <div className="text-lg font-bold text-[var(--text-primary)] mt-0.5">Neon Serverless DB</div>
-            <div className="text-[11px] text-emerald-400 font-medium">Active Connection Pool • SSL Enabled</div>
+            <div className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">Active Connection Pool • SSL Enabled</div>
           </div>
-          <div className="h-10 w-10 rounded-xl bg-indigo-500/15 text-indigo-400 flex items-center justify-center">
+          <div className="h-10 w-10 rounded-xl bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
             <Database className="h-5 w-5" />
           </div>
         </div>
@@ -179,9 +179,9 @@ export default function SuperAdminDashboardPage() {
           <div>
             <div className="text-xs text-[var(--text-tertiary)] font-semibold">Notice Stream Engine</div>
             <div className="text-lg font-bold text-[var(--text-primary)] mt-0.5">SSE Real-Time Bus</div>
-            <div className="text-[11px] text-indigo-400 font-medium">Broadcasts Active • 0 Dropped</div>
+            <div className="text-[11px] text-indigo-600 dark:text-indigo-400 font-medium">Broadcasts Active • 0 Dropped</div>
           </div>
-          <div className="h-10 w-10 rounded-xl bg-violet-500/15 text-violet-400 flex items-center justify-center">
+          <div className="h-10 w-10 rounded-xl bg-violet-500/15 text-violet-600 dark:text-violet-400 flex items-center justify-center">
             <Activity className="h-5 w-5" />
           </div>
         </div>
@@ -195,7 +195,7 @@ export default function SuperAdminDashboardPage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <h2 className="text-base font-bold text-[var(--text-primary)]">Pending Staff Verification Queue</h2>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30">
               <AnimatedNum value={pendingStaff.length} /> Awaiting Approval
             </span>
           </div>
@@ -208,7 +208,7 @@ export default function SuperAdminDashboardPage() {
               className="p-4 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border)] flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-[var(--border-hover)] transition-all"
             >
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl bg-amber-500/15 border border-amber-500/25 text-amber-300 flex items-center justify-center font-bold text-sm">
+                <div className="h-10 w-10 rounded-xl bg-amber-500/15 border border-amber-500/25 text-amber-700 dark:text-amber-300 flex items-center justify-center font-bold text-sm">
                   {staff.name[0]}
                 </div>
                 <div>
@@ -219,14 +219,14 @@ export default function SuperAdminDashboardPage() {
                     </span>
                   </div>
                   <div className="text-xs text-[var(--text-tertiary)]">{staff.email}</div>
-                  <div className="text-[11px] text-indigo-400 mt-0.5 font-medium">{staff.organization}</div>
+                  <div className="text-[11px] text-indigo-600 dark:text-indigo-400 mt-0.5 font-medium">{staff.organization}</div>
                 </div>
               </div>
 
               <div className="flex items-center gap-2 self-end sm:self-center">
                 <button
                   onClick={() => handleReject(staff)}
-                  className="px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-semibold transition-colors flex items-center gap-1"
+                  className="px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-300 border border-rose-500/30 text-xs font-semibold transition-colors flex items-center gap-1"
                 >
                   <XCircle className="h-3.5 w-3.5" /> Reject
                 </button>
@@ -275,7 +275,7 @@ export default function SuperAdminDashboardPage() {
                   <td className="py-3 capitalize text-[var(--text-secondary)] font-medium">{staff.role}</td>
                   <td className="py-3 text-[var(--text-tertiary)]">{staff.organization}</td>
                   <td className="py-3 text-right">
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
                       Active Verified
                     </span>
                   </td>

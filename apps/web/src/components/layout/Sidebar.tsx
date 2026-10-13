@@ -48,7 +48,7 @@ export default function Sidebar({ onCloseMobile }: { onCloseMobile?: () => void 
         section: 'Overview',
         items: [
           { id: 'dashboard', href: '/student/dashboard', label: 'Dashboard', icon: Home },
-          { id: 'notice-board', href: '/student/notice-board', label: 'Notice Board', icon: Bell, badge: unreadCount > 0 ? String(unreadCount) : 'Live' },
+          { id: 'notice-board', href: '/student/notice-board', label: 'Notice Board', icon: Bell, badge: unreadCount > 0 ? String(unreadCount) : undefined },
           { id: 'profile', href: '/student/profile', label: 'My Profile', icon: User },
         ],
       },

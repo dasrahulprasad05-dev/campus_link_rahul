@@ -88,8 +88,10 @@ app.get('/api/v1/dashboard', authenticate, async (req, res) => {
     if (role === 'student') {
       // Student dashboard: readiness + applications + jobs
       const profile = memoryDb.tables.student_profiles.find(p => p.user_id === req.user.id);
-      const apps = memoryDb.tables.applications.filter(a => a.student_id === (profile?.id || req.user.id));
-      const offers = memoryDb.tables.offers.filter(o => o.student_id === (profile?.id || req.user.id));
+      // Applications reference student_profile.id (not user_id), so use profile.id with fallback
+      const studentProfileId = profile?.id || req.user.id;
+      const apps = memoryDb.tables.applications.filter(a => a.student_id === studentProfileId);
+      const offers = memoryDb.tables.offers.filter(o => o.student_id === studentProfileId);
       const allJobs = memoryDb.tables.jobs.filter(j => j.status === 'active');
 
       const kpis = [

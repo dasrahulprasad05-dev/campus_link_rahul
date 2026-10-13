@@ -5,36 +5,49 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 import { 
-  Zap, 
   ArrowRight, 
   User, 
   Mail, 
   Lock, 
-  Building, 
-  GraduationCap, 
-  Briefcase,
+  Eye,
+  EyeOff,
   AlertCircle,
   CheckCircle2,
-  Sparkles
+  Zap
 } from 'lucide-react';
 import { toast } from 'sonner';
+
+const ROLES = [
+  { id: 'student', label: 'Student', icon: '🎓', desc: 'Track placement, practice interviews' },
+  { id: 'recruiter', label: 'Recruiter', icon: '💼', desc: 'Post jobs, manage pipelines' },
+  { id: 'mentor', label: 'Mentor', icon: '👨‍🏫', desc: 'Guide and review student roadmaps' },
+  { id: 'admin', label: 'TPO Admin', icon: '🏛️', desc: 'Manage drives and offers' },
+] as const;
+
+type Role = typeof ROLES[number]['id'];
 
 export default function RegisterPage() {
   const router = useRouter();
 
-  const [role, setRole] = useState<'student' | 'recruiter' | 'mentor' | 'admin'>('student');
+  const [role, setRole] = useState<Role>('student');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [metaField, setMetaField] = useState(''); // Branch for student, Company for recruiter, Dept for mentor, College for admin
+  const [showPassword, setShowPassword] = useState(false);
+  const [metaField, setMetaField] = useState('');
   const [cgpa, setCgpa] = useState('8.0');
   const [loading, setLoading] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState<string | null>(null);
+  const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !email || !password) {
       toast.warning('Please complete all required fields');
+      return;
+    }
+    if (password.length < 6) {
+      toast.warning('Password must be at least 6 characters');
       return;
     }
 
@@ -61,213 +74,267 @@ export default function RegisterPage() {
 
       await api.post('/auth/register', payload);
       setRegisteredEmail(email.trim());
-      toast.success('Registration successful! Please verify your email.');
+      toast.success('Account created! Check your email to verify.');
     } catch (err: any) {
-      toast.error(err.message || 'Registration failed');
+      toast.error(err.message || 'Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
+  // ── Success State ──────────────────────────────────────────────────
   if (registeredEmail) {
     return (
-      <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-white/8 shadow-2xl text-center space-y-5">
-        <div className="h-14 w-14 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mx-auto">
-          <CheckCircle2 className="h-7 w-7" />
-        </div>
-        <h1 className="text-2xl font-bold text-white tracking-tight">Account Created!</h1>
-        <p className="text-xs sm:text-sm text-slate-300">
-          We sent a verification link to: <br />
-          <strong className="text-white font-mono">{registeredEmail}</strong>
-        </p>
-
-        <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs text-left space-y-2">
-          <div className="flex items-center gap-2 font-bold text-amber-300">
-            <AlertCircle className="h-4 w-4" />
-            <span>Check Your Spam / Junk Folder!</span>
+      <div className="relative">
+        <div className="absolute -inset-px rounded-3xl bg-gradient-to-br from-emerald-500/15 via-transparent to-indigo-500/15 pointer-events-none" />
+        <div className="relative glass-panel p-7 sm:p-9 rounded-3xl border border-white/10 shadow-2xl shadow-black/40 text-center space-y-5 animate-scale-in">
+          <div className="h-16 w-16 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/30">
+            <CheckCircle2 className="h-8 w-8 text-white" />
           </div>
-          <p className="leading-relaxed">
-            University firewalls and email providers often route verification emails into your Spam folder. Please click <strong>&quot;Report Not Spam&quot;</strong> and verify your account.
-          </p>
-        </div>
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Account Created!</h1>
+            <p className="text-xs sm:text-sm text-slate-300 mt-2">
+              We sent a verification link to:
+            </p>
+            <p className="font-mono text-sm font-bold text-indigo-300 mt-1 bg-indigo-500/10 border border-indigo-500/20 px-4 py-2 rounded-xl inline-block mt-2">
+              {registeredEmail}
+            </p>
+          </div>
 
-        <div className="pt-2">
+          <div className="p-4 rounded-2xl bg-amber-500/8 border border-amber-500/30 text-left space-y-2">
+            <div className="flex items-center gap-2 font-bold text-amber-300 text-xs">
+              <AlertCircle className="h-4 w-4" />
+              <span>Check Your Spam / Junk Folder!</span>
+            </div>
+            <p className="text-xs text-amber-200/80 leading-relaxed">
+              University firewalls often route verification emails to Spam. Please click{' '}
+              <strong>&quot;Not Spam&quot;</strong> and verify your account before signing in.
+            </p>
+          </div>
+
           <Link
             href="/login"
-            className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-indigo-600/25 transition-all inline-block"
+            className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-sm shadow-xl shadow-indigo-600/25 transition-all inline-flex items-center justify-center gap-2 btn-lift"
           >
-            Continue to Sign In →
+            Continue to Sign In <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </div>
     );
   }
 
+  // ── Registration Form ──────────────────────────────────────────────
   return (
-    <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-white/8 shadow-2xl">
-      <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold text-white tracking-tight">Create your Account</h1>
-        <p className="text-xs sm:text-sm text-slate-400 mt-1">
-          Join CampusGrid 2.0 placement intelligence network
-        </p>
-      </div>
+    <div className="relative">
+      <div className="absolute -inset-px rounded-3xl bg-gradient-to-br from-indigo-500/20 via-transparent to-violet-500/20 pointer-events-none" />
 
-      {/* Role Picker */}
-      <div className="mb-5">
-        <label className="block text-xs font-semibold text-slate-300 mb-2">I am registering as a:</label>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          {[
-            { id: 'student', label: 'Student', icon: '🎓' },
-            { id: 'recruiter', label: 'Recruiter', icon: '💼' },
-            { id: 'mentor', label: 'Mentor', icon: '👨‍🏫' },
-            { id: 'admin', label: 'TPO Admin', icon: '🏛️' },
-          ].map((r) => (
-            <button
-              key={r.id}
-              type="button"
-              onClick={() => setRole(r.id as any)}
-              className={`p-2.5 rounded-xl border text-xs font-semibold flex flex-col items-center gap-1 transition-all ${
-                role === r.id
-                  ? 'bg-indigo-600/20 text-indigo-300 border-indigo-500/40 shadow-sm'
-                  : 'bg-white/3 text-slate-400 border-white/8 hover:bg-white/6 hover:text-white'
-              }`}
-            >
-              <span className="text-base">{r.icon}</span>
-              <span>{r.label}</span>
-            </button>
-          ))}
+      <div className="relative glass-panel p-6 sm:p-8 rounded-3xl border border-white/10 shadow-2xl shadow-black/40">
+        {/* Header */}
+        <div className="text-center mb-6">
+          <div className="h-14 w-14 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-500/30 animate-pulse-glow">
+            <Zap className="h-7 w-7 text-white fill-white" />
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Create Account</h1>
+          <p className="text-xs sm:text-sm text-slate-400 mt-1.5">
+            Join <span className="text-indigo-400 font-medium">CampusGrid 2.0</span> placement intelligence
+          </p>
         </div>
-      </div>
 
-      {/* Form */}
-      <form onSubmit={handleRegister} className="space-y-4">
-        <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1.5">Full Name</label>
-          <div className="relative">
-            <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Ananya Sharma"
-              required
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#0b0f19] border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500/50"
-            />
+        {/* Role Picker */}
+        <div className="mb-5">
+          <label className="block text-xs font-semibold text-slate-300 mb-2.5">I am registering as:</label>
+          <div className="grid grid-cols-2 gap-2">
+            {ROLES.map((r) => (
+              <button
+                key={r.id}
+                type="button"
+                id={`role-${r.id}`}
+                onClick={() => { setRole(r.id); setMetaField(''); }}
+                className={`p-3 rounded-xl border text-left transition-all ${
+                  role === r.id
+                    ? 'bg-indigo-600/20 text-indigo-300 border-indigo-500/50 shadow-md shadow-indigo-500/10 scale-[1.02]'
+                    : 'bg-white/3 text-slate-400 border-white/8 hover:bg-white/6 hover:text-white hover:border-white/15'
+                }`}
+              >
+                <div className="flex items-center gap-2 mb-0.5">
+                  <span className="text-base">{r.icon}</span>
+                  <span className="text-xs font-bold">{r.label}</span>
+                </div>
+                <div className="text-[10px] text-slate-500 leading-tight">{r.desc}</div>
+              </button>
+            ))}
           </div>
         </div>
 
-        <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1.5">Email Address</label>
-          <div className="relative">
-            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@university.edu"
-              required
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#0b0f19] border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500/50"
-            />
+        {/* Form */}
+        <form onSubmit={handleRegister} className="space-y-4">
+          {/* Name */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1.5">Full Name</label>
+            <div className={`relative transition-all duration-200 ${focusedField === 'name' ? 'scale-[1.01]' : ''}`}>
+              <User className={`absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 transition-colors ${focusedField === 'name' ? 'text-indigo-400' : 'text-slate-500'}`} />
+              <input
+                id="reg-name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                onFocus={() => setFocusedField('name')}
+                onBlur={() => setFocusedField(null)}
+                placeholder="e.g. Ananya Sharma"
+                required
+                className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/4 border border-white/10 text-white placeholder-slate-500 text-sm transition-all focus:outline-none focus:bg-white/6 focus:border-indigo-500/60"
+              />
+            </div>
           </div>
-        </div>
 
-        <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1.5">Password</label>
-          <div className="relative">
-            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Min 8 characters"
-              required
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#0b0f19] border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500/50"
-            />
+          {/* Email */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1.5">Email Address</label>
+            <div className={`relative transition-all duration-200 ${focusedField === 'email' ? 'scale-[1.01]' : ''}`}>
+              <Mail className={`absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 transition-colors ${focusedField === 'email' ? 'text-indigo-400' : 'text-slate-500'}`} />
+              <input
+                id="reg-email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onFocus={() => setFocusedField('email')}
+                onBlur={() => setFocusedField(null)}
+                placeholder="you@university.edu"
+                required
+                className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/4 border border-white/10 text-white placeholder-slate-500 text-sm transition-all focus:outline-none focus:bg-white/6 focus:border-indigo-500/60"
+              />
+            </div>
           </div>
-        </div>
 
-        {/* Dynamic Meta Field */}
-        {role === 'student' && (
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">Branch</label>
+          {/* Password */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1.5">Password</label>
+            <div className={`relative transition-all duration-200 ${focusedField === 'password' ? 'scale-[1.01]' : ''}`}>
+              <Lock className={`absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 transition-colors ${focusedField === 'password' ? 'text-indigo-400' : 'text-slate-500'}`} />
+              <input
+                id="reg-password"
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onFocus={() => setFocusedField('password')}
+                onBlur={() => setFocusedField(null)}
+                placeholder="Min 6 characters"
+                required
+                className="w-full pl-10 pr-11 py-3 rounded-xl bg-white/4 border border-white/10 text-white placeholder-slate-500 text-sm transition-all focus:outline-none focus:bg-white/6 focus:border-indigo-500/60"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors p-0.5"
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+          </div>
+
+          {/* Dynamic Meta Field */}
+          {role === 'student' && (
+            <div className="grid grid-cols-2 gap-3 animate-slide-down">
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">Branch</label>
+                <input
+                  type="text"
+                  value={metaField}
+                  onChange={(e) => setMetaField(e.target.value)}
+                  placeholder="CSE / IT / ECE"
+                  className="w-full px-3.5 py-3 rounded-xl bg-white/4 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500/60 transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">Current CGPA</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  max="10"
+                  value={cgpa}
+                  onChange={(e) => setCgpa(e.target.value)}
+                  placeholder="8.50"
+                  className="w-full px-3.5 py-3 rounded-xl bg-white/4 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500/60 transition-all"
+                />
+              </div>
+            </div>
+          )}
+
+          {role === 'recruiter' && (
+            <div className="animate-slide-down">
+              <label className="block text-xs font-semibold text-slate-300 mb-1.5">Company Name</label>
               <input
                 type="text"
                 value={metaField}
                 onChange={(e) => setMetaField(e.target.value)}
-                placeholder="CSE / IT / ECE"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#0b0f19] border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500/50"
+                placeholder="e.g. TechNova Solutions"
+                className="w-full px-3.5 py-3 rounded-xl bg-white/4 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500/60 transition-all"
               />
             </div>
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">Current CGPA</label>
+          )}
+
+          {role === 'mentor' && (
+            <div className="animate-slide-down">
+              <label className="block text-xs font-semibold text-slate-300 mb-1.5">Academic Department</label>
               <input
-                type="number"
-                step="0.01"
-                min="0"
-                max="10"
-                value={cgpa}
-                onChange={(e) => setCgpa(e.target.value)}
-                placeholder="8.50"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#0b0f19] border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500/50"
+                type="text"
+                value={metaField}
+                onChange={(e) => setMetaField(e.target.value)}
+                placeholder="e.g. Department of Computer Science"
+                className="w-full px-3.5 py-3 rounded-xl bg-white/4 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500/60 transition-all"
               />
             </div>
-          </div>
-        )}
+          )}
 
-        {role === 'recruiter' && (
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5">Company Name</label>
-            <input
-              type="text"
-              value={metaField}
-              onChange={(e) => setMetaField(e.target.value)}
-              placeholder="e.g. TechNova Solutions"
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#0b0f19] border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500/50"
-            />
-          </div>
-        )}
+          {role === 'admin' && (
+            <div className="animate-slide-down">
+              <label className="block text-xs font-semibold text-slate-300 mb-1.5">College / Institution</label>
+              <input
+                type="text"
+                value={metaField}
+                onChange={(e) => setMetaField(e.target.value)}
+                placeholder="e.g. ABIT Institute of Technology"
+                className="w-full px-3.5 py-3 rounded-xl bg-white/4 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500/60 transition-all"
+              />
+            </div>
+          )}
 
-        {role === 'mentor' && (
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5">Academic Department</label>
-            <input
-              type="text"
-              value={metaField}
-              onChange={(e) => setMetaField(e.target.value)}
-              placeholder="e.g. Department of Computer Science"
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#0b0f19] border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500/50"
-            />
-          </div>
-        )}
+          {/* Note for staff roles */}
+          {(role === 'admin' || role === 'mentor' || role === 'recruiter') && (
+            <div className="p-3 rounded-xl bg-indigo-500/8 border border-indigo-500/20 text-xs text-indigo-300 flex items-start gap-2 animate-slide-down">
+              <AlertCircle className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+              <span>Staff accounts require email verification <strong>and</strong> Super Admin approval before you can sign in.</span>
+            </div>
+          )}
 
-        {role === 'admin' && (
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5">College / Institution</label>
-            <input
-              type="text"
-              value={metaField}
-              onChange={(e) => setMetaField(e.target.value)}
-              placeholder="e.g. ABIT Institute of Technology"
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#0b0f19] border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500/50"
-            />
-          </div>
-        )}
+          <button
+            id="register-submit"
+            type="submit"
+            disabled={loading}
+            className="w-full mt-1 py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-sm shadow-xl shadow-indigo-600/25 transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed btn-lift"
+          >
+            {loading ? (
+              <>
+                <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span>Creating Account...</span>
+              </>
+            ) : (
+              <>
+                <span>Create Account</span>
+                <ArrowRight className="h-4 w-4" />
+              </>
+            )}
+          </button>
+        </form>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full mt-2 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm shadow-lg shadow-indigo-600/25 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-        >
-          {loading ? 'Creating Account...' : 'Register Account →'}
-        </button>
-      </form>
-
-      <div className="mt-5 text-center text-xs text-slate-400">
-        Already have an account?{' '}
-        <Link href="/login" className="font-semibold text-indigo-400 hover:text-indigo-300">
-          Sign In
-        </Link>
+        <div className="mt-5 text-center text-xs text-slate-400">
+          Already have an account?{' '}
+          <Link href="/login" className="font-semibold text-indigo-400 hover:text-indigo-300 transition-colors">
+            Sign In →
+          </Link>
+        </div>
       </div>
     </div>
   );

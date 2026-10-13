@@ -31,10 +31,20 @@ export default function StudentDashboardPage() {
     // Fetch live dashboard metrics
     api.get('/dashboard')
       .then(res => {
-        if (res && res.data) {
-          if (res.data.readiness) setReadinessScore(res.data.readiness);
-          if (res.data.active_jobs) setActiveJobsCount(res.data.active_jobs);
-          if (res.data.applications) setApplicationsCount(res.data.applications);
+        // Dashboard API returns data at root level (not res.data)
+        if (res && res.kpis) {
+          const kpiMap: Record<string, any> = {};
+          (res.kpis as any[]).forEach(k => { kpiMap[k.label] = k.value; });
+        }
+        if (res && res.readiness) {
+          const score = typeof res.readiness === 'object' ? res.readiness.score : res.readiness;
+          if (typeof score === 'number') setReadinessScore(score);
+        }
+        if (res && typeof res.jobs === 'object' && Array.isArray(res.jobs)) {
+          setActiveJobsCount(res.jobs.length);
+        }
+        if (res && typeof res.applications === 'object' && Array.isArray(res.applications)) {
+          setApplicationsCount(res.applications.length);
         }
       })
       .catch(() => {});
@@ -43,6 +53,8 @@ export default function StudentDashboardPage() {
       .then(res => {
         if (res && res.data && Array.isArray(res.data)) {
           setRecentDrives(res.data.slice(0, 3));
+        } else if (Array.isArray(res)) {
+          setRecentDrives((res as any[]).slice(0, 3));
         }
       })
       .catch(() => {});

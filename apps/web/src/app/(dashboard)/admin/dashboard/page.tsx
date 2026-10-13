@@ -26,10 +26,11 @@ export default function AdminDashboardPage() {
     async function load() {
       try {
         const [dashRes, stuRes] = await Promise.all([
-          api.get('/dashboard/admin').catch(() => null),
+          api.get('/dashboard').catch(() => null),
           api.get('/students').catch(() => null),
         ]);
-        setData(dashRes?.data || dashRes || {});
+        // Dashboard API returns data at root level for admin role
+        setData(dashRes || {});
         const stuList = Array.isArray(stuRes?.data) ? stuRes.data : (Array.isArray(stuRes) ? stuRes : []);
         setStudents(stuList);
       } catch (err) {

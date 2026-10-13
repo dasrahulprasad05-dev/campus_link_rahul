@@ -65,7 +65,7 @@ function registerSSEConnection(userId, res) {
     }
   }, 25000);
 
-  reqCloseHandler = () => {
+  const reqCloseHandler = () => {
     clearInterval(interval);
     const clients = _sseClients.get(userId);
     if (clients) {
@@ -123,11 +123,13 @@ async function createNotification({ userId = 'all_students', type = 'system_aler
 
   // Also try to insert into PostgreSQL notifications table if database exists
   try {
+    // Store 'all_students' broadcasts as NULL user_id in DB (matching the query in listUserNotifications)
+    const dbUserId = userId === 'all_students' ? null : userId;
     await query(
       `INSERT INTO notifications (id, user_id, type, title, message, metadata, is_read, created_at)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
        ON CONFLICT (id) DO NOTHING`,
-      [notif.id, userId === 'all_students' ? null : userId, type, title, message, JSON.stringify(metadata), false, notif.created_at]
+      [notif.id, dbUserId, type, title, message, JSON.stringify(metadata), false, notif.created_at]
     );
   } catch (err) {
     // Falls back gracefully to memory store

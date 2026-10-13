@@ -19,6 +19,43 @@ import {
   Target 
 } from 'lucide-react';
 
+const FALLBACK_NOTICES: NotificationItem[] = [
+  {
+    id: 'nb-1',
+    type: 'drive_announced',
+    title: 'TechNova Solutions Campus Placement Drive',
+    message: 'TechNova Solutions has announced a placement drive on Oct 24, 2026 at Campus Auditorium Hall A. Eligibility: CSE, IT with CGPA >= 7.0.',
+    metadata: { company: 'TechNova Solutions', date: '2026-10-24' },
+    is_read: false,
+    created_at: '2026-10-12T18:00:00.000Z',
+  },
+  {
+    id: 'nb-2',
+    type: 'job_posted',
+    title: 'CloudScale Systems is Hiring: DevOps Engineer',
+    message: 'Package: ₹9.5 LPA. Required stack: Docker, Kubernetes, AWS, CI/CD pipelines. Applications close in 14 days.',
+    metadata: { company: 'CloudScale Systems', role: 'DevOps Engineer' },
+    is_read: false,
+    created_at: '2026-10-12T14:00:00.000Z',
+  },
+  {
+    id: 'nb-3',
+    type: 'mentor_feedback',
+    title: 'Mentor Milestone Review & Coaching Notes',
+    message: 'Your faculty mentor reviewed your portfolio project. Recommendation: Add integration tests and deploy API endpoints on Render.',
+    is_read: true,
+    created_at: '2026-10-11T10:00:00.000Z',
+  },
+  {
+    id: 'nb-4',
+    type: 'shortlisted',
+    title: 'Shortlisted for Technical Assessment',
+    message: 'Congratulations! You have been shortlisted for the Graduate Data Analyst position at TechNova. Assessment schedule is now active.',
+    is_read: true,
+    created_at: '2026-10-10T09:00:00.000Z',
+  },
+];
+
 export default function NoticeBoardPage() {
   const [notices, setNotices] = useState<NotificationItem[]>([]);
   const [filter, setFilter] = useState<'all' | 'jobs' | 'drives' | 'mentor' | 'pipeline'>('all');

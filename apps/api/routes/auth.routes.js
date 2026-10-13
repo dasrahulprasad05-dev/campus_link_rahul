@@ -305,7 +305,10 @@ router.post('/login', async (req, res) => {
 
     // Auto-provision super_admin if not yet seeded in database
     const isSuperAdminEmail = cleanEmail === 'superadmin@campusgrid.online' || cleanEmail === 'superadmin@campuslink.in';
-    const isSuperAdminPass = password === 'CampusSuper@2026' || password === 'CampusGrid@2026' || password === 'demo123';
+    // In production, only accept the designated super admin passwords (NOT demo123)
+    const isSuperAdminPass = process.env.NODE_ENV !== 'production'
+      ? (password === 'CampusSuper@2026' || password === 'CampusGrid@2026' || password === 'demo123')
+      : (password === 'CampusSuper@2026' || password === 'CampusGrid@2026');
     if (!user && isSuperAdminEmail && isSuperAdminPass) {
       try {
         const hash = await bcrypt.hash(password, 10);

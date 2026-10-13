@@ -56,7 +56,7 @@ export default function Topbar({ onToggleMobile }: { onToggleMobile?: () => void
 
         {/* Real-time Notice Bell */}
         <Link
-          href="/student/notice-board"
+          href={role === 'student' ? '/student/notice-board' : `/${role}/dashboard`}
           className="relative p-2 text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
           title="Notice Board & Real-Time Alerts"
         >

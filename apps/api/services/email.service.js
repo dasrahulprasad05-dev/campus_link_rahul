@@ -135,7 +135,7 @@ function _emailWrapper({ title, preview, content, ctaUrl, ctaText, footerNote })
  * 1. Send Email Verification on First-Time Signup
  */
 async function sendVerificationEmail(user, token) {
-  const verifyUrl = `${getAppUrl()}/#verify-email?token=${token}&email=${encodeURIComponent(user.email)}`;
+  const verifyUrl = `${getAppUrl()}/verify-email?token=${token}&email=${encodeURIComponent(user.email)}`;
 
   const content = `
     <h2 style="color:#ffffff; margin-top:0;">Verify Your Email Address</h2>
@@ -165,7 +165,7 @@ async function sendVerificationEmail(user, token) {
  * 2. Send Welcome Email (sent after email verification or first login)
  */
 async function sendWelcomeEmail(user) {
-  const portalUrl = `${getAppUrl()}/#${user.role || 'student'}/dashboard`;
+  const portalUrl = `${getAppUrl()}/${user.role || 'student'}/dashboard`;
 
   const content = `
     <h2 style="color:#ffffff; margin-top:0;">Welcome to CAMPUSGRID 🎉</h2>
@@ -197,7 +197,7 @@ async function sendWelcomeEmail(user) {
  * 3. Send Password Reset Email
  */
 async function sendPasswordResetEmail(user, token) {
-  const resetUrl = `${getAppUrl()}/#reset-password?token=${token}&email=${encodeURIComponent(user.email)}`;
+  const resetUrl = `${getAppUrl()}/reset-password?token=${token}&email=${encodeURIComponent(user.email)}`;
 
   const content = `
     <h2 style="color:#ffffff; margin-top:0;">Reset Your Password</h2>
@@ -227,7 +227,7 @@ async function sendPasswordResetEmail(user, token) {
  * 4. Send Admin Approval Email (sent when super_admin approves a staff account)
  */
 async function sendAdminApprovedEmail(user) {
-  const portalUrl = `${getAppUrl()}/#login`;
+  const portalUrl = `${getAppUrl()}/login`;
 
   const content = `
     <h2 style="color:#ffffff; margin-top:0;">Account Approved! ✅</h2>
@@ -255,7 +255,7 @@ async function sendAdminApprovedEmail(user) {
  */
 async function sendStaffPendingNotification(user) {
   const superAdminEmail = process.env.SUPER_ADMIN_EMAIL || 'superadmin@campusgrid.online';
-  const dashboardUrl = `${getAppUrl()}/#superadmin/dashboard`;
+  const dashboardUrl = `${getAppUrl()}/superadmin/dashboard`;
 
   const content = `
     <h2 style="color:#ffffff; margin-top:0;">New Staff Account Awaiting Approval</h2>

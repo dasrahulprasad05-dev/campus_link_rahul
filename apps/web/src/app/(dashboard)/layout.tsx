@@ -13,18 +13,25 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
   const router = useRouter();
   const { token, isAuthenticated } = useAuthStore();
 
   useEffect(() => {
-    // Verify client session token
-    if (typeof window !== 'undefined') {
-      const storedToken = localStorage.getItem('campusgrid_token') || localStorage.getItem('campuslink_token');
-      if (!storedToken && !token && !isAuthenticated()) {
-        router.replace('/login');
-      }
+    // Wait one tick for Zustand to hydrate from localStorage before checking auth
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    // Verify client session token after hydration completes
+    const storedToken = typeof window !== 'undefined'
+      ? (localStorage.getItem('campusgrid_token') || localStorage.getItem('campuslink_token'))
+      : null;
+    if (!storedToken && !token && !isAuthenticated()) {
+      router.replace('/login');
     }
-  }, [token, isAuthenticated, router]);
+  }, [hydrated, token, isAuthenticated, router]);
 
   return (
     <div className="flex min-h-screen bg-[#080c14] text-slate-100 antialiased overflow-x-hidden">

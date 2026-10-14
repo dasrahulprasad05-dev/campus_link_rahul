@@ -6,6 +6,7 @@ import Sidebar from '@/components/layout/Sidebar';
 import Topbar from '@/components/layout/Topbar';
 import MobileNav from '@/components/layout/MobileNav';
 import { useAuthStore } from '@/stores/useAuthStore';
+import WhatsAppFAB from '@/components/WhatsAppFAB';
 import { useThemeStore } from '@/stores/useThemeStore';
 
 export default function DashboardLayout({
@@ -72,6 +73,9 @@ export default function DashboardLayout({
           {children}
         </main>
       </div>
+
+      {/* WhatsApp Floating Action Button (Students only) */}
+      <WhatsAppFAB />
 
       {/* Mobile Bottom Navigation */}
       <MobileNav />

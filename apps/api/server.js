@@ -58,6 +58,7 @@ const careerFinderRoutes = require('./routes/career-finder.routes');
 const offerRoutes = require('./routes/offer.routes');
 const superAdminRoutes = require('./routes/superadmin.routes');
 const notificationRoutes = require('./routes/notification.routes');
+const whatsappRoutes = require('./routes/whatsapp.routes');
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/students', studentRoutes);
@@ -73,6 +74,7 @@ app.use('/api/v1/career-finder', careerFinderRoutes);
 app.use('/api/v1/offers', offerRoutes);
 app.use('/api/v1/superadmin', superAdminRoutes);
 app.use('/api/v1/notifications', notificationRoutes);
+app.use('/api/v1/whatsapp', whatsappRoutes);
 
 const { authenticate, authorize } = require('./middleware/auth');
 const { query, memoryDb } = require('./db/pool');

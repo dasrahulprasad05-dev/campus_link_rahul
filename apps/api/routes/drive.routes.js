@@ -59,6 +59,15 @@ router.post('/', authenticate, authorize('admin', 'super_admin'), async (req, re
       metadata: { driveId: drive.id, company: drive.company, role: drive.role, date: drive.drive_date },
     }).catch(err => console.warn('[Notif] Drive broadcast error:', err.message));
 
+    // WhatsApp push notification to all linked students
+    try {
+      const whatsappRoutes = require('./whatsapp.routes');
+      const { formatDriveAlert } = require('../services/whatsapp.service');
+      const alertMsg = formatDriveAlert(drive);
+      whatsappRoutes.broadcastToLinkedStudents(alertMsg)
+        .catch(err => console.warn('[WhatsApp] Drive broadcast error:', err.message));
+    } catch (_) {}
+
     res.status(201).json({ success: true, data: drive });
   } catch (err) {
     res.status(500).json({ success: false, error: { code: 'DB_ERROR', message: err.message } });

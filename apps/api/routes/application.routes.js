@@ -87,6 +87,16 @@ router.patch('/:id/status', authenticate, authorize('recruiter', 'admin'), async
         message: `Your application at ${updated.company || 'the company'} for ${updated.job_title || 'role'} is now at "${targetRound || status}".`,
         metadata: { applicationId: updated.id, status, round: targetRound, company: updated.company },
       }).catch(err => console.warn('[Notif] Application update notice error:', err.message));
+
+      // WhatsApp push notification to student
+      try {
+        const whatsappRoutes = require('./whatsapp.routes');
+        const statusEmoji = { applied: '🔵', shortlisted: '🟢', interview: '🟡', offered: '🟣', rejected: '🔴' };
+        const emoji = statusEmoji[status] || '📋';
+        const waMsg = `━━━━━━━━━━━━━━━━━━━━\n${emoji} *Application Update*\n━━━━━━━━━━━━━━━━━━━━\n\n🏢 ${updated.company || 'Company'}\n💼 ${updated.job_title || 'Position'}\n📊 Status: *${(status || '').toUpperCase()}*\n📍 Round: ${targetRound || 'N/A'}\n\n━━━━━━━━━━━━━━━━━━━━`;
+        whatsappRoutes.notifyStudent(studentTargetId, waMsg)
+          .catch(err => console.warn('[WhatsApp] App status notify error:', err.message));
+      } catch (_) {}
     }
 
     res.json({ success: true, data: updated });

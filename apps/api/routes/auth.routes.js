@@ -68,11 +68,16 @@ router.post('/register', async (req, res) => {
 
     // If user is a student, automatically initialize their student profile record
     if (assignedRole === 'student') {
+      // Normalize phone for WhatsApp: strip non-digits, prepend 91 if needed
+      let rawPhone = (req.body.phone || '').replace(/[^0-9]/g, '');
+      if (rawPhone.length === 10) rawPhone = '91' + rawPhone;
+
       await studentRepo.createProfile({
         user_id: newUser.id,
-        branch: 'Computer Science & Engineering',
+        branch: req.body.branch || 'Computer Science & Engineering',
         year: 2026,
         target_role: 'Software Engineer',
+        phone: rawPhone || '',
       }).catch(err => console.warn('[Auth] Auto-profile creation note:', err.message));
     }
 

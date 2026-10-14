@@ -98,9 +98,35 @@ async function listStudents() {
   return res.rows;
 }
 
+/**
+ * Find a student profile by phone number (for WhatsApp bot authentication).
+ * Joins with users table to get name and email alongside profile data.
+ */
+async function findByPhone(phone) {
+  if (!phone) return null;
+  // Normalize: strip +, spaces, dashes for comparison
+  const cleaned = phone.replace(/[\s\-\(\)\+]/g, '');
+  try {
+    const res = await query(`
+      SELECT sp.*, u.name, u.email
+      FROM student_profiles sp
+      JOIN users u ON u.id = sp.user_id
+      WHERE REPLACE(REPLACE(REPLACE(REPLACE(sp.phone, '+', ''), ' ', ''), '-', ''), '(', '') = $1
+         OR sp.phone = $2
+         OR sp.phone = $3
+      LIMIT 1
+    `, [cleaned, phone, '+' + cleaned]);
+    return res.rows[0] || null;
+  } catch (err) {
+    console.warn('[StudentRepo] findByPhone error:', err.message);
+    return null;
+  }
+}
+
 module.exports = {
   getProfileByUserId,
   createProfile,
   updateProfile,
   listStudents,
+  findByPhone,
 };

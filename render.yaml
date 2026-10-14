@@ -28,6 +28,12 @@ services:
         sync: false
       - key: SENDGRID_FROM_EMAIL
         value: rahulprasadcoding01@gmail.com
+      - key: WHATSAPP_TOKEN
+        sync: false
+      - key: WHATSAPP_PHONE_ID
+        sync: false
+      - key: WHATSAPP_VERIFY_TOKEN
+        value: campusgrid_verify_2026
 
   # 2. Python AI Microservice (FastAPI + ML + NLP + Groq LLM + RAG)
   - type: web

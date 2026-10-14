@@ -36,6 +36,7 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [metaField, setMetaField] = useState('');
   const [cgpa, setCgpa] = useState('8.0');
+  const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState<string | null>(null);
   const [focusedField, setFocusedField] = useState<string | null>(null);
@@ -64,6 +65,7 @@ export default function RegisterPage() {
       if (role === 'student') {
         payload.branch = metaField || 'Computer Science & Engineering';
         payload.cgpa = parseFloat(cgpa) || 8.0;
+        payload.phone = phone.trim() || '';
       } else if (role === 'recruiter') {
         payload.company = metaField || 'Tech Solutions Inc';
       } else if (role === 'mentor') {
@@ -235,29 +237,49 @@ export default function RegisterPage() {
 
           {/* Dynamic Meta Field */}
           {role === 'student' && (
-            <div className="grid grid-cols-2 gap-3 animate-slide-down">
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">Branch</label>
-                <input
-                  type="text"
-                  value={metaField}
-                  onChange={(e) => setMetaField(e.target.value)}
-                  placeholder="CSE / IT / ECE"
-                  className="w-full px-3.5 py-3 rounded-xl bg-white/4 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500/60 transition-all"
-                />
+            <div className="space-y-3 animate-slide-down">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">Branch</label>
+                  <input
+                    type="text"
+                    value={metaField}
+                    onChange={(e) => setMetaField(e.target.value)}
+                    placeholder="CSE / IT / ECE"
+                    className="w-full px-3.5 py-3 rounded-xl bg-white/4 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500/60 transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">Current CGPA</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    max="10"
+                    value={cgpa}
+                    onChange={(e) => setCgpa(e.target.value)}
+                    placeholder="8.50"
+                    className="w-full px-3.5 py-3 rounded-xl bg-white/4 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500/60 transition-all"
+                  />
+                </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">Current CGPA</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="10"
-                  value={cgpa}
-                  onChange={(e) => setCgpa(e.target.value)}
-                  placeholder="8.50"
-                  className="w-full px-3.5 py-3 rounded-xl bg-white/4 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500/60 transition-all"
-                />
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">📱 WhatsApp Number <span className="text-slate-500 font-normal">(optional — for bot alerts)</span></label>
+                <div className={`relative transition-all duration-200 ${focusedField === 'phone' ? 'scale-[1.01]' : ''}`}>
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm">+91</span>
+                  <input
+                    id="reg-phone"
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value.replace(/[^0-9]/g, '').slice(0, 10))}
+                    onFocus={() => setFocusedField('phone')}
+                    onBlur={() => setFocusedField(null)}
+                    placeholder="9876543210"
+                    maxLength={10}
+                    className="w-full pl-12 pr-4 py-3 rounded-xl bg-white/4 border border-white/10 text-white placeholder-slate-500 text-sm transition-all focus:outline-none focus:bg-white/6 focus:border-emerald-500/60"
+                  />
+                </div>
+                <p className="text-[10px] text-emerald-400/70 mt-1">🤖 Get readiness scores, drive alerts & mock interviews on WhatsApp</p>
               </div>
             </div>
           )}

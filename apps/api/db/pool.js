@@ -94,10 +94,10 @@ const memoryDb = (() => {
 
   const tables = {
     users: [
-      { id: '00000000-0000-4000-8000-000000000001', name: 'System Super Admin', email: 'superadmin@campuslink.in', password_hash: superAdminHash, role: 'super_admin', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
-      { id: 'a1b2c3d4-0001-0001-0001-000000000002', name: 'Training & Placement Office ABIT', email: 'admin@campuslink.in', password_hash: defaultHash, role: 'admin', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
-      { id: 'a1b2c3d4-0001-0001-0001-000000000003', name: 'TCS Campus Recruitment', email: 'recruiter@campuslink.in', password_hash: defaultHash, role: 'recruiter', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
-      { id: 'a1b2c3d4-0001-0001-0001-000000000004', name: 'Faculty Mentor ABIT', email: 'mentor@campuslink.in', password_hash: defaultHash, role: 'mentor', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
+      { id: '00000000-0000-4000-8000-000000000001', name: 'Rahul Prasad Das (Super Admin)', email: 'rahulprsaddas@gmail.com', password_hash: superAdminHash, role: 'super_admin', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
+      { id: 'a1b2c3d4-0001-0001-0001-000000000002', name: 'Rahul Prasad Das (Admin / TPO)', email: 'rahulprasaddas1234@gmail.com', password_hash: defaultHash, role: 'admin', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: false },
+      { id: 'a1b2c3d4-0001-0001-0001-000000000003', name: 'Omm Prasad Das (Recruiter)', email: 'ommprasadd363@gmail.com', password_hash: defaultHash, role: 'recruiter', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: false },
+      { id: 'a1b2c3d4-0001-0001-0001-000000000004', name: 'Das Omm Prasad (Mentor)', email: 'dasommprasad68@gmail.com', password_hash: defaultHash, role: 'mentor', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: false },
       { id: '10000000-0000-4000-8000-000000000001', name: 'Ananya Sharma', email: 'ananya.sharma@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
       { id: '10000000-0000-4000-8000-000000000002', name: 'Vikram Rao', email: 'vikram.rao@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },
       { id: '10000000-0000-4000-8000-000000000003', name: 'Soham Das', email: 'soham.das@campuslink.in', password_hash: defaultHash, role: 'student', avatar_url: null, created_at: now, updated_at: now, email_verified: true, admin_verified: true },

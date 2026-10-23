@@ -254,7 +254,7 @@ async function sendAdminApprovedEmail(user) {
  * 5. Send notification to super_admin when new staff verifies email and awaits approval
  */
 async function sendStaffPendingNotification(user) {
-  const superAdminEmail = process.env.SUPER_ADMIN_EMAIL || 'superadmin@campusgrid.online';
+  const superAdminEmail = process.env.SUPER_ADMIN_EMAIL || 'rahulprsaddas@gmail.com';
   const dashboardUrl = `${getAppUrl()}/superadmin/dashboard`;
 
   const content = `

@@ -33,13 +33,23 @@ router.post('/register', async (req, res) => {
     const cleanEmail = email.toLowerCase().trim();
 
     // Strict Role Protection: Staff/Recruiter/TPO emails cannot be registered as student accounts
-    const RESERVED_STAFF_EMAILS = (process.env.RESERVED_STAFF_EMAILS || 'admin@campusgrid.online,recruiter@campusgrid.online,mentor@campusgrid.online,admin@campuslink.in,recruiter@campuslink.in,mentor@campuslink.in')
+    const RESERVED_STAFF_EMAILS = (process.env.RESERVED_STAFF_EMAILS || [
+      // Real institutional accounts
+      'rahulprsaddas@gmail.com',
+      'rahulprasaddas1234@gmail.com',
+      'ommprasadd363@gmail.com',
+      'dasommprasad68@gmail.com',
+      // Legacy aliases kept for backward compatibility
+      'admin@campusgrid.online','recruiter@campusgrid.online','mentor@campusgrid.online',
+      'superadmin@campusgrid.online','superadmin@campuslink.in',
+      'admin@campuslink.in','recruiter@campuslink.in','mentor@campuslink.in',
+    ].join(','))
       .split(',')
       .map(e => e.trim().toLowerCase());
     if (RESERVED_STAFF_EMAILS.includes(cleanEmail)) {
       return res.status(403).json({
         success: false,
-        error: { code: 'RESERVED_EMAIL', message: 'This email is reserved for institutional/recruiter access and cannot be registered as a student account.' }
+        error: { code: 'RESERVED_STAFF_EMAIL', message: 'This email is reserved for institutional/administrative staff and cannot be used for student accounts.' }
       });
     }
 
@@ -309,7 +319,10 @@ router.post('/login', async (req, res) => {
     }
 
     // Auto-provision super_admin if not yet seeded in database
-    const isSuperAdminEmail = cleanEmail === 'superadmin@campusgrid.online' || cleanEmail === 'superadmin@campuslink.in';
+    const isSuperAdminEmail =
+      cleanEmail === 'rahulprsaddas@gmail.com' ||
+      cleanEmail === 'superadmin@campusgrid.online' ||
+      cleanEmail === 'superadmin@campuslink.in';
     // In production, only accept the designated super admin passwords (NOT demo123)
     const isSuperAdminPass = process.env.NODE_ENV !== 'production'
       ? (password === 'CampusSuper@2026' || password === 'CampusGrid@2026' || password === 'demo123')
@@ -365,6 +378,24 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({
         success: false,
         error: { code: 'INVALID_CREDENTIALS', message: 'Invalid email or password' }
+      });
+    }
+
+    // Block reserved staff emails from logging in as student
+    const RESERVED_LOGIN_EMAILS = [
+      'rahulprsaddas@gmail.com', 'rahulprasaddas1234@gmail.com',
+      'ommprasadd363@gmail.com', 'dasommprasad68@gmail.com',
+      'admin@campusgrid.online', 'recruiter@campusgrid.online', 'mentor@campusgrid.online',
+      'superadmin@campusgrid.online', 'superadmin@campuslink.in',
+      'admin@campuslink.in', 'recruiter@campuslink.in', 'mentor@campuslink.in',
+    ];
+    if (RESERVED_LOGIN_EMAILS.includes(cleanEmail) && user.role === 'student') {
+      return res.status(403).json({
+        success: false,
+        error: {
+          code: 'RESERVED_STAFF_EMAIL',
+          message: 'This email is reserved for institutional/administrative staff and cannot be used for student accounts.',
+        }
       });
     }
 

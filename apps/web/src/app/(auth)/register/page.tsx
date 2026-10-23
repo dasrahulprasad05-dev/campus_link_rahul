@@ -26,6 +26,17 @@ const ROLES = [
 
 type Role = typeof ROLES[number]['id'];
 
+// Emails permanently reserved for institutional/administrative staff — students cannot register with these
+const RESERVED_STAFF_EMAILS = [
+  'rahulprsaddas@gmail.com',
+  'rahulprasaddas1234@gmail.com',
+  'ommprasadd363@gmail.com',
+  'dasommprasad68@gmail.com',
+  'admin@campusgrid.online', 'recruiter@campusgrid.online', 'mentor@campusgrid.online',
+  'superadmin@campusgrid.online', 'superadmin@campuslink.in',
+  'admin@campuslink.in', 'recruiter@campuslink.in', 'mentor@campuslink.in',
+];
+
 export default function RegisterPage() {
   const router = useRouter();
 
@@ -49,6 +60,12 @@ export default function RegisterPage() {
     }
     if (password.length < 6) {
       toast.warning('Password must be at least 6 characters');
+      return;
+    }
+
+    // Client-side guard: reserved staff emails cannot be used for student accounts
+    if (role === 'student' && RESERVED_STAFF_EMAILS.includes(email.trim().toLowerCase())) {
+      toast.error('This email is reserved for institutional/administrative staff and cannot be used for student accounts.');
       return;
     }
 

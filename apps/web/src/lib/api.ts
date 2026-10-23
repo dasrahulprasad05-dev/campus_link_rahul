@@ -40,7 +40,10 @@ export async function apiRequest<T = any>(endpoint: string, options: RequestOpti
       useAuthStore.getState().logout();
     }
     const errorMsg = data?.error?.message || data?.message || `Request failed with status ${response.status}`;
-    throw new Error(errorMsg);
+    const errorCode = data?.error?.code || data?.code || '';
+    const err = new Error(errorMsg) as Error & { code: string };
+    err.code = errorCode;
+    throw err;
   }
 
   return data;

@@ -68,10 +68,17 @@ function LoginForm() {
       }
     } catch (err: any) {
       const msg = err.message || 'Login failed';
-      if (msg.toLowerCase().includes('not verified') || msg.toLowerCase().includes('verification')) {
+      const code = err.code || '';
+      if (code === 'RESERVED_STAFF_EMAIL') {
+        toast.error('This email is reserved for institutional/administrative staff and cannot be used for student accounts.');
+      } else if (code === 'ADMIN_VERIFICATION_PENDING') {
+        toast.error('Your account is pending approval from the Super Admin. You will receive an email once approved.');
+      } else if (msg.toLowerCase().includes('not verified') || msg.toLowerCase().includes('verification')) {
         setUnverifiedEmail(email.trim());
+        toast.error(msg);
+      } else {
+        toast.error(msg);
       }
-      toast.error(msg);
     } finally {
       setLoading(false);
     }

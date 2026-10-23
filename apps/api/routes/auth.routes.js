@@ -330,21 +330,29 @@ router.post('/login', async (req, res) => {
     if (!user && isSuperAdminEmail && isSuperAdminPass) {
       try {
         const hash = await bcrypt.hash(password, 10);
-        user = await userRepo.create({
-          name: 'System Super Admin',
-          email: cleanEmail,
-          passwordHash: hash,
-          role: 'super_admin'
-        });
-        if (user && user.id) {
-          await userRepo.markEmailVerified(user.id);
-          await userRepo.adminVerifyUser(user.id);
-        }
+        // Use UPSERT so we handle UUID-conflict cases from old seeds gracefully
+        const { v4: uuidv4 } = require('uuid');
+        const { query: dbQuery } = require('../db/pool');
+        await dbQuery(
+          `INSERT INTO users (id, name, email, password_hash, role, email_verified, admin_verified)
+           VALUES ($1, $2, $3, $4, 'super_admin', true, true)
+           ON CONFLICT (email) DO UPDATE
+             SET password_hash = EXCLUDED.password_hash,
+                 role = 'super_admin',
+                 email_verified = true,
+                 admin_verified = true,
+                 updated_at = NOW()`,
+          [uuidv4(), 'Rahul Prasad Das', cleanEmail, hash]
+        );
+        user = await userRepo.findByEmail(cleanEmail);
       } catch (_e) {
+        // In-memory fallback: attach a live hash so bcrypt.compare succeeds this request
+        const tempHash = await bcrypt.hash(password, 10).catch(() => '');
         user = {
-          id: '00000000-0000-4000-8000-000000000001',
-          name: 'System Super Admin',
+          id: '00000000-0000-4000-8000-000000000099',
+          name: 'Rahul Prasad Das',
           email: cleanEmail,
+          password_hash: tempHash,
           role: 'super_admin',
           email_verified: true,
           admin_verified: true

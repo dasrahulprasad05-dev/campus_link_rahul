@@ -14,17 +14,29 @@ WHERE email IN (
   'dasommprasad68@gmail.com'
 ) AND role = 'student';
 
+-- Guard: Remove old placeholder staff rows so UUIDs are freed for re-use
+DELETE FROM users WHERE email IN (
+  'superadmin@campuslink.in',
+  'superadmin@campusgrid.online',
+  'admin@campuslink.in',
+  'recruiter@campuslink.in',
+  'mentor@campuslink.in',
+  'admin@campusgrid.online',
+  'recruiter@campusgrid.online',
+  'mentor@campusgrid.online'
+);
+
 -- Super Admin (password: CampusSuper@2026) — always verified
 INSERT INTO users (id, name, email, password_hash, role, email_verified, admin_verified) VALUES
-('00000000-0000-4000-8000-000000000001', 'Rahul Prasad Das', 'rahulprsaddas@gmail.com', '$2a$10$XYdaeuLbZw7TsMjImKHzsOqUNYAI.FPGc38CVVir5E5WO4N9Yfjli', 'super_admin', true, true)
+('00000000-0000-4000-8000-000000000001', 'Rahul Prasad Das', 'rahulprsaddas@gmail.com', '$2a$10$KF1ZDB2fkNd6ZQx1WZMEf.u3VQoejYPWlJ6V4Va.UB8H1njOPfU1W', 'super_admin', true, true)
 ON CONFLICT (email) DO UPDATE SET password_hash = EXCLUDED.password_hash, role = EXCLUDED.role, email_verified = true, admin_verified = true;
 
 -- Staff Accounts (password: CampusLink@2026)
 -- Admin/TPO and Recruiter/Mentor: admin_verified=false — must be approved by Super Admin
 INSERT INTO users (id, name, email, password_hash, role, email_verified, admin_verified) VALUES
-('a1b2c3d4-0001-0001-0001-000000000002', 'Rahul Prasad Das (Admin / TPO)', 'rahulprasaddas1234@gmail.com', '$2a$10$7WESn6ndDPNAabWjobNCEOwVFCn4.CwILQVoGLmwKLEl/i.l3f.96', 'admin',     true, false),
-('a1b2c3d4-0001-0001-0001-000000000003', 'Omm Prasad Das (Recruiter)',     'ommprasadd363@gmail.com',       '$2a$10$7WESn6ndDPNAabWjobNCEOwVFCn4.CwILQVoGLmwKLEl/i.l3f.96', 'recruiter', true, false),
-('a1b2c3d4-0001-0001-0001-000000000004', 'Das Omm Prasad (Mentor)',        'dasommprasad68@gmail.com',      '$2a$10$7WESn6ndDPNAabWjobNCEOwVFCn4.CwILQVoGLmwKLEl/i.l3f.96', 'mentor',    true, false),
+('a1b2c3d4-0001-0001-0001-000000000002', 'Rahul Prasad Das (Admin / TPO)', 'rahulprasaddas1234@gmail.com', '$2a$10$R77ykHNGlJP1qg6RtkUL6O7.Fc9w4h6h6G4cYmthgsmhgWlqo5kPy', 'admin',     true, false),
+('a1b2c3d4-0001-0001-0001-000000000003', 'Omm Prasad Das (Recruiter)',     'ommprasadd363@gmail.com',       '$2a$10$R77ykHNGlJP1qg6RtkUL6O7.Fc9w4h6h6G4cYmthgsmhgWlqo5kPy', 'recruiter', true, false),
+('a1b2c3d4-0001-0001-0001-000000000004', 'Das Omm Prasad (Mentor)',        'dasommprasad68@gmail.com',      '$2a$10$R77ykHNGlJP1qg6RtkUL6O7.Fc9w4h6h6G4cYmthgsmhgWlqo5kPy', 'mentor',    true, false),
 -- Students (20)
 ('10000000-0000-4000-8000-000000000001', 'Ananya Sharma',     'ananya.sharma@campuslink.in',   '$2a$10$7WESn6ndDPNAabWjobNCEOwVFCn4.CwILQVoGLmwKLEl/i.l3f.96', 'student', true, true),
 ('10000000-0000-4000-8000-000000000002', 'Vikram Rao',        'vikram.rao@campuslink.in',      '$2a$10$7WESn6ndDPNAabWjobNCEOwVFCn4.CwILQVoGLmwKLEl/i.l3f.96', 'student', true, true),

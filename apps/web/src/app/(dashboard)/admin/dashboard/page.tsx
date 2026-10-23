@@ -44,19 +44,26 @@ function AnimatedKPI({ value }: { value: string | number }) {
 export default function AdminDashboardPage() {
   const [data, setData] = useState<any>(null);
   const [students, setStudents] = useState<any[]>([]);
+  const [drives, setDrives] = useState<any[]>([]);
+  const [offers, setOffers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
       try {
-        const [dashRes, stuRes] = await Promise.all([
+        const [dashRes, stuRes, driveRes, offerRes] = await Promise.all([
           api.get('/dashboard').catch(() => null),
           api.get('/students').catch(() => null),
+          api.get('/drives').catch(() => null),
+          api.get('/offers').catch(() => null),
         ]);
-        // Dashboard API returns data at root level for admin role
         setData(dashRes || {});
         const stuList = Array.isArray(stuRes?.data) ? stuRes.data : (Array.isArray(stuRes) ? stuRes : []);
         setStudents(stuList);
+        const driveList = Array.isArray(driveRes?.data) ? driveRes.data : (Array.isArray(driveRes) ? driveRes : []);
+        setDrives(driveList);
+        const offerList = Array.isArray(offerRes?.data) ? offerRes.data : (Array.isArray(offerRes) ? offerRes : []);
+        setOffers(offerList);
       } catch (err) {
         console.error(err);
       } finally {
@@ -66,19 +73,21 @@ export default function AdminDashboardPage() {
     load();
   }, []);
 
-  const kpis = data?.kpis || [
-    { label: 'Total Students', value: students.length || 842, delta: '+12% vs last year', color: 'indigo' },
-    { label: 'Average Readiness', value: '78%', delta: '+5 pts this semester', color: 'emerald' },
-    { label: 'Active Placement Drives', value: data?.drives?.length || 14, delta: '3 closing this week', color: 'violet' },
-    { label: 'Verified Offers', value: '126', delta: 'Highest: ₹28.5 LPA', color: 'amber' },
+  const totalStudents = students.length;
+  const avgReadiness = totalStudents > 0 
+    ? `${Math.round(students.reduce((acc, s) => acc + (Number(s.readiness_score || s.readiness) || 0), 0) / totalStudents)}%`
+    : '0%';
+  const activeDrivesCount = drives.length;
+  const verifiedOffersCount = offers.filter(o => o.status === 'accepted' || o.status === 'verified').length;
+
+  const kpis = [
+    { label: 'Total Students', value: totalStudents, delta: `${totalStudents} enrolled profiles`, color: 'indigo' },
+    { label: 'Average Readiness', value: avgReadiness, delta: 'Calculated across active batches', color: 'emerald' },
+    { label: 'Active Placement Drives', value: activeDrivesCount, delta: `${activeDrivesCount} drives scheduled`, color: 'violet' },
+    { label: 'Verified Offers', value: verifiedOffersCount, delta: `${offers.length} total offers tracked`, color: 'amber' },
   ];
 
-  const atRisk = students.filter(s => (s.readiness || 0) < 60).slice(0, 5);
-  const drives = data?.drives || [
-    { company: 'Google', role: 'Software Engineer', date: '2026-10-18', status: 'Registration Open', venue: 'Virtual' },
-    { company: 'Microsoft', role: 'Support Engineer', date: '2026-10-22', status: 'Upcoming', venue: 'Campus Aud-1' },
-    { company: 'TechNova', role: 'Data Analyst', date: '2026-10-25', status: 'Shortlisting', venue: 'Virtual' },
-  ];
+  const atRisk = students.filter(s => (Number(s.readiness_score || s.readiness) || 0) < 60).slice(0, 5);
 
   const headerRef = useScrollAnimation();
   const kpiRef = useScrollAnimation();
@@ -166,7 +175,21 @@ export default function AdminDashboardPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border)] text-[var(--text-secondary)]">
-                {drives.map((d: any, idx: number) => (
+                {loading ? (
+                  <tr>
+                    <td colSpan={4} className="py-8 text-center text-[var(--text-tertiary)]">
+                      <div className="inline-block h-5 w-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mb-1.5" />
+                      <div>Loading drives from database...</div>
+                    </td>
+                  </tr>
+                ) : drives.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="py-8 text-center text-[var(--text-tertiary)]">
+                      No upcoming placement drives scheduled.
+                    </td>
+                  </tr>
+                ) : (
+                  drives.map((d: any, idx: number) => (
                   <tr key={idx} className="hover:bg-[var(--table-hover)] transition-colors">
                     <td className="py-3.5 font-semibold text-[var(--text-primary)] flex items-center gap-2">
                       <div className="h-7 w-7 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 flex items-center justify-center font-bold text-xs">
@@ -187,7 +210,7 @@ export default function AdminDashboardPage() {
                       </span>
                     </td>
                   </tr>
-                ))}
+                )))}
               </tbody>
             </table>
           </div>

@@ -50,80 +50,48 @@ function AnimatedNum({ value }: { value: number }) {
 }
 
 export default function SuperAdminDashboardPage() {
-  const [pendingStaff, setPendingStaff] = useState<StaffUser[]>([
-    {
-      id: 'pending-rec-01',
-      name: 'Amit Verma',
-      email: 'recruiter.pending@campusgrid.online',
-      role: 'recruiter',
-      organization: 'Infosys Campus Talent',
-      admin_verified: false,
-      email_verified: true,
-    },
-    {
-      id: 'pending-tpo-02',
-      name: 'Er. Bikash Mohapatra',
-      email: 'admin.pending@campusgrid.online',
-      role: 'admin',
-      organization: 'Training & Placement Cell',
-      admin_verified: false,
-      email_verified: true,
-    },
-    {
-      id: 'pending-men-03',
-      name: 'Dr. Sunita Rao',
-      email: 'mentor.pending@campusgrid.online',
-      role: 'mentor',
-      organization: 'ECE Department',
-      admin_verified: false,
-      email_verified: true,
-    },
-  ]);
+  const [pendingStaff, setPendingStaff] = useState<StaffUser[]>([]);
+  const [approvedStaff, setApprovedStaff] = useState<StaffUser[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const [approvedStaff, setApprovedStaff] = useState<StaffUser[]>([
-    {
-      id: 'a1b2c3d4-0001-0001-0001-000000000002',
-      name: 'Dr. Rajesh Nayak',
-      email: 'admin@campusgrid.online',
-      role: 'admin',
-      organization: 'ABIT Placement Cell',
-      admin_verified: true,
-      email_verified: true,
-    },
-    {
-      id: 'a1b2c3d4-0001-0001-0001-000000000003',
-      name: 'Sneha Patel',
-      email: 'recruiter@campusgrid.online',
-      role: 'recruiter',
-      organization: 'TechNova Solutions',
-      admin_verified: true,
-      email_verified: true,
-    },
-    {
-      id: 'a1b2c3d4-0001-0001-0001-000000000004',
-      name: 'Prof. Suresh Mishra',
-      email: 'mentor@campusgrid.online',
-      role: 'mentor',
-      organization: 'Computer Science Department',
-      admin_verified: true,
-      email_verified: true,
-    },
-  ]);
+  const loadData = async () => {
+    try {
+      const res = await api.get('/superadmin/dashboard');
+      const data = res?.data || res;
+      setPendingStaff(Array.isArray(data?.pending) ? data.pending : []);
+      setApprovedStaff(Array.isArray(data?.approved) ? data.approved : []);
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to load staff accounts');
+      setPendingStaff([]);
+      setApprovedStaff([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   const handleApprove = async (staff: StaffUser) => {
     try {
-      await api.patch(`/auth/staff/${staff.id}/verify`, { admin_verified: true });
-    } catch {
-      // Allow optimistic UI
+      await api.post(`/superadmin/verify/${staff.id}`);
+      setPendingStaff(prev => prev.filter(s => s.id !== staff.id));
+      setApprovedStaff(prev => [...prev, { ...staff, admin_verified: true }]);
+      toast.success(`Approved staff access for ${staff.name} (${staff.role})!`);
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to approve staff account');
     }
-    setPendingStaff(prev => prev.filter(s => s.id !== staff.id));
-    setApprovedStaff(prev => [...prev, { ...staff, admin_verified: true }]);
-    toast.success(`Approved staff access for ${staff.name} (${staff.role})!`);
   };
 
   const handleReject = async (staff: StaffUser) => {
-    setPendingStaff(prev => prev.filter(s => s.id !== staff.id));
-    toast.info(`Rejected verification request for ${staff.name}.`);
+    try {
+      await api.post(`/superadmin/reject/${staff.id}`);
+      setPendingStaff(prev => prev.filter(s => s.id !== staff.id));
+      toast.info(`Rejected verification request for ${staff.name}.`);
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to reject staff account');
+    }
   };
 
   const headerRef = useScrollAnimation();
@@ -202,48 +170,57 @@ export default function SuperAdminDashboardPage() {
         </div>
 
         <div className="space-y-3">
-          {pendingStaff.map((staff) => (
-            <div
-              key={staff.id}
-              className="p-4 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border)] flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-[var(--border-hover)] transition-all"
-            >
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl bg-amber-500/15 border border-amber-500/25 text-amber-700 dark:text-amber-300 flex items-center justify-center font-bold text-sm">
-                  {staff.name[0]}
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-sm text-[var(--text-primary)]">{staff.name}</span>
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-[var(--badge-bg)] border border-[var(--border)] text-[var(--text-secondary)] capitalize">
-                      {staff.role}
-                    </span>
-                  </div>
-                  <div className="text-xs text-[var(--text-tertiary)]">{staff.email}</div>
-                  <div className="text-[11px] text-indigo-600 dark:text-indigo-400 mt-0.5 font-medium">{staff.organization}</div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 self-end sm:self-center">
-                <button
-                  onClick={() => handleReject(staff)}
-                  className="px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-300 border border-rose-500/30 text-xs font-semibold transition-colors flex items-center gap-1"
-                >
-                  <XCircle className="h-3.5 w-3.5" /> Reject
-                </button>
-                <button
-                  onClick={() => handleApprove(staff)}
-                  className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-md transition-colors flex items-center gap-1"
-                >
-                  <CheckCircle2 className="h-3.5 w-3.5" /> Approve Staff
-                </button>
-              </div>
-            </div>
-          ))}
-
-          {pendingStaff.length === 0 && (
+          {loading ? (
             <div className="text-center py-8 text-[var(--text-tertiary)] text-xs">
-              No staff accounts currently pending verification.
+              <div className="inline-block h-5 w-5 border-2 border-rose-500 border-t-transparent rounded-full animate-spin mb-1.5" />
+              <div>Loading verification queue...</div>
             </div>
+          ) : (
+            <>
+              {pendingStaff.map((staff) => (
+                <div
+                  key={staff.id}
+                  className="p-4 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border)] flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-[var(--border-hover)] transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-xl bg-amber-500/15 border border-amber-500/25 text-amber-700 dark:text-amber-300 flex items-center justify-center font-bold text-sm">
+                      {(staff.name || 'S')[0]}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-sm text-[var(--text-primary)]">{staff.name}</span>
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-[var(--badge-bg)] border border-[var(--border)] text-[var(--text-secondary)] capitalize">
+                          {staff.role}
+                        </span>
+                      </div>
+                      <div className="text-xs text-[var(--text-tertiary)]">{staff.email}</div>
+                      <div className="text-[11px] text-indigo-600 dark:text-indigo-400 mt-0.5 font-medium">{staff.organization}</div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 self-end sm:self-center">
+                    <button
+                      onClick={() => handleReject(staff)}
+                      className="px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-300 border border-rose-500/30 text-xs font-semibold transition-colors flex items-center gap-1"
+                    >
+                      <XCircle className="h-3.5 w-3.5" /> Reject
+                    </button>
+                    <button
+                      onClick={() => handleApprove(staff)}
+                      className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-md transition-colors flex items-center gap-1"
+                    >
+                      <CheckCircle2 className="h-3.5 w-3.5" /> Approve Staff
+                    </button>
+                  </div>
+                </div>
+              ))}
+
+              {pendingStaff.length === 0 && (
+                <div className="text-center py-8 text-[var(--text-tertiary)] text-xs">
+                  No staff accounts currently pending verification.
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
@@ -266,21 +243,36 @@ export default function SuperAdminDashboardPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--border)] text-[var(--text-secondary)]">
-              {approvedStaff.map((staff) => (
-                <tr key={staff.id} className="hover:bg-[var(--table-hover)] transition-colors">
-                  <td className="py-3 font-semibold text-[var(--text-primary)]">
-                    <div>{staff.name}</div>
-                    <div className="text-[11px] text-[var(--text-tertiary)] font-normal">{staff.email}</div>
-                  </td>
-                  <td className="py-3 capitalize text-[var(--text-secondary)] font-medium">{staff.role}</td>
-                  <td className="py-3 text-[var(--text-tertiary)]">{staff.organization}</td>
-                  <td className="py-3 text-right">
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
-                      Active Verified
-                    </span>
+              {loading ? (
+                <tr>
+                  <td colSpan={4} className="py-8 text-center text-[var(--text-tertiary)]">
+                    <div className="inline-block h-5 w-5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mb-1.5" />
+                    <div>Loading verified staff members...</div>
                   </td>
                 </tr>
-              ))}
+              ) : approvedStaff.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="py-8 text-center text-[var(--text-tertiary)]">
+                    No verified staff members found.
+                  </td>
+                </tr>
+              ) : (
+                approvedStaff.map((staff) => (
+                  <tr key={staff.id} className="hover:bg-[var(--table-hover)] transition-colors">
+                    <td className="py-3 font-semibold text-[var(--text-primary)]">
+                      <div>{staff.name}</div>
+                      <div className="text-[11px] text-[var(--text-tertiary)] font-normal">{staff.email}</div>
+                    </td>
+                    <td className="py-3 capitalize text-[var(--text-secondary)] font-medium">{staff.role}</td>
+                    <td className="py-3 text-[var(--text-tertiary)]">{staff.organization}</td>
+                    <td className="py-3 text-right">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                        Active Verified
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

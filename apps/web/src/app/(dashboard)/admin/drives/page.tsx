@@ -36,13 +36,9 @@ export default function AdminDrivesPage() {
       const res = await api.get('/drives');
       const list = Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : []);
       setDrives(list);
-    } catch {
-      // Fallback sample drives
-      setDrives([
-        { id: '1', company: 'Google', role: 'Software Engineer', ctc: '₹28 LPA', date: '2026-10-18', venue: 'Virtual', status: 'Active', applicants_count: 84 },
-        { id: '2', company: 'Microsoft', role: 'Cloud Solutions Associate', ctc: '₹21 LPA', date: '2026-10-22', venue: 'Auditorium 1', status: 'Scheduled', applicants_count: 112 },
-        { id: '3', company: 'TechNova', role: 'Full Stack Engineer', ctc: '₹14 LPA', date: '2026-10-26', venue: 'Virtual', status: 'Active', applicants_count: 67 },
-      ]);
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to load drives');
+      setDrives([]);
     } finally {
       setLoading(false);
     }
@@ -126,52 +122,63 @@ export default function AdminDrivesPage() {
       </div>
 
       {/* Drives Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {filtered.map((d, idx) => (
-          <div key={d.id || idx} className="glass-panel p-5 rounded-2xl border border-[var(--border)] flex flex-col justify-between space-y-4 hover:border-indigo-500/40 transition-all shadow-sm">
-            <div className="space-y-3">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-indigo-500/15 border border-indigo-500/25 text-indigo-400 flex items-center justify-center font-bold text-sm">
-                    {(d.company || 'C')[0]}
+      {loading ? (
+        <div className="glass-panel p-12 rounded-2xl border border-[var(--border)] text-center text-[var(--text-tertiary)] text-xs">
+          <div className="inline-block h-6 w-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mb-2" />
+          <div>Loading recruitment drives from database...</div>
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className="glass-panel p-12 rounded-2xl border border-[var(--border)] text-center text-[var(--text-tertiary)] text-xs">
+          No recruitment drives found. Click &quot;Schedule New Drive&quot; to create one.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {filtered.map((d, idx) => (
+            <div key={d.id || idx} className="glass-panel p-5 rounded-2xl border border-[var(--border)] flex flex-col justify-between space-y-4 hover:border-indigo-500/40 transition-all shadow-sm">
+              <div className="space-y-3">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-xl bg-indigo-500/15 border border-indigo-500/25 text-indigo-400 flex items-center justify-center font-bold text-sm">
+                      {(d.company || 'C')[0]}
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-base text-[var(--text-primary)]">{d.company}</h3>
+                      <div className="text-xs text-indigo-400 font-medium">{d.role}</div>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-bold text-base text-[var(--text-primary)]">{d.company}</h3>
-                    <div className="text-xs text-indigo-400 font-medium">{d.role}</div>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">
+                    {d.status || 'Active'}
+                  </span>
+                </div>
+
+                <div className="space-y-1.5 text-xs text-[var(--text-secondary)] pt-1">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
+                    <span>Date: {d.date || d.drive_date || 'TBD'}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
+                    <span>Venue: {d.venue || 'Campus Auditorium'}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Users className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
+                    <span>Package: <strong className="text-[var(--text-primary)]">{d.ctc || d.package || 'Competitive'}</strong></span>
                   </div>
                 </div>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">
-                  {d.status || 'Active'}
+              </div>
+
+              <div className="pt-3 border-t border-[var(--border)] flex items-center justify-between text-xs">
+                <span className="text-[var(--text-secondary)] font-medium">
+                  {d.applicants_count !== undefined ? `${d.applicants_count} Registered` : 'Open for registrations'}
+                </span>
+                <span className="text-indigo-400 font-semibold flex items-center gap-1">
+                  <Bell className="h-3 w-3" /> Live Alert Active
                 </span>
               </div>
-
-              <div className="space-y-1.5 text-xs text-[var(--text-secondary)] pt-1">
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
-                  <span>Date: {d.date || d.drive_date || 'Oct 25, 2026'}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
-                  <span>Venue: {d.venue || 'Campus Auditorium'}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Users className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
-                  <span>Package: <strong className="text-[var(--text-primary)]">{d.ctc || d.package || '₹12 - ₹18 LPA'}</strong></span>
-                </div>
-              </div>
             </div>
-
-            <div className="pt-3 border-t border-[var(--border)] flex items-center justify-between text-xs">
-              <span className="text-[var(--text-secondary)] font-medium">
-                {d.applicants_count || 48} Registered
-              </span>
-              <span className="text-indigo-400 font-semibold flex items-center gap-1">
-                <Bell className="h-3 w-3" /> Live Alert Active
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Create Drive Modal */}
       {showModal && (

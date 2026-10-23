@@ -13,53 +13,10 @@ import {
   Eye, 
   EyeOff, 
   AlertCircle,
-  Sparkles,
   ShieldCheck
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-const DEMO_CREDENTIALS: Record<string, { role: string; email: string; pass: string; label: string; icon: string; color: string }> = {
-  student: {
-    role: 'student',
-    email: 'ananya.sharma@campusgrid.online',
-    pass: 'demo123',
-    label: 'Student',
-    icon: '🎓',
-    color: 'from-blue-600/20 to-indigo-600/20 border-indigo-500/30 text-indigo-300 hover:border-indigo-400/50',
-  },
-  admin: {
-    role: 'admin',
-    email: 'admin@campusgrid.online',
-    pass: 'demo123',
-    label: 'TPO Admin',
-    icon: '🏛️',
-    color: 'from-emerald-600/20 to-teal-600/20 border-emerald-500/30 text-emerald-300 hover:border-emerald-400/50',
-  },
-  recruiter: {
-    role: 'recruiter',
-    email: 'recruiter@campusgrid.online',
-    pass: 'demo123',
-    label: 'Recruiter',
-    icon: '💼',
-    color: 'from-purple-600/20 to-violet-600/20 border-purple-500/30 text-purple-300 hover:border-purple-400/50',
-  },
-  mentor: {
-    role: 'mentor',
-    email: 'mentor@campusgrid.online',
-    pass: 'demo123',
-    label: 'Mentor',
-    icon: '👨‍🏫',
-    color: 'from-amber-600/20 to-orange-600/20 border-amber-500/30 text-amber-300 hover:border-amber-400/50',
-  },
-  super_admin: {
-    role: 'super_admin',
-    email: 'superadmin@campusgrid.online',
-    pass: 'CampusSuper@2026',
-    label: 'Super Admin',
-    icon: '🛡️',
-    color: 'from-rose-600/20 to-pink-600/20 border-rose-500/30 text-rose-300 hover:border-rose-400/50',
-  },
-};
 
 function LoginForm() {
   const router = useRouter();
@@ -79,15 +36,6 @@ function LoginForm() {
       toast.success('Signed out of CampusGrid successfully.');
     }
   }, [searchParams]);
-
-  const fillDemo = (key: string) => {
-    const cred = DEMO_CREDENTIALS[key];
-    if (cred) {
-      setEmail(cred.email);
-      setPassword(cred.pass);
-      toast.info(`Loaded ${cred.label} demo credentials`, { duration: 2000 });
-    }
-  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -119,30 +67,6 @@ function LoginForm() {
         }
       }
     } catch (err: any) {
-      // Check for demo account fallback if API is offline or returns error
-      const normalizedEmail = email.trim().toLowerCase();
-      const demoUserMap: Record<string, any> = {
-        'admin@campusgrid.online': { id: 'usr-admin-01', name: 'Training & Placement Officer', email: 'admin@campusgrid.online', role: 'admin' },
-        'ananya.sharma@campusgrid.online': { id: 'usr-student-01', name: 'Ananya Sharma', email: 'ananya.sharma@campusgrid.online', role: 'student' },
-        'recruiter@campusgrid.online': { id: 'usr-recruiter-01', name: 'Priya Sharma (TechNova)', email: 'recruiter@campusgrid.online', role: 'recruiter' },
-        'mentor@campusgrid.online': { id: 'usr-mentor-01', name: 'Dr. Rajesh Khanna', email: 'mentor@campusgrid.online', role: 'mentor' },
-        'superadmin@campusgrid.online': { id: 'usr-super-01', name: 'Platform Super Admin', email: 'superadmin@campusgrid.online', role: 'super_admin' },
-      };
-
-      const fallback = demoUserMap[normalizedEmail];
-      if (fallback && (password === 'demo123' || password === 'CampusSuper@2026')) {
-        const demoToken = 'demo-jwt-' + Date.now();
-        setAuth(fallback, demoToken);
-        toast.success(`Welcome back, ${fallback.name}! 🎉`);
-
-        if (fallback.role === 'super_admin') router.push('/superadmin/dashboard');
-        else if (fallback.role === 'admin') router.push('/admin/dashboard');
-        else if (fallback.role === 'recruiter') router.push('/recruiter/dashboard');
-        else if (fallback.role === 'mentor') router.push('/mentor/dashboard');
-        else router.push('/student/dashboard');
-        return;
-      }
-
       const msg = err.message || 'Login failed';
       if (msg.toLowerCase().includes('not verified') || msg.toLowerCase().includes('verification')) {
         setUnverifiedEmail(email.trim());
@@ -289,39 +213,6 @@ function LoginForm() {
           </Link>
         </div>
 
-        {/* 1-Click Demo Quick-Fill */}
-        <div className="mt-6 pt-5 border-t border-white/8">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-              <Sparkles className="h-3 w-3 text-amber-400" />
-              Quick Demo Fill
-            </span>
-            <button
-              type="button"
-              onClick={() => { setEmail(''); setPassword(''); }}
-              className="text-[11px] text-slate-500 hover:text-slate-300 transition-colors"
-            >
-              Clear
-            </button>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            {Object.entries(DEMO_CREDENTIALS).map(([key, cred]) => (
-              <button
-                key={key}
-                id={`demo-${key}`}
-                type="button"
-                onClick={() => fillDemo(key)}
-                className={`px-2.5 py-2 rounded-xl bg-gradient-to-br ${cred.color} border text-xs font-semibold flex items-center gap-1.5 transition-all hover:scale-[1.03] active:scale-[0.98]`}
-              >
-                <span className="text-sm">{cred.icon}</span>
-                <span>{cred.label}</span>
-              </button>
-            ))}
-          </div>
-          <p className="text-[10px] text-slate-500 mt-2.5 text-center">
-            Demo accounts use password: <code className="font-mono text-indigo-400">demo123</code>
-          </p>
-        </div>
       </div>
     </div>
   );

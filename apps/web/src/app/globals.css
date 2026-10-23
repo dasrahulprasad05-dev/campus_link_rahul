@@ -474,6 +474,31 @@ body {
 .stagger-7 { animation-delay: 0.35s; }
 .stagger-8 { animation-delay: 0.40s; }
 
+/* ═════════════════════════════════════════════
+   DARK MODE SELECT / DROPDOWN FIX
+   Native <option> elements ignore CSS variables,
+   so we force dark background & light text.
+   ═════════════════════════════════════════════ */
+:is(.dark, :root.dark, html.dark, [data-theme="dark"]) select {
+  background-color: #0f172a !important;
+  color: #f1f5f9 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+:is(.dark, :root.dark, html.dark, [data-theme="dark"]) select option {
+  background-color: #0f172a !important;
+  color: #f1f5f9 !important;
+}
+
+:is(.dark, :root.dark, html.dark, [data-theme="dark"]) select option:checked {
+  background-color: #312e81 !important;
+  color: #e0e7ff !important;
+}
+
+:is(.dark, :root.dark, html.dark, [data-theme="dark"]) select option:hover {
+  background-color: #1e1b4b !important;
+}
+
 /* Input focus glow */
 input:focus, textarea:focus {
   outline: none;

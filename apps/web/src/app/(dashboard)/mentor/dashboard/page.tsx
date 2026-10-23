@@ -30,23 +30,23 @@ function AnimatedKPI({ value }: { value: string | number }) {
 }
 
 export default function MentorDashboardPage() {
-  const [data, setData] = useState<any>(null);
+  const [students, setStudents] = useState<any[]>([]);
+  const [interventions, setInterventions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
       try {
-        const res = await api.get('/dashboard/mentor');
-        setData(res?.data || res || {});
-      } catch {
-        setData({
-          kpis: [
-            { label: 'Assigned Mentees', value: 18, delta: 'All active' },
-            { label: 'Average Mentee Score', value: '76%', delta: '+4% this month' },
-            { label: 'Active Interventions', value: 3, delta: 'Requires review' },
-            { label: 'Completed Milestones', value: 42, delta: '12 completed this week' },
-          ],
-        });
+        const [stuRes, intRes] = await Promise.all([
+          api.get('/students').catch(() => null),
+          api.get('/students/all/interventions').catch(() => null),
+        ]);
+        const stuList = Array.isArray(stuRes?.data) ? stuRes.data : (Array.isArray(stuRes) ? stuRes : []);
+        const intList = Array.isArray(intRes?.data) ? intRes.data : (Array.isArray(intRes) ? intRes : []);
+        setStudents(stuList);
+        setInterventions(intList);
+      } catch (err) {
+        console.error(err);
       } finally {
         setLoading(false);
       }
@@ -54,19 +54,30 @@ export default function MentorDashboardPage() {
     load();
   }, []);
 
-  const kpis = data?.kpis || [
-    { label: 'Assigned Mentees', value: 18, delta: 'All active' },
-    { label: 'Average Mentee Score', value: '76%', delta: '+4% this month' },
-    { label: 'Active Interventions', value: 3, delta: 'Requires review' },
-    { label: 'Completed Milestones', value: 42, delta: '12 completed this week' },
+  const totalMentees = students.length;
+  const avgScore = totalMentees > 0
+    ? `${Math.round(students.reduce((acc, s) => acc + (Number(s.readiness_score || s.readiness) || 0), 0) / totalMentees)}%`
+    : '0%';
+  const activeInterventions = interventions.filter(i => i.status !== 'completed' && i.status !== 'Resolved').length;
+  const readyCount = students.filter(s => (Number(s.readiness_score || s.readiness) || 0) >= 75).length;
+
+  const kpis = [
+    { label: 'Assigned Mentees', value: totalMentees, delta: `${totalMentees} active profiles` },
+    { label: 'Average Mentee Score', value: avgScore, delta: 'Calculated across mentees' },
+    { label: 'Active Interventions', value: activeInterventions, delta: `${activeInterventions} in review` },
+    { label: 'Drive-Ready Students', value: readyCount, delta: `${readyCount} meeting benchmark` },
   ];
 
-  const mentees = [
-    { name: 'Ananya Sharma', role: 'Data Analyst & ML', readiness: 78, status: 'On Track', branch: 'CSE' },
-    { name: 'Rohan Verma', role: 'Embedded Systems', readiness: 54, status: 'At Risk', branch: 'ECE' },
-    { name: 'Priya Nair', role: 'Cloud Engineer', readiness: 88, status: 'Excellent', branch: 'IT' },
-    { name: 'Amit Kumar', role: 'Full Stack Developer', readiness: 48, status: 'At Risk', branch: 'ME' },
-  ];
+  const mentees = students.slice(0, 5).map(s => {
+    const score = Number(s.readiness_score || s.readiness) || 70;
+    return {
+      name: s.name || 'Mentee',
+      role: s.target_role || 'Software Engineering',
+      readiness: score,
+      status: score >= 80 ? 'Excellent' : score >= 60 ? 'On Track' : 'At Risk',
+      branch: s.branch || 'CSE',
+    };
+  });
 
   const headerRef = useScrollAnimation();
   const kpiRef = useScrollAnimation();
@@ -127,19 +138,30 @@ export default function MentorDashboardPage() {
           <div className="flex items-center justify-between">
             <h2 className="text-base font-bold text-[var(--text-primary)]">Assigned Mentees</h2>
             <Link href="/mentor/students" className="text-xs text-amber-600 dark:text-amber-400 hover:underline">
-              View All 18 Mentees →
+              View All {totalMentees} Mentees →
             </Link>
           </div>
 
           <div className="space-y-3">
-            {mentees.map((m, idx) => {
-              const isRisk = m.status === 'At Risk';
-              return (
-                <div key={idx} className="p-4 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border)] flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-xl bg-[var(--surface-hover)] border border-[var(--border)] text-[var(--text-primary)] flex items-center justify-center font-bold text-xs">
-                      {m.name.split(' ').map((n: string) => n[0]).join('')}
-                    </div>
+            {loading ? (
+              <div className="p-8 text-center text-[var(--text-tertiary)] text-xs">
+                <div className="inline-block h-5 w-5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mb-1.5" />
+                <div>Loading mentees from database...</div>
+              </div>
+            ) : mentees.length === 0 ? (
+              <div className="p-8 text-center text-[var(--text-tertiary)] text-xs">
+                No mentees currently assigned.
+              </div>
+            ) : (
+              mentees.map((m, idx) => {
+                const isRisk = m.status === 'At Risk';
+                const initials = (m.name || 'M').split(' ').map((n: string) => n[0]).join('').slice(0, 2);
+                return (
+                  <div key={idx} className="p-4 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border)] flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="h-9 w-9 rounded-xl bg-[var(--surface-hover)] border border-[var(--border)] text-[var(--text-primary)] flex items-center justify-center font-bold text-xs">
+                        {initials}
+                      </div>
                     <div>
                       <div className="font-semibold text-sm text-[var(--text-primary)]">{m.name}</div>
                       <div className="text-xs text-[var(--text-tertiary)]">{m.branch} • Target: {m.role}</div>
@@ -163,7 +185,7 @@ export default function MentorDashboardPage() {
                   </div>
                 </div>
               );
-            })}
+            }))}
           </div>
         </div>
 

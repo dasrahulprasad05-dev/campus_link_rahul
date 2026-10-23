@@ -6,16 +6,41 @@ import { Users, Search, AlertTriangle, CheckCircle2, Zap, Send } from 'lucide-re
 import { toast } from 'sonner';
 
 export default function MentorStudentsPage() {
-  const [mentees, setMentees] = useState<any[]>([
-    { id: '1', name: 'Ananya Sharma', email: 'ananya.sharma@campusgrid.online', branch: 'CSE', cgpa: 8.42, readiness: 78, goal: 'Data Analyst & ML', roadmap_progress: 68, last_action: 'Completed SQL practice' },
-    { id: '2', name: 'Rohan Verma', email: 'rohan.verma@campusgrid.online', branch: 'ECE', cgpa: 7.15, readiness: 54, goal: 'Embedded Software Engineer', roadmap_progress: 42, last_action: 'Needs DSA coaching' },
-    { id: '3', name: 'Priya Nair', email: 'priya.nair@campusgrid.online', branch: 'IT', cgpa: 8.90, readiness: 88, goal: 'Cloud Infrastructure Associate', roadmap_progress: 85, last_action: 'AWS certified' },
-    { id: '4', name: 'Amit Kumar', email: 'amit.kumar@campusgrid.online', branch: 'ME', cgpa: 6.80, readiness: 48, goal: 'Full Stack Engineer', roadmap_progress: 35, last_action: 'Overdue project submission' },
-  ]);
-
+  const [mentees, setMentees] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedMentee, setSelectedMentee] = useState<any | null>(null);
   const [note, setNote] = useState('');
   const [sending, setSending] = useState(false);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await api.get('/students');
+        const list = Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : []);
+        const formatted = list.map((s: any) => {
+          const score = Number(s.readiness_score || s.readiness) || 72;
+          return {
+            id: s.id,
+            name: s.name || 'Student Candidate',
+            email: s.email || '',
+            branch: s.branch || 'CSE',
+            cgpa: s.cgpa ? parseFloat(s.cgpa) : 8.0,
+            readiness: score,
+            goal: s.target_role || 'Software Engineer',
+            roadmap_progress: Math.min(100, Math.round(score * 0.9)),
+            last_action: score < 60 ? 'Requires foundational DSA practice' : 'Active milestone progress',
+          };
+        });
+        setMentees(formatted);
+      } catch (err: any) {
+        toast.error(err.message || 'Failed to load mentees');
+        setMentees([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
 
   const handleSendGuidance = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,16 +49,15 @@ export default function MentorStudentsPage() {
     setSending(true);
     try {
       await api.post(`/students/${selectedMentee.id}/interventions`, {
-        action: 'mentor_guidance',
-        note: note.trim(),
+        title: 'Mentor Guidance',
+        type: 'coaching',
+        notes: note.trim(),
       });
       toast.success(`Guidance sent to ${selectedMentee.name}! Instant alert delivered.`);
       setSelectedMentee(null);
       setNote('');
-    } catch {
-      toast.success(`Guidance recorded for ${selectedMentee.name}!`);
-      setSelectedMentee(null);
-      setNote('');
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to dispatch guidance');
     } finally {
       setSending(false);
     }
@@ -54,16 +78,27 @@ export default function MentorStudentsPage() {
       </div>
 
       {/* Grid of Mentees */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        {mentees.map((m) => {
-          const isRisk = m.readiness < 60;
-          return (
-            <div key={m.id} className="glass-card p-5 rounded-2xl border border-[var(--border)] space-y-4 hover:border-amber-500/40 transition-all">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-amber-500/15 border border-amber-500/25 text-amber-700 dark:text-amber-300 flex items-center justify-center font-bold text-sm">
-                    {m.name.split(' ').map((n: string) => n[0]).join('')}
-                  </div>
+      {loading ? (
+        <div className="glass-panel p-12 rounded-2xl border border-[var(--border)] text-center text-[var(--text-tertiary)] text-xs">
+          <div className="inline-block h-6 w-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mb-2" />
+          <div>Loading mentee roster from database...</div>
+        </div>
+      ) : mentees.length === 0 ? (
+        <div className="glass-panel p-12 rounded-2xl border border-[var(--border)] text-center text-[var(--text-tertiary)] text-xs">
+          No mentees assigned to your faculty advisory roster.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {mentees.map((m) => {
+            const isRisk = m.readiness < 60;
+            const initials = (m.name || 'M').split(' ').map((n: string) => n[0]).join('').slice(0, 2);
+            return (
+              <div key={m.id} className="glass-card p-5 rounded-2xl border border-[var(--border)] space-y-4 hover:border-amber-500/40 transition-all">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-xl bg-amber-500/15 border border-amber-500/25 text-amber-700 dark:text-amber-300 flex items-center justify-center font-bold text-sm">
+                      {initials}
+                    </div>
                   <div>
                     <h3 className="font-bold text-base text-[var(--text-primary)]">{m.name}</h3>
                     <div className="text-xs text-[var(--text-tertiary)]">{m.branch} • CGPA: {m.cgpa}</div>
@@ -118,6 +153,7 @@ export default function MentorStudentsPage() {
           );
         })}
       </div>
+      )}
 
       {/* Modal */}
       {selectedMentee && (

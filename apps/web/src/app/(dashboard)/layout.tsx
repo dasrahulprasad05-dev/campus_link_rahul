@@ -45,8 +45,8 @@ export default function DashboardLayout({
 
   return (
     <div className="dashboard-layout flex min-h-screen bg-[var(--background)] text-[var(--foreground)] antialiased overflow-x-hidden">
-      {/* Desktop Sidebar */}
-      <div className="hidden md:block">
+      {/* Desktop Sidebar — sticky so it stays visible on scroll */}
+      <div className="hidden md:flex h-screen sticky top-0">
         <Sidebar />
       </div>
 

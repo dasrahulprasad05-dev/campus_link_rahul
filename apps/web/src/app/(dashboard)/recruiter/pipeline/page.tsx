@@ -47,34 +47,21 @@ export default function RecruiterPipelinePage() {
     try {
       const res = await api.get('/applications');
       const list = Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : []);
-      if (list.length > 0) {
-        setApps(list.map((a: any) => ({
-          id: a.id,
-          student_name: a.student_name || 'Ananya Sharma',
-          job_title: a.job_title || a.job || 'Data Analyst & ML Associate',
-          cgpa: a.cgpa || 8.42,
-          status: a.status || 'interview',
-          current_round: a.current_round || a.round || 'Technical Round 1',
-          branch: a.branch || 'CSE',
-        })));
-      } else {
-        loadFallbackApps();
-      }
-    } catch {
-      loadFallbackApps();
+      setApps(list.map((a: any) => ({
+        id: a.id,
+        student_name: a.student_name || 'Candidate',
+        job_title: a.job_title || a.job || 'Role',
+        cgpa: parseFloat(a.cgpa) || 8.0,
+        status: (a.status || 'applied').toLowerCase() as any,
+        current_round: a.current_round || a.round || 'Application Received',
+        branch: a.branch || 'Engineering',
+      })));
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to load applications');
+      setApps([]);
     } finally {
       setLoading(false);
     }
-  };
-
-  const loadFallbackApps = () => {
-    setApps([
-      { id: '1', student_name: 'Ananya Sharma', job_title: 'Data Analyst & ML Associate', cgpa: 8.42, status: 'interview', current_round: 'Technical Round 2', branch: 'CSE' },
-      { id: '2', student_name: 'Sneha Rao', job_title: 'Full Stack Software Engineer', cgpa: 9.10, status: 'offered', current_round: 'Offer Letter Sent', branch: 'CSE' },
-      { id: '3', student_name: 'Priya Nair', job_title: 'Cloud Infrastructure Associate', cgpa: 8.90, status: 'interview', current_round: 'Technical Round 1', branch: 'IT' },
-      { id: '4', student_name: 'Rohan Verma', job_title: 'Data Analyst & ML Associate', cgpa: 7.15, status: 'shortlisted', current_round: 'Aptitude Test', branch: 'ECE' },
-      { id: '5', student_name: 'Amit Kumar', job_title: 'Full Stack Software Engineer', cgpa: 6.80, status: 'applied', current_round: 'Resume Screening', branch: 'ME' },
-    ]);
   };
 
   useEffect(() => {
@@ -133,9 +120,8 @@ export default function RecruiterPipelinePage() {
       });
       setApps(prev => prev.map(a => a.id === appId ? { ...a, status: nextStatus, current_round: nextRound } : a));
       toast.success(`Candidate advanced to ${nextRound}!`);
-    } catch {
-      setApps(prev => prev.map(a => a.id === appId ? { ...a, status: nextStatus, current_round: nextRound } : a));
-      toast.success(`Candidate advanced to ${nextRound}!`);
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to advance candidate');
     }
   };
 

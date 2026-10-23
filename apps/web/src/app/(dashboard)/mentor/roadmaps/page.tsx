@@ -1,11 +1,33 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { api } from '@/lib/api';
 import { Map, CheckCircle2, Clock, Check, Plus, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function MentorRoadmapsPage() {
-  const [selectedStudent, setSelectedStudent] = useState('Ananya Sharma');
+  const [students, setStudents] = useState<any[]>([]);
+  const [selectedStudent, setSelectedStudent] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await api.get('/students');
+        const list = Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : []);
+        setStudents(list);
+        if (list.length > 0) {
+          setSelectedStudent(list[0].name || 'Candidate');
+        }
+      } catch (err: any) {
+        toast.error(err.message || 'Failed to load students');
+        setStudents([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
 
   const roadmapMilestones = [
     { week: 1, title: 'Data Analysis Foundations', topics: ['Pandas syntax', 'Numpy arrays', 'Data cleaning pipelines'], status: 'completed' },
@@ -17,7 +39,7 @@ export default function MentorRoadmapsPage() {
   ];
 
   const approveMilestone = (week: number) => {
-    toast.success(`Week ${week} milestone approved for ${selectedStudent}!`);
+    toast.success(`Week ${week} milestone approved for ${selectedStudent || 'Student'}!`);
   };
 
   return (
@@ -40,9 +62,14 @@ export default function MentorRoadmapsPage() {
           onChange={(e) => setSelectedStudent(e.target.value)}
           className="px-3.5 py-2 rounded-xl bg-[var(--input-bg)] border border-[var(--border)] text-[var(--text-primary)] text-xs sm:text-sm focus:outline-none"
         >
-          <option value="Ananya Sharma">Ananya Sharma (Data Analyst)</option>
-          <option value="Rohan Verma">Rohan Verma (Embedded Systems)</option>
-          <option value="Priya Nair">Priya Nair (Cloud Ops)</option>
+          {students.map((s, idx) => (
+            <option key={s.id || idx} value={s.name}>
+              {s.name} ({s.target_role || s.branch || 'Engineering'})
+            </option>
+          ))}
+          {students.length === 0 && (
+            <option value="">No mentees available</option>
+          )}
         </select>
       </div>
 

@@ -3,12 +3,14 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { useSidebarStore } from '@/stores/useSidebarStore';
 import ThemeToggle from '@/components/ThemeToggle';
-import { Menu, Bell, Search, ShieldCheck, LogOut } from 'lucide-react';
+import { Menu, Bell, Search, ShieldCheck, LogOut, PanelLeftClose, PanelLeft } from 'lucide-react';
 
 export default function Topbar({ onToggleMobile }: { onToggleMobile?: () => void }) {
   const pathname = usePathname();
   const { user, getRole, unreadCount, logout } = useAuthStore();
+  const { collapsed, toggleSidebar } = useSidebarStore();
   const role = getRole();
 
   const roleLabels: Record<string, string> = {
@@ -27,8 +29,19 @@ export default function Topbar({ onToggleMobile }: { onToggleMobile?: () => void
 
   return (
     <header className="topbar-container h-16 bg-[var(--topbar-bg)] backdrop-blur-md border-b border-[var(--border)] px-4 sm:px-6 flex items-center justify-between sticky top-0 z-40">
-      {/* Left: Mobile Toggle & Breadcrumbs */}
-      <div className="flex items-center gap-3">
+      {/* Left: Sidebar Toggle, Mobile Toggle & Breadcrumbs */}
+      <div className="flex items-center gap-2">
+        {/* Desktop Sidebar Collapse/Expand Toggle */}
+        <button
+          onClick={toggleSidebar}
+          className="hidden md:flex p-2 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] rounded-lg hover:bg-[var(--surface-hover)] transition-colors"
+          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        >
+          {collapsed ? <PanelLeft className="h-5 w-5" /> : <PanelLeftClose className="h-5 w-5" />}
+        </button>
+
+        {/* Mobile Hamburger Toggle */}
         <button
           onClick={onToggleMobile}
           className="p-2 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] rounded-lg md:hidden hover:bg-[var(--surface-hover)] transition-colors"

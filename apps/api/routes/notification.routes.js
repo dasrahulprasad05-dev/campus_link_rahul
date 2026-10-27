@@ -9,12 +9,20 @@ const { authenticate } = require('../middleware/auth');
 const notifService = require('../services/notification.service');
 
 // GET /api/v1/notifications/stream — Real-Time SSE Stream
-router.get('/stream', authenticate, (req, res) => {
+// Supports token via query param (EventSource can't set Authorization headers)
+router.get('/stream', (req, res, next) => {
+  // If token is in query param, move it to Authorization header for authenticate middleware
+  if (req.query.token && !req.headers.authorization) {
+    req.headers.authorization = `Bearer ${req.query.token}`;
+  }
+  next();
+}, authenticate, (req, res) => {
   res.writeHead(200, {
     'Content-Type': 'text/event-stream',
     'Cache-Control': 'no-cache, no-transform',
     'Connection': 'keep-alive',
     'Access-Control-Allow-Origin': '*',
+    'X-Accel-Buffering': 'no', // Disable Nginx buffering for SSE
   });
 
   const cleanup = notifService.registerSSEConnection(req.user.id, res);

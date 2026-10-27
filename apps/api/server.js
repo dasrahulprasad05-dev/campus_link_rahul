@@ -77,7 +77,7 @@ app.use('/api/v1/notifications', notificationRoutes);
 app.use('/api/v1/whatsapp', whatsappRoutes);
 
 const { authenticate, authorize } = require('./middleware/auth');
-const { query, memoryDb } = require('./db/pool');
+const { query } = require('./db/pool');
 
 // Dashboard endpoint (strictly authenticated; returns role-specific aggregated data from DB)
 app.get('/api/v1/dashboard', authenticate, async (req, res) => {
@@ -394,6 +394,55 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', service: 'campusgrid-api' });
 });
 
+/* ---------- Global Search Endpoint ---------- */
+app.get('/api/v1/search', authenticate, async (req, res) => {
+  try {
+    const q = (req.query.q || '').trim();
+    if (!q || q.length < 2) {
+      return res.json({ success: true, data: { jobs: [], students: [], companies: [] } });
+    }
+
+    const searchPattern = `%${q}%`;
+
+    // Parallel search across all tables
+    const [jobsRes, studentsRes, companiesRes] = await Promise.all([
+      query(
+        `SELECT j.id, j.title, j.location, j.type, j.status, j.created_at, c.name AS company
+         FROM jobs j LEFT JOIN companies c ON j.company_id = c.id
+         WHERE j.title ILIKE $1 OR j.description ILIKE $1 OR c.name ILIKE $1
+         ORDER BY j.created_at DESC LIMIT 10`,
+        [searchPattern]
+      ),
+      ['admin', 'super_admin', 'mentor'].includes(req.user.role)
+        ? query(
+            `SELECT u.id, u.name, u.email, sp.branch, sp.target_role
+             FROM users u LEFT JOIN student_profiles sp ON u.id = sp.user_id
+             WHERE u.role = 'student' AND (u.name ILIKE $1 OR u.email ILIKE $1 OR sp.branch ILIKE $1)
+             ORDER BY u.created_at DESC LIMIT 10`,
+            [searchPattern]
+          )
+        : Promise.resolve({ rows: [] }),
+      query(
+        `SELECT id, name, industry, website FROM companies
+         WHERE name ILIKE $1 OR industry ILIKE $1
+         ORDER BY created_at DESC LIMIT 10`,
+        [searchPattern]
+      ),
+    ]);
+
+    res.json({
+      success: true,
+      data: {
+        jobs: jobsRes.rows,
+        students: studentsRes.rows,
+        companies: companiesRes.rows,
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: { code: 'SEARCH_ERROR', message: err.message } });
+  }
+});
+
 /* ---------- Serve Frontend (Static) ---------- */
 const webDir = path.join(__dirname, '../web');
 app.use(express.static(webDir));
@@ -405,6 +454,7 @@ app.get('*', (req, res) => {
   }
   res.sendFile(path.join(webDir, 'index.html'));
 });
+
 
 /* ---------- Global Error Handler ---------- */
 app.use((err, req, res, next) => {

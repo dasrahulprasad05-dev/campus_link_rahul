@@ -8,6 +8,7 @@ const router = require('express').Router();
 const { authenticate, authorize } = require('../middleware/auth');
 const driveRepo = require('../repositories/drive.repository');
 const notifService = require('../services/notification.service');
+const { createDriveRules, validate } = require('../middleware/validate');
 
 // GET /api/v1/drives — list placement drives
 router.get('/', async (req, res) => {
@@ -23,7 +24,7 @@ router.get('/', async (req, res) => {
 });
 
 // POST /api/v1/drives — create drive (Admin & Super Admin)
-router.post('/', authenticate, authorize('admin', 'super_admin'), async (req, res) => {
+router.post('/', authenticate, authorize('admin', 'super_admin'), createDriveRules, validate, async (req, res) => {
   try {
     const { company, role, date, drive_date, venue, min_cgpa, branches } = req.body;
     if (!company || !role) {

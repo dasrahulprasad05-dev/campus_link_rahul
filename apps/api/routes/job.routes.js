@@ -8,18 +8,22 @@ const router = require('express').Router();
 const { authenticate, authorize } = require('../middleware/auth');
 const jobRepo = require('../repositories/job.repository');
 const notifService = require('../services/notification.service');
+const { createJobRules, paginationRules, validate } = require('../middleware/validate');
 
-// GET /api/v1/jobs — list jobs with optional search and type filtering
+// GET /api/v1/jobs — list jobs with search, type filtering, and pagination
 router.get('/', async (req, res) => {
   try {
-    const jobs = await jobRepo.listJobs({
+    const result = await jobRepo.listJobs({
       search: req.query.search,
       type: req.query.type,
+      status: req.query.status,
+      page: req.query.page,
+      limit: req.query.limit,
     });
     res.json({
       success: true,
-      data: jobs || [],
-      meta: { total: (jobs || []).length }
+      data: result.jobs || [],
+      meta: { total: result.pagination.total, pagination: result.pagination }
     });
   } catch (err) {
     res.status(500).json({ success: false, error: { code: 'DB_ERROR', message: err.message } });
@@ -40,7 +44,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST /api/v1/jobs — create new job posting (Strictly Recruiter / Admin / Super Admin)
-router.post('/', authenticate, authorize('recruiter', 'admin', 'super_admin'), async (req, res) => {
+router.post('/', authenticate, authorize('recruiter', 'admin', 'super_admin'), createJobRules, validate, async (req, res) => {
   try {
     const { title, location, type, deadline, skills, description, min_cgpa, eligible_branches, max_backlogs } = req.body;
     const company = req.body.company || req.user.company || 'TechNova Solutions';

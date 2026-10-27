@@ -322,3 +322,16 @@ CREATE TABLE IF NOT EXISTS interventions (
 
 CREATE INDEX IF NOT EXISTS idx_interventions_student ON interventions(student_id);
 CREATE INDEX IF NOT EXISTS idx_interventions_mentor ON interventions(mentor_id);
+
+-- Full-Text Search Indexes (GIN on computed tsvectors for fast search)
+CREATE INDEX IF NOT EXISTS idx_jobs_search ON jobs USING GIN (
+  to_tsvector('english', COALESCE(title, '') || ' ' || COALESCE(description, ''))
+);
+
+CREATE INDEX IF NOT EXISTS idx_students_search ON student_profiles USING GIN (
+  to_tsvector('english', COALESCE(branch, '') || ' ' || COALESCE(target_role, ''))
+);
+
+CREATE INDEX IF NOT EXISTS idx_companies_search ON companies USING GIN (
+  to_tsvector('english', COALESCE(name, '') || ' ' || COALESCE(industry, ''))
+);

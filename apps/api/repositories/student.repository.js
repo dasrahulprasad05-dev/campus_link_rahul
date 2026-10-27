@@ -81,21 +81,52 @@ async function updateProfile(userId, updates) {
   return res.rows[0];
 }
 
-async function listStudents() {
-  const res = await query(`
+async function listStudents(filter = {}) {
+  const conditions = ["u.role = 'student'"];
+  const params = [];
+  let paramIdx = 1;
+
+  if (filter.search && filter.search.trim()) {
+    conditions.push(
+      `(u.name ILIKE $${paramIdx} OR u.email ILIKE $${paramIdx} OR sp.branch ILIKE $${paramIdx} OR sp.target_role ILIKE $${paramIdx})`
+    );
+    params.push(`%${filter.search.trim()}%`);
+    paramIdx++;
+  }
+
+  if (filter.branch) {
+    conditions.push(`sp.branch = $${paramIdx++}`);
+    params.push(filter.branch);
+  }
+
+  const whereClause = `WHERE ${conditions.join(' AND ')}`;
+
+  // Count total
+  const countSql = `SELECT COUNT(*) FROM users u LEFT JOIN student_profiles sp ON u.id = sp.user_id ${whereClause}`;
+  const countRes = await query(countSql, params);
+  const total = parseInt(countRes.rows[0]?.count || '0', 10);
+
+  // Pagination
+  const page = Math.max(1, parseInt(filter.page) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(filter.limit) || 25));
+  const offset = (page - 1) * limit;
+
+  const sql = `
     SELECT u.id, u.name, u.email, u.created_at, sp.branch, sp.cgpa, sp.readiness_score as readiness, sp.target_role,
            sp.skills, sp.phone, sp.linkedin, sp.github, sp.year, sp.reg_no
     FROM users u
     LEFT JOIN student_profiles sp ON u.id = sp.user_id
-    WHERE u.role = 'student'
-    ORDER BY 
-      CASE 
-        WHEN u.email LIKE '%@university.edu' THEN 1 
-        ELSE 0 
-      END ASC,
-      u.created_at DESC
-  `);
-  return res.rows;
+    ${whereClause}
+    ORDER BY u.created_at DESC
+    LIMIT $${paramIdx++} OFFSET $${paramIdx++}
+  `;
+  params.push(limit, offset);
+
+  const res = await query(sql, params);
+  return {
+    students: res.rows,
+    pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+  };
 }
 
 /**

@@ -10,9 +10,10 @@ const { generateToken, authenticate } = require('../middleware/auth');
 const userRepo = require('../repositories/user.repository');
 const studentRepo = require('../repositories/student.repository');
 const { sendVerificationEmail, sendWelcomeEmail, sendPasswordResetEmail, sendAdminApprovedEmail, sendStaffPendingNotification } = require('../services/email.service');
+const { registerRules, loginRules, validate } = require('../middleware/validate');
 
 // POST /api/v1/auth/register
-router.post('/register', async (req, res) => {
+router.post('/register', registerRules, validate, async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 

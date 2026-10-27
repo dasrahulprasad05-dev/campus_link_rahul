@@ -9,43 +9,64 @@ const { v4: uuidv4 } = require('uuid');
 const companyRepo = require('./company.repository');
 
 async function listJobs(filter = {}) {
-  const sql = `
-    SELECT 
-      j.id,
-      j.company_id,
-      j.recruiter_id,
-      j.title,
-      j.description,
-      j.location,
-      j.type,
-      j.skills_required,
-      j.skills_required AS skills,
-      j.min_cgpa,
-      j.deadline,
-      j.status,
-      j.created_at,
-      c.name AS company,
-      c.name AS company_name,
-      c.industry AS company_industry
-    FROM jobs j
-    LEFT JOIN companies c ON j.company_id = c.id
-    ORDER BY j.created_at DESC
-  `;
-  const res = await query(sql);
-  let jobs = res.rows;
+  const conditions = [];
+  const params = [];
+  let paramIdx = 1;
 
   if (filter.type) {
-    jobs = jobs.filter(j => j.type?.toLowerCase() === filter.type.toLowerCase());
+    conditions.push(`j.type = $${paramIdx++}`);
+    params.push(filter.type);
   }
-  if (filter.search) {
-    const s = filter.search.toLowerCase();
-    jobs = jobs.filter(j =>
-      j.title?.toLowerCase().includes(s) ||
-      j.company?.toLowerCase().includes(s) ||
-      (Array.isArray(j.skills_required) && j.skills_required.some(skill => skill.toLowerCase().includes(s)))
+
+  if (filter.status) {
+    conditions.push(`j.status = $${paramIdx++}`);
+    params.push(filter.status);
+  }
+
+  // Full-text search using PostgreSQL
+  let searchClause = '';
+  let orderClause = 'ORDER BY j.created_at DESC';
+  if (filter.search && filter.search.trim()) {
+    const searchTerm = filter.search.trim();
+    // Use ILIKE for flexible matching (works without tsvector setup)
+    conditions.push(
+      `(j.title ILIKE $${paramIdx} OR c.name ILIKE $${paramIdx} OR j.description ILIKE $${paramIdx} OR array_to_string(j.skills_required, ',') ILIKE $${paramIdx})`
     );
+    params.push(`%${searchTerm}%`);
+    paramIdx++;
   }
-  return jobs;
+
+  const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+  // Count total before pagination
+  const countSql = `SELECT COUNT(*) FROM jobs j LEFT JOIN companies c ON j.company_id = c.id ${whereClause}`;
+  const countRes = await query(countSql, params);
+  const total = parseInt(countRes.rows[0]?.count || '0', 10);
+
+  // Pagination
+  const page = Math.max(1, parseInt(filter.page) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(filter.limit) || 20));
+  const offset = (page - 1) * limit;
+
+  const sql = `
+    SELECT 
+      j.id, j.company_id, j.recruiter_id, j.title, j.description,
+      j.location, j.type, j.skills_required, j.skills_required AS skills,
+      j.min_cgpa, j.deadline, j.status, j.created_at,
+      c.name AS company, c.name AS company_name, c.industry AS company_industry
+    FROM jobs j
+    LEFT JOIN companies c ON j.company_id = c.id
+    ${whereClause}
+    ${orderClause}
+    LIMIT $${paramIdx++} OFFSET $${paramIdx++}
+  `;
+  params.push(limit, offset);
+
+  const res = await query(sql, params);
+  return {
+    jobs: res.rows,
+    pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+  };
 }
 
 async function getJobById(id) {

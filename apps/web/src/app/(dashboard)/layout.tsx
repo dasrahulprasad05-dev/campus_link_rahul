@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '@/components/layout/Sidebar';
 import Topbar from '@/components/layout/Topbar';
@@ -8,6 +8,7 @@ import MobileNav from '@/components/layout/MobileNav';
 import { useAuthStore } from '@/stores/useAuthStore';
 import WhatsAppFAB from '@/components/WhatsAppFAB';
 import { useThemeStore } from '@/stores/useThemeStore';
+import { useSSE } from '@/lib/useSSE';
 
 export default function DashboardLayout({
   children,
@@ -19,6 +20,22 @@ export default function DashboardLayout({
   const router = useRouter();
   const { token, isAuthenticated } = useAuthStore();
   const { theme } = useThemeStore();
+  const { notifications, isConnected } = useSSE();
+  const prevCountRef = useRef(0);
+
+  // Show toast for new real-time notifications
+  useEffect(() => {
+    if (notifications.length > prevCountRef.current && prevCountRef.current > 0) {
+      const latest = notifications[0];
+      if (latest?.title && typeof window !== 'undefined') {
+        // Use native Notification API if permitted, otherwise console
+        if ('Notification' in window && Notification.permission === 'granted') {
+          new Notification(latest.title, { body: latest.message || '' });
+        }
+      }
+    }
+    prevCountRef.current = notifications.length;
+  }, [notifications]);
 
   useEffect(() => {
     // Wait one tick for Zustand to hydrate from localStorage before checking auth

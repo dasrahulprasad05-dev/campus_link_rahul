@@ -14,16 +14,20 @@ const { query } = require('../db/pool');
 // GET /api/v1/students — list students (Admin / Mentor / Recruiter with role protection)
 router.get('/', authenticate, authorize('admin', 'mentor', 'recruiter'), async (req, res) => {
   try {
-    // Use the student_profiles query which now joins with users
-    const result = await query('SELECT * FROM student_profiles', []);
-    const students = result.rows || [];
+    const result = await studentRepo.listStudents({
+      search: req.query.search,
+      branch: req.query.branch,
+      page: req.query.page,
+      limit: req.query.limit,
+    });
+    const students = result.students || [];
     const isRecruiter = req.user.role === 'recruiter';
 
     const formatted = students.map(s => {
       const skills = Array.isArray(s.skills) ? s.skills : (typeof s.skills === 'string' && s.skills ? s.skills.split(',').map(x=>x.trim()).filter(Boolean) : []);
       const cgpa = s.cgpa ? parseFloat(s.cgpa) : null;
       
-      let readiness = Number(s.readiness_score || s.readiness) || 0;
+      let readiness = Number(s.readiness || s.readiness_score) || 0;
       if (readiness === 0 && (skills.length > 0 || cgpa)) {
         const skillsPts = Math.min(50, skills.length * 10);
         const academicPts = cgpa ? Math.min(30, Math.round((cgpa / 10) * 30)) : 0;
@@ -37,10 +41,10 @@ router.get('/', authenticate, authorize('admin', 'mentor', 'recruiter'), async (
         id: s.id,
         name: isRecruiter ? (s.name ? s.name.split(' ')[0] + ' ' + (s.name.split(' ')[1] ? s.name.split(' ')[1][0] + '.' : '') : 'Candidate') : (s.name || 'Student'),
         email: isRecruiter ? undefined : (s.email || ''),
-        branch: s.branch || 'Computer Science & Engineering',
+        branch: s.branch || '',
         cgpa: cgpa,
         readiness: readiness,
-        target_role: s.target_role || 'Software Engineer',
+        target_role: s.target_role || '',
         skills: skills,
         phone: isRecruiter ? undefined : (s.phone || ''),
         linkedin: isRecruiter ? undefined : (s.linkedin || ''),
@@ -55,7 +59,7 @@ router.get('/', authenticate, authorize('admin', 'mentor', 'recruiter'), async (
     res.json({
       success: true,
       data: formatted,
-      meta: { total: formatted.length }
+      meta: { total: result.pagination.total, pagination: result.pagination }
     });
   } catch (err) {
     console.error('[Students List Error]:', err);

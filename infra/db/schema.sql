@@ -304,3 +304,21 @@ CREATE INDEX IF NOT EXISTS idx_drive_candidates_student ON drive_candidates(stud
 CREATE INDEX IF NOT EXISTS idx_audit_log_entity ON audit_log(entity_type, entity_id);
 CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id, is_read, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_stage_progress_app ON candidate_stage_progress(application_id);
+
+-- Mentor Interventions (persistent student support actions)
+CREATE TABLE IF NOT EXISTS interventions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    student_id UUID REFERENCES student_profiles(id) ON DELETE CASCADE,
+    mentor_id UUID REFERENCES users(id),
+    mentor_name VARCHAR(120),
+    title VARCHAR(255) NOT NULL,
+    type VARCHAR(30) DEFAULT 'coaching',
+    priority VARCHAR(20) DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high', 'critical')),
+    status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'in-progress', 'completed', 'cancelled')),
+    notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_interventions_student ON interventions(student_id);
+CREATE INDEX IF NOT EXISTS idx_interventions_mentor ON interventions(mentor_id);

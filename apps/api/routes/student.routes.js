@@ -188,72 +188,99 @@ router.get('/:id/roadmap', authenticate, async (req, res) => {
   }
 });
 
-// ─── AI Intervention Engine (Mentor Support) ───────────────────
-const _interventions = [
-  { id: 'int-001', student_id: 'sp-004', mentor_id: 'a1b2c3d4-0001-0001-0001-000000000004', mentor_name: 'Faculty Mentor ABIT', title: 'Schedule 1-on-1 Placement Counseling', type: 'meeting', status: 'pending', priority: 'high', notes: 'Readiness dropped; needs resume rebuild and structured mock interview practice', created_at: new Date(Date.now() - 86400000 * 2).toISOString() },
-  { id: 'int-002', student_id: 'sp-006', mentor_id: 'a1b2c3d4-0001-0001-0001-000000000004', mentor_name: 'Faculty Mentor ABIT', title: 'Assign Web Dev Milestone & Practice Tasks', type: 'assignment', status: 'in-progress', priority: 'high', notes: 'Low technical readiness (45%). Assigned core JS + React fundamentals.', created_at: new Date(Date.now() - 86400000 * 4).toISOString() },
-  { id: 'int-003', student_id: 'sp-013', mentor_id: 'a1b2c3d4-0001-0001-0001-000000000004', mentor_name: 'Faculty Mentor ABIT', title: 'AI Mock Interview & Communication Coaching', type: 'mock-interview', status: 'completed', priority: 'medium', notes: 'Completed Business Analyst behavioral mock session with score 68/100.', created_at: new Date(Date.now() - 86400000 * 7).toISOString() }
-];
+// ─── Mentor Intervention Engine (Database-backed) ──────────────────
 
 // GET /api/v1/students/:id/interventions — list interventions
 router.get('/:id/interventions', authenticate, async (req, res) => {
-  const studentId = req.params.id;
-  const list = studentId === 'all'
-    ? _interventions
-    : _interventions.filter(i => i.student_id === studentId);
-  res.json({ success: true, data: list });
+  try {
+    const studentId = req.params.id;
+    let sql, params;
+    if (studentId === 'all') {
+      sql = 'SELECT * FROM interventions ORDER BY created_at DESC';
+      params = [];
+    } else {
+      sql = 'SELECT * FROM interventions WHERE student_id = $1 ORDER BY created_at DESC';
+      params = [studentId];
+    }
+    const result = await query(sql, params);
+    res.json({ success: true, data: result.rows || [] });
+  } catch (err) {
+    console.error('[Interventions List Error]:', err);
+    res.json({ success: true, data: [] });
+  }
 });
 
 // POST /api/v1/students/:id/interventions — create intervention
 router.post('/:id/interventions', authenticate, authorize('admin', 'mentor'), async (req, res) => {
-  const studentId = req.params.id;
-  const { title, type, priority, notes } = req.body;
-  if (!title) return res.status(400).json({ success: false, error: { message: 'Title is required' } });
+  try {
+    const studentId = req.params.id;
+    const { title, type, priority, notes } = req.body;
+    if (!title) return res.status(400).json({ success: false, error: { message: 'Title is required' } });
 
-  const newInt = {
-    id: `int-${Date.now()}`,
-    student_id: studentId,
-    mentor_id: req.user.id,
-    mentor_name: req.user.name || 'Faculty Mentor',
-    title,
-    type: type || 'coaching',
-    priority: priority || 'high',
-    status: 'pending',
-    notes: notes || '',
-    created_at: new Date().toISOString()
-  };
-  _interventions.unshift(newInt);
+    const result = await query(
+      `INSERT INTO interventions (student_id, mentor_id, mentor_name, title, type, priority, status, notes)
+       VALUES ($1, $2, $3, $4, $5, $6, 'pending', $7)
+       RETURNING *`,
+      [
+        studentId,
+        req.user.id,
+        req.user.name || 'Faculty Mentor',
+        title,
+        type || 'coaching',
+        priority || 'high',
+        notes || '',
+      ]
+    );
+    const newInt = result.rows[0];
 
-  // Dispatch real-time notice to student
-  notifService.createNotification({
-    userId: studentId,
-    type: 'mentor_feedback',
-    title: `📝 Mentor Guidance: ${newInt.title}`,
-    message: `${newInt.mentor_name} created an intervention for you: "${newInt.notes || newInt.title}". Priority: ${newInt.priority}.`,
-    metadata: { interventionId: newInt.id, mentorName: newInt.mentor_name },
-  }).catch(err => console.warn('[Notif] Mentor notification error:', err.message));
+    // Dispatch real-time notice to student
+    notifService.createNotification({
+      userId: studentId,
+      type: 'mentor_feedback',
+      title: `📝 Mentor Guidance: ${title}`,
+      message: `${req.user.name || 'Your mentor'} created an intervention for you: "${notes || title}". Priority: ${priority || 'high'}.`,
+      metadata: { interventionId: newInt?.id, mentorName: req.user.name },
+    }).catch(err => console.warn('[Notif] Mentor notification error:', err.message));
 
-  res.status(201).json({ success: true, data: newInt });
+    res.status(201).json({ success: true, data: newInt });
+  } catch (err) {
+    console.error('[Intervention Create Error]:', err);
+    res.status(500).json({ success: false, error: { code: 'DB_ERROR', message: err.message } });
+  }
 });
 
 // PATCH /api/v1/students/:id/interventions/:intId — update status
 router.patch('/:id/interventions/:intId', authenticate, authorize('admin', 'mentor'), async (req, res) => {
-  const item = _interventions.find(i => i.id === req.params.intId);
-  if (!item) return res.status(404).json({ success: false, error: { message: 'Intervention not found' } });
-  if (req.body.status) item.status = req.body.status;
-  if (req.body.notes) item.notes = req.body.notes;
-  item.updated_at = new Date().toISOString();
+  try {
+    const result = await query(
+      `UPDATE interventions
+       SET status = COALESCE($1, status),
+           notes = COALESCE($2, notes),
+           updated_at = NOW()
+       WHERE id = $3
+       RETURNING *`,
+      [req.body.status, req.body.notes, req.params.intId]
+    );
 
-  // Dispatch notice on update
-  notifService.createNotification({
-    userId: req.params.id,
-    type: 'mentor_feedback',
-    title: `✅ Mentor Update: ${item.title}`,
-    message: `${req.user.name || 'Your mentor'} marked your action item as "${item.status}": "${item.notes || ''}"`,
-    metadata: { interventionId: item.id },
-  }).catch(err => console.warn('[Notif] Mentor update notice error:', err.message));
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, error: { message: 'Intervention not found' } });
+    }
+    const item = result.rows[0];
 
-  res.json({ success: true, data: item });
+    // Dispatch notice on update
+    notifService.createNotification({
+      userId: req.params.id,
+      type: 'mentor_feedback',
+      title: `✅ Mentor Update: ${item.title}`,
+      message: `${req.user.name || 'Your mentor'} marked your action item as "${item.status}": "${item.notes || ''}"`,
+      metadata: { interventionId: item.id },
+    }).catch(err => console.warn('[Notif] Mentor update notice error:', err.message));
+
+    res.json({ success: true, data: item });
+  } catch (err) {
+    console.error('[Intervention Update Error]:', err);
+    res.status(500).json({ success: false, error: { code: 'DB_ERROR', message: err.message } });
+  }
 });
 
 module.exports = router;

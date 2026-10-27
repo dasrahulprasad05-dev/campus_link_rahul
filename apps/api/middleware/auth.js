@@ -19,26 +19,28 @@ function authenticate(req, res, next) {
   try {
     const token = header.slice(7);
 
-    // --- Preseeded Demo Tokens (kept for backward compatibility) ---
-    if (token.startsWith('jwt-superadmin-') || token === 'demo-superadmin-token' || token === 'demo_token_super_admin') {
-      req.user = { id: '00000000-0000-4000-8000-000000000001', role: 'super_admin', name: 'System Super Admin', email: 'superadmin@campusgrid.online' };
-      return next();
-    }
-    if (token.startsWith('jwt-admin-') || token === 'demo-admin-token' || token === 'demo_token_admin') {
-      req.user = { id: 'a1b2c3d4-0001-0001-0001-000000000002', role: 'admin', name: 'Training & Placement Office ABIT', email: 'admin@campusgrid.online' };
-      return next();
-    }
-    if (token.startsWith('jwt-mentor-') || token === 'demo-mentor-token' || token === 'demo_token_mentor') {
-      req.user = { id: 'a1b2c3d4-0001-0001-0001-000000000004', role: 'mentor', name: 'Faculty Mentor ABIT', email: 'mentor@campusgrid.online' };
-      return next();
-    }
-    if (token.startsWith('jwt-recruiter-') || token === 'demo-recruiter-token' || token === 'demo_token_recruiter') {
-      req.user = { id: 'a1b2c3d4-0001-0001-0001-000000000003', role: 'recruiter', name: 'TCS Campus Recruitment', email: 'recruiter@campusgrid.online' };
-      return next();
-    }
-    if (token.startsWith('jwt-student-') || token === 'demo-student-token' || token === 'demo_token_student') {
-      req.user = { id: 'u-student-general', role: 'student', name: 'Student', email: 'student@campusgrid.online' };
-      return next();
+    // --- Demo Tokens: ONLY allowed in development mode ---
+    if (process.env.NODE_ENV !== 'production') {
+      if (token.startsWith('jwt-superadmin-') || token === 'demo-superadmin-token' || token === 'demo_token_super_admin') {
+        req.user = { id: '00000000-0000-4000-8000-000000000001', role: 'super_admin', name: 'System Super Admin', email: 'superadmin@campusgrid.online' };
+        return next();
+      }
+      if (token.startsWith('jwt-admin-') || token === 'demo-admin-token' || token === 'demo_token_admin') {
+        req.user = { id: 'a1b2c3d4-0001-0001-0001-000000000002', role: 'admin', name: 'Training & Placement Office ABIT', email: 'admin@campusgrid.online' };
+        return next();
+      }
+      if (token.startsWith('jwt-mentor-') || token === 'demo-mentor-token' || token === 'demo_token_mentor') {
+        req.user = { id: 'a1b2c3d4-0001-0001-0001-000000000004', role: 'mentor', name: 'Faculty Mentor ABIT', email: 'mentor@campusgrid.online' };
+        return next();
+      }
+      if (token.startsWith('jwt-recruiter-') || token === 'demo-recruiter-token' || token === 'demo_token_recruiter') {
+        req.user = { id: 'a1b2c3d4-0001-0001-0001-000000000003', role: 'recruiter', name: 'TCS Campus Recruitment', email: 'recruiter@campusgrid.online' };
+        return next();
+      }
+      if (token.startsWith('jwt-student-') || token === 'demo-student-token' || token === 'demo_token_student') {
+        req.user = { id: 'a1b2c3d4-0001-0001-0001-000000000005', role: 'student', name: 'Student', email: 'student@campusgrid.online' };
+        return next();
+      }
     }
 
     req.user = jwt.verify(token, JWT_SECRET);

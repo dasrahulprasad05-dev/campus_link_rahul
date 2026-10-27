@@ -79,7 +79,7 @@ app.use('/api/v1/whatsapp', whatsappRoutes);
 const { authenticate, authorize } = require('./middleware/auth');
 const { query, memoryDb } = require('./db/pool');
 
-// Dashboard endpoint (strictly authenticated; returns role-specific aggregated data)
+// Dashboard endpoint (strictly authenticated; returns role-specific aggregated data from DB)
 app.get('/api/v1/dashboard', authenticate, async (req, res) => {
   let role = req.user.role || 'student';
   if (req.user.role === 'admin' && req.query.role) {
@@ -88,45 +88,72 @@ app.get('/api/v1/dashboard', authenticate, async (req, res) => {
 
   try {
     if (role === 'student') {
-      // Student dashboard: readiness + applications + jobs
-      const profile = memoryDb.tables.student_profiles.find(p => p.user_id === req.user.id);
-      // Applications reference student_profile.id (not user_id), so use profile.id with fallback
-      const studentProfileId = profile?.id || req.user.id;
-      const apps = memoryDb.tables.applications.filter(a => a.student_id === studentProfileId);
-      const offers = memoryDb.tables.offers.filter(o => o.student_id === studentProfileId);
-      const allJobs = memoryDb.tables.jobs.filter(j => j.status === 'active');
+      // Find student profile by user_id
+      const profileRes = await query(
+        'SELECT * FROM student_profiles WHERE user_id = $1', [req.user.id]
+      );
+      const profile = profileRes.rows[0];
+      const studentProfileId = profile?.id;
+
+      // Applications for this student
+      const appsRes = studentProfileId
+        ? await query(
+            `SELECT a.*, j.title AS job_title, c.name AS company_name
+             FROM applications a
+             LEFT JOIN jobs j ON a.job_id = j.id
+             LEFT JOIN companies c ON j.company_id = c.id
+             WHERE a.student_id = $1
+             ORDER BY a.applied_at DESC LIMIT 5`, [studentProfileId])
+        : { rows: [] };
+
+      // Offers for this student
+      const offersRes = studentProfileId
+        ? await query('SELECT * FROM offers WHERE student_id = $1', [studentProfileId])
+        : { rows: [] };
+
+      // Active jobs count
+      const jobsRes = await query(
+        "SELECT COUNT(*) AS count FROM jobs WHERE status = 'active'"
+      );
+
+      const apps = appsRes.rows;
+      const offers = offersRes.rows;
+      const activeJobsCount = parseInt(jobsRes.rows[0]?.count || '0', 10);
 
       const kpis = [
         { label: 'Readiness Score', value: `${profile?.readiness_score || 0}/100`, delta: '', icon: '📊', color: 'blue' },
         { label: 'Applications', value: String(apps.length), delta: `${apps.filter(a => a.status !== 'rejected').length} active`, icon: '📝', color: 'green' },
         { label: 'Offers', value: String(offers.length), delta: offers.filter(o => o.status === 'pending').length ? `${offers.filter(o => o.status === 'pending').length} pending` : '', icon: '🎉', color: 'orange' },
-        { label: 'Open Jobs', value: String(allJobs.length), delta: '', icon: '💼', color: 'purple' },
+        { label: 'Open Jobs', value: String(activeJobsCount), delta: '', icon: '💼', color: 'purple' },
       ];
 
       return res.json({
         success: true,
         kpis,
         readiness: { score: profile?.readiness_score || 0 },
-        applications: apps.slice(0, 5).map(a => {
-          const job = memoryDb.tables.jobs.find(j => j.id === a.job_id);
-          const comp = job ? memoryDb.tables.companies.find(c => c.id === job.company_id) : null;
-          return { id: a.id, job: job?.title || 'Unknown', company: comp?.name || '', status: a.status, round: a.current_round };
-        }),
-        jobs: allJobs.slice(0, 5).map(j => {
-          const comp = memoryDb.tables.companies.find(c => c.id === j.company_id);
-          return { id: j.id, title: j.title, company: comp?.name || '', location: j.location, type: j.type, deadline: j.deadline, skills: j.skills_required || [] };
-        }),
+        applications: apps.map(a => ({
+          id: a.id, job: a.job_title || 'Unknown', company: a.company_name || '', status: a.status, round: a.current_round
+        })),
+        jobs: [], // Student dashboard loads jobs separately via /jobs endpoint
       });
     }
 
     if (role === 'admin') {
-      const students = memoryDb.tables.student_profiles;
-      const jobs = memoryDb.tables.jobs;
-      const drives = memoryDb.tables.drives;
-      const offers = memoryDb.tables.offers;
-      const apps = memoryDb.tables.applications;
+      const [studentsRes, jobsRes, drivesRes, offersRes] = await Promise.all([
+        query('SELECT sp.*, u.name, u.email FROM student_profiles sp LEFT JOIN users u ON sp.user_id = u.id'),
+        query('SELECT * FROM jobs'),
+        query('SELECT d.*, c.name AS company_name FROM drives d LEFT JOIN companies c ON d.company_id = c.id'),
+        query('SELECT * FROM offers'),
+      ]);
+
+      const students = studentsRes.rows;
+      const jobs = jobsRes.rows;
+      const drives = drivesRes.rows;
+      const offers = offersRes.rows;
       const acceptedOffers = offers.filter(o => o.status === 'accepted');
-      const avgCTC = acceptedOffers.length > 0 ? (acceptedOffers.reduce((s, o) => s + parseFloat(o.ctc_lpa || 0), 0) / acceptedOffers.length).toFixed(2) : 0;
+      const avgCTC = acceptedOffers.length > 0
+        ? (acceptedOffers.reduce((s, o) => s + parseFloat(o.ctc_lpa || 0), 0) / acceptedOffers.length).toFixed(2)
+        : 0;
 
       return res.json({
         success: true,
@@ -138,41 +165,65 @@ app.get('/api/v1/dashboard', authenticate, async (req, res) => {
           { label: 'Avg CTC', value: `₹${avgCTC}L`, icon: '💰', color: 'emerald' },
           { label: 'Upcoming Drives', value: String(drives.filter(d => d.status !== 'completed').length), icon: '🏢', color: 'red' },
         ],
-        students: students.slice(0, 10).map(s => {
-          const user = memoryDb.tables.users.find(u => u.id === s.user_id);
-          return { id: s.id, name: user?.name || '', branch: s.branch, cgpa: s.cgpa, readiness: s.readiness_score, target_role: s.target_role };
-        }),
-        drives: drives.map(dr => {
-          const comp = memoryDb.tables.companies.find(c => c.id === dr.company_id);
-          return { id: dr.id, company: comp?.name || '', role: dr.role, date: dr.drive_date, venue: dr.venue, status: dr.status };
-        }),
+        students: students.slice(0, 10).map(s => ({
+          id: s.id, name: s.name || '', branch: s.branch, cgpa: s.cgpa, readiness: s.readiness_score, target_role: s.target_role
+        })),
+        drives: drives.map(dr => ({
+          id: dr.id, company: dr.company_name || '', role: dr.role, date: dr.drive_date, venue: dr.venue, status: dr.status
+        })),
       });
     }
 
     if (role === 'recruiter') {
-      const jobs = memoryDb.tables.jobs.filter(j => j.recruiter_id === req.user.id || j.recruiter_id === 'a1b2c3d4-0001-0001-0001-000000000003' || j.recruiter_id === 'u-recruiter-tcs');
-      const apps = memoryDb.tables.applications;
+      // Only show jobs posted by THIS recruiter
+      const jobsRes = await query(
+        `SELECT j.*, c.name AS company_name FROM jobs j
+         LEFT JOIN companies c ON j.company_id = c.id
+         WHERE j.recruiter_id = $1
+         ORDER BY j.created_at DESC`, [req.user.id]
+      );
+      const jobs = jobsRes.rows;
+      const jobIds = jobs.map(j => j.id);
+
+      // Get applications for this recruiter's jobs
+      let apps = [];
+      if (jobIds.length > 0) {
+        const appsRes = await query(
+          `SELECT a.*, j.title AS job_title, u.name AS student_name
+           FROM applications a
+           LEFT JOIN jobs j ON a.job_id = j.id
+           LEFT JOIN student_profiles sp ON a.student_id = sp.id
+           LEFT JOIN users u ON sp.user_id = u.id
+           WHERE a.job_id = ANY($1)`, [jobIds]
+        );
+        apps = appsRes.rows;
+      }
 
       return res.json({
         success: true,
         kpis: [
           { label: 'Active Jobs', value: String(jobs.filter(j => j.status === 'active').length), icon: '💼', color: 'blue' },
-          { label: 'Total Applications', value: String(apps.filter(a => jobs.some(j => j.id === a.job_id)).length), icon: '📝', color: 'green' },
-          { label: 'Shortlisted', value: String(apps.filter(a => a.status === 'shortlisted' && jobs.some(j => j.id === a.job_id)).length), icon: '✅', color: 'orange' },
-          { label: 'Interviewing', value: String(apps.filter(a => a.status === 'interview' && jobs.some(j => j.id === a.job_id)).length), icon: '🎤', color: 'purple' },
+          { label: 'Total Applications', value: String(apps.length), icon: '📝', color: 'green' },
+          { label: 'Shortlisted', value: String(apps.filter(a => a.status === 'shortlisted').length), icon: '✅', color: 'orange' },
+          { label: 'Interviewing', value: String(apps.filter(a => a.status === 'interview').length), icon: '🎤', color: 'purple' },
         ],
         jobs: jobs.map(j => {
-          const comp = memoryDb.tables.companies.find(c => c.id === j.company_id);
           const jobApps = apps.filter(a => a.job_id === j.id);
-          return { id: j.id, title: j.title, company: comp?.name || '', applicants: jobApps.length, shortlisted: jobApps.filter(a => a.status !== 'applied').length, status: j.status };
+          return { id: j.id, title: j.title, company: j.company_name || '', applicants: jobApps.length, shortlisted: jobApps.filter(a => a.status !== 'applied').length, status: j.status };
         }),
       });
     }
 
     if (role === 'mentor') {
-      const assignments = memoryDb.tables.mentor_assignments.filter(a => a.mentor_id === req.user.id || a.mentor_id === 'a1b2c3d4-0001-0001-0001-000000000004' || a.mentor_id === 'u-mentor-rahul');
-      const menteeIds = assignments.map(a => a.student_id);
-      const mentees = memoryDb.tables.student_profiles.filter(s => menteeIds.includes(s.id));
+      // Get mentor assignments for THIS mentor only
+      const assignRes = await query(
+        `SELECT ma.*, sp.readiness_score, sp.target_role, sp.branch, u.name
+         FROM mentor_assignments ma
+         LEFT JOIN student_profiles sp ON ma.student_id = sp.id
+         LEFT JOIN users u ON sp.user_id = u.id
+         WHERE ma.mentor_id = $1`, [req.user.id]
+      );
+      const mentees = assignRes.rows;
       const atRisk = mentees.filter(s => (s.readiness_score || 0) < 60);
 
       return res.json({
@@ -182,33 +233,36 @@ app.get('/api/v1/dashboard', authenticate, async (req, res) => {
           { label: 'At Risk', value: String(atRisk.length), icon: '⚠️', color: 'red' },
           { label: 'Avg Readiness', value: `${mentees.length ? Math.round(mentees.reduce((s, m) => s + (m.readiness_score || 0), 0) / mentees.length) : 0}`, icon: '📊', color: 'green' },
         ],
-        students: mentees.map(s => {
-          const user = memoryDb.tables.users.find(u => u.id === s.user_id);
-          return { id: s.id, name: user?.name || '', branch: s.branch, readiness: s.readiness_score, target_role: s.target_role, status: (s.readiness_score || 0) < 60 ? 'at-risk' : 'on-track' };
-        }),
+        students: mentees.map(s => ({
+          id: s.student_id, name: s.name || '', branch: s.branch, readiness: s.readiness_score, target_role: s.target_role, status: (s.readiness_score || 0) < 60 ? 'at-risk' : 'on-track'
+        })),
       });
     }
 
     if (role === 'super_admin') {
-      const users = memoryDb.tables.users;
+      const [usersRes, drivesRes, jobsRes] = await Promise.all([
+        query('SELECT id, name, email, role, email_verified, admin_verified, created_at FROM users'),
+        query('SELECT * FROM drives'),
+        query('SELECT * FROM jobs'),
+      ]);
+
+      const users = usersRes.rows;
       const pending = users.filter(u => ['admin', 'recruiter', 'mentor'].includes(u.role) && u.email_verified && !u.admin_verified);
       const approved = users.filter(u => ['admin', 'recruiter', 'mentor'].includes(u.role) && u.admin_verified);
       const students = users.filter(u => u.role === 'student');
-      const drives = memoryDb.tables.drives;
-      const jobs = memoryDb.tables.jobs;
 
       return res.json({
         success: true,
         kpis: [
           { label: 'Pending Approvals', value: String(pending.length), icon: '⏳', color: 'orange' },
           { label: 'Approved Staff', value: String(approved.length), icon: '✅', color: 'green' },
-          { label: 'Active Drives', value: String(drives.length), icon: '🏢', color: 'blue' },
+          { label: 'Active Drives', value: String(drivesRes.rows.length), icon: '🏢', color: 'blue' },
           { label: 'Total Students', value: String(students.length), icon: '🎓', color: 'purple' },
         ],
         pending,
         staff: approved,
-        drives,
-        jobs,
+        drives: drivesRes.rows,
+        jobs: jobsRes.rows,
       });
     }
 

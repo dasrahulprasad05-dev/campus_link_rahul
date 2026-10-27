@@ -43,9 +43,9 @@ function AnimatedNumber({ value, suffix = '' }: { value: number; suffix?: string
 
 export default function StudentDashboardPage() {
   const { user } = useAuthStore();
-  const [readinessScore, setReadinessScore] = useState(78);
-  const [activeJobsCount, setActiveJobsCount] = useState(8);
-  const [applicationsCount, setApplicationsCount] = useState(4);
+  const [readinessScore, setReadinessScore] = useState(0);
+  const [activeJobsCount, setActiveJobsCount] = useState(0);
+  const [applicationsCount, setApplicationsCount] = useState(0);
   const [recentDrives, setRecentDrives] = useState<any[]>([]);
 
   useEffect(() => {

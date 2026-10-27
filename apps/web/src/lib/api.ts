@@ -1,6 +1,6 @@
 import { useAuthStore } from '@/stores/useAuthStore';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://node-js-web-app.onrender.com/api/v1';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api/v1';
 
 interface RequestOptions extends RequestInit {
   params?: Record<string, string | number | boolean | undefined>;

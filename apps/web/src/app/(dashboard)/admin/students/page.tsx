@@ -57,8 +57,10 @@ export default function AdminStudentsPage() {
     setDispatching(true);
     try {
       await api.post(`/students/${selectedStudent.id}/interventions`, {
-        action: 'mentor_review',
-        note: interventionNote.trim(),
+        title: `Mentor Review: ${selectedStudent.name}`,
+        type: 'mentor_review',
+        priority: 'high',
+        notes: interventionNote.trim(),
       });
       toast.success(`Intervention assigned to ${selectedStudent.name}. Real-time notice sent!`);
       setSelectedStudent(null);
@@ -93,7 +95,7 @@ export default function AdminStudentsPage() {
     toast.success('Downloaded student records as CSV');
   };
 
-  const handleBulkImport = (e: React.FormEvent) => {
+  const handleBulkImport = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!csvText.trim()) return;
 
@@ -108,23 +110,41 @@ export default function AdminStudentsPage() {
       const cols = line.split(',').map(c => c.trim().replace(/^["']|["']$/g, ''));
       if (cols.length >= 2 && cols[0] && cols[1]) {
         newStudents.push({
-          id: `imp-${Date.now()}-${idx}`,
           name: cols[0],
           email: cols[1],
-          branch: cols[2] || 'CSE',
-          cgpa: parseFloat(cols[3]) || 8.0,
-          readiness: parseInt(cols[4], 10) || 75,
-          skills: cols[5] ? cols[5].split(';').map(s => s.trim()) : ['Python', 'DSA'],
+          branch: cols[2] || '',
+          cgpa: parseFloat(cols[3]) || 0,
+          skills: cols[5] ? cols[5].split(';').map(s => s.trim()) : [],
         });
         imported++;
       }
     });
 
     if (imported > 0) {
-      setStudents(prev => [...newStudents, ...prev]);
-      toast.success(`Successfully imported ${imported} students! Zero cloud storage used.`);
-      setShowImportModal(false);
-      setCsvText('');
+      try {
+        // Persist each student to backend via registration API
+        const results = await Promise.allSettled(
+          newStudents.map(s =>
+            api.post('/auth/register', {
+              name: s.name,
+              email: s.email,
+              password: 'CampusGrid@2026',
+              role: 'student',
+              branch: s.branch,
+            }).catch(() => null)
+          )
+        );
+        const succeeded = results.filter(r => r.status === 'fulfilled').length;
+        toast.success(`Imported ${succeeded} of ${imported} students to database.`);
+        setShowImportModal(false);
+        setCsvText('');
+        // Reload student list from backend
+        const res = await api.get('/students');
+        const list = Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : []);
+        setStudents(list);
+      } catch (err: any) {
+        toast.error(err.message || 'Failed to import students to backend');
+      }
     } else {
       toast.error('Could not parse student records. Please check the CSV format.');
     }
@@ -252,8 +272,8 @@ export default function AdminStudentsPage() {
                       <div className="font-semibold text-[var(--text-primary)]">{s.name}</div>
                       <div className="text-[11px] text-[var(--text-tertiary)]">{s.email}</div>
                     </td>
-                    <td className="py-3.5 px-4 text-[var(--text-secondary)] font-medium">{s.branch || 'CSE'}</td>
-                    <td className="py-3.5 px-4 font-mono font-semibold text-[var(--text-primary)]">{s.cgpa || '8.0'}</td>
+                    <td className="py-3.5 px-4 text-[var(--text-secondary)] font-medium">{s.branch || '—'}</td>
+                    <td className="py-3.5 px-4 font-mono font-semibold text-[var(--text-primary)]">{s.cgpa || '—'}</td>
                     <td className="py-3.5 px-4">
                       <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
                         score >= 80 
@@ -267,11 +287,14 @@ export default function AdminStudentsPage() {
                     </td>
                     <td className="py-3.5 px-4">
                       <div className="flex flex-wrap gap-1 max-w-xs">
-                        {(s.skills || ['Python', 'DSA']).slice(0, 3).map((sk: string, i: number) => (
+                        {(s.skills && s.skills.length > 0 ? s.skills : []).slice(0, 3).map((sk: string, i: number) => (
                           <span key={i} className="px-1.5 py-0.5 rounded bg-[var(--surface-elevated)] text-[10px] text-[var(--text-secondary)] border border-[var(--border)]">
                             {sk}
                           </span>
                         ))}
+                        {(!s.skills || s.skills.length === 0) && (
+                          <span className="text-[10px] text-[var(--text-tertiary)] italic">No skills listed</span>
+                        )}
                       </div>
                     </td>
                     <td className="py-3.5 px-4 text-right">

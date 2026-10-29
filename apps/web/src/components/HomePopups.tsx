@@ -1,7 +1,20 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { X, Youtube, Mail, ArrowRight, Star, Sparkles, PlayCircle } from 'lucide-react';
+import { X, Mail, ArrowRight, Star, Sparkles, PlayCircle } from 'lucide-react';
+
+/* Inline YouTube logo SVG (lucide-react version in this project lacks a Youtube export) */
+function YoutubeLogo({ size = 18, color = '#fff' }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.96A29 29 0 0023 12a29 29 0 00-.46-5.58z"
+        fill={color === '#fff' ? '#FF0000' : color}
+      />
+      <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="white" />
+    </svg>
+  );
+}
 
 /* ─────────────────────────────────────────────────
    Card 1 – YouTube Tutorial Popup
@@ -146,7 +159,7 @@ function TutorialCard({ onClose }: { onClose: () => void }) {
                   CampusGrid Full Walkthrough
                 </div>
                 <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <Youtube size={11} color="#ff4444" />
+                  <YoutubeLogo size={13} />
                   <span>YouTube Tutorial • Click to watch</span>
                 </div>
               </div>
@@ -199,7 +212,7 @@ function TutorialCard({ onClose }: { onClose: () => void }) {
               (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 24px rgba(239,68,68,0.35)';
             }}
           >
-            <Youtube size={18} />
+            <YoutubeLogo size={20} />
             Watch Tutorial on YouTube
           </a>
 

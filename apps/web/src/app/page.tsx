@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useThemeStore } from '@/stores/useThemeStore';
 import { useScrollAnimation, useCountUp, parseNumericValue } from '@/lib/hooks';
 import ThemeToggle from '@/components/ThemeToggle';
+import HomePopups from '@/components/HomePopups';
 import {
   Zap,
   ArrowRight,
@@ -144,6 +145,8 @@ export default function HomePage() {
 
   return (
     <div className="home-page min-h-screen bg-[var(--background)] text-[var(--foreground)] selection:bg-indigo-500 selection:text-white">
+      {/* ─── Onboarding Popups (Tutorial → Contact) ─── */}
+      <HomePopups />
       {/* ─── Navigation Header ─── */}
       <header className="home-header sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--header-bg)] backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useSidebarStore } from '@/stores/useSidebarStore';
@@ -51,7 +52,16 @@ export default function Topbar({ onToggleMobile }: { onToggleMobile?: () => void
         </button>
 
         <div className="hidden sm:flex items-center gap-2 text-xs font-medium text-[var(--text-tertiary)]">
-          <span className="text-[var(--text-secondary)] font-semibold">CampusGrid</span>
+          <Link href="/" className="flex items-center gap-1.5 hover:opacity-80 transition-opacity">
+            <Image
+              src="/logo-icon.png"
+              alt="CampusGrid"
+              width={18}
+              height={18}
+              className="h-4.5 w-4.5 object-contain"
+            />
+            <span className="text-[var(--text-secondary)] font-semibold">CampusGrid</span>
+          </Link>
           <span>/</span>
           <span className="text-indigo-600 dark:text-indigo-400 font-semibold">{breadcrumb}</span>
         </div>

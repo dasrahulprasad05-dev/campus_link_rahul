@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useThemeStore } from '@/stores/useThemeStore';
 import { useScrollAnimation, useCountUp, parseNumericValue } from '@/lib/hooks';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -150,16 +151,23 @@ export default function HomePage() {
       {/* ─── Navigation Header ─── */}
       <header className="home-header sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--header-bg)] backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/25">
-              <Zap className="h-5 w-5 text-white fill-white" />
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <div className="relative h-10 w-10 flex items-center justify-center transition-transform group-hover:scale-105">
+              <Image
+                src="/logo-icon.png"
+                alt="CampusGrid Logo"
+                width={40}
+                height={40}
+                className="h-10 w-10 object-contain drop-shadow-[0_2px_10px_rgba(0,162,238,0.35)]"
+                priority
+              />
             </div>
             <div>
               <span className="font-extrabold text-lg text-[var(--text-primary)] tracking-tight flex items-center gap-1.5">
-                CampusGrid <span className="text-[11px] font-black px-1.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">2.0</span>
+                CampusGrid <span className="text-[11px] font-black px-1.5 py-0.5 rounded-full bg-cyan-500/15 text-cyan-600 dark:text-cyan-300 border border-cyan-500/30">2.0</span>
               </span>
             </div>
-          </div>
+          </Link>
 
           <div className="flex items-center gap-3">
             <ThemeToggle />
@@ -283,7 +291,13 @@ export default function HomePage() {
       <footer className="border-t border-[var(--border)] bg-[var(--background-secondary)] py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[var(--text-tertiary)]">
           <div className="flex items-center gap-2">
-            <Zap className="h-4 w-4 text-indigo-400" />
+            <Image
+              src="/logo-icon.png"
+              alt="CampusGrid"
+              width={20}
+              height={20}
+              className="h-5 w-5 object-contain"
+            />
             <span className="font-semibold text-[var(--text-primary)]">CampusGrid 2.0</span>
             <span>— Explainable Campus Placement Intelligence</span>
           </div>

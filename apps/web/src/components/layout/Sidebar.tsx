@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useSidebarStore } from '@/stores/useSidebarStore';
@@ -141,19 +142,31 @@ export default function Sidebar({ onCloseMobile }: { onCloseMobile?: () => void 
       }`}
     >
       {/* Brand Header */}
-      <div className={`h-16 flex items-center border-b border-[var(--border)] gap-3 shrink-0 ${isCollapsed ? 'px-3 justify-center' : 'px-6'}`}>
-        <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/25 shrink-0">
-          <Zap className="h-5 w-5 text-white fill-white" />
+      <Link
+        href="/"
+        className={`h-16 flex items-center border-b border-[var(--border)] gap-3 shrink-0 group ${
+          isCollapsed ? 'px-3 justify-center' : 'px-5'
+        }`}
+      >
+        <div className="relative h-9 w-9 flex items-center justify-center shrink-0 transition-transform group-hover:scale-105">
+          <Image
+            src="/logo-icon.png"
+            alt="CampusGrid Logo"
+            width={36}
+            height={36}
+            className="h-9 w-9 object-contain drop-shadow-[0_2px_8px_rgba(0,162,238,0.3)]"
+            priority
+          />
         </div>
         {!isCollapsed && (
           <div className="min-w-0 overflow-hidden">
             <div className="font-bold text-base tracking-tight text-[var(--text-primary)] flex items-center gap-1.5 whitespace-nowrap">
-              CampusGrid <span className="text-[11px] font-extrabold px-1.5 py-0.5 rounded-full bg-indigo-500/15 text-indigo-600 dark:text-indigo-300 border border-indigo-500/30">2.0</span>
+              CampusGrid <span className="text-[11px] font-extrabold px-1.5 py-0.5 rounded-full bg-cyan-500/15 text-cyan-600 dark:text-cyan-300 border border-cyan-500/30">2.0</span>
             </div>
             <div className="text-[11px] text-[var(--text-tertiary)] font-medium whitespace-nowrap">Placement Intelligence</div>
           </div>
         )}
-      </div>
+      </Link>
 
       {/* Collapse Toggle (Desktop only) */}
       {!isMobile && (

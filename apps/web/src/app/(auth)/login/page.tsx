@@ -2,11 +2,11 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { api } from '@/lib/api';
 import { 
-  Zap, 
   ArrowRight, 
   Lock, 
   Mail, 
@@ -105,12 +105,19 @@ function LoginForm() {
       <div className="relative glass-panel p-6 sm:p-8 rounded-3xl border border-white/10 shadow-2xl shadow-black/40">
         {/* Header */}
         <div className="text-center mb-7">
-          <div className="h-14 w-14 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-500/30 animate-pulse-glow">
-            <Zap className="h-7 w-7 text-white fill-white" />
+          <div className="relative inline-flex items-center justify-center mx-auto mb-4 p-2.5 rounded-2xl bg-white/5 border border-white/10 shadow-xl shadow-cyan-500/10">
+            <Image
+              src="/logo-icon.png"
+              alt="CampusGrid Logo"
+              width={56}
+              height={56}
+              className="h-14 w-14 object-contain drop-shadow-[0_4px_16px_rgba(0,162,238,0.4)]"
+              priority
+            />
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Sign in</h1>
           <p className="text-xs sm:text-sm text-slate-400 mt-1.5">
-            Access your <span className="text-indigo-400 font-medium">CampusGrid</span> placement portal
+            Access your <span className="text-cyan-400 font-medium">CampusGrid</span> placement portal
           </p>
         </div>
 

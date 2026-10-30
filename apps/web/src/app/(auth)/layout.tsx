@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Zap } from 'lucide-react';
+import Image from 'next/image';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -30,14 +30,21 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
       {/* Top Navbar */}
       <header className="border-b border-white/5 bg-[#080c14]/60 backdrop-blur-xl px-4 sm:px-8 h-16 flex items-center justify-between relative z-10">
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/30 group-hover:shadow-indigo-500/50 transition-shadow">
-            <Zap className="h-5 w-5 text-white fill-white" />
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <div className="relative h-9 w-9 flex items-center justify-center transition-transform group-hover:scale-105">
+            <Image
+              src="/logo-icon.png"
+              alt="CampusGrid Logo"
+              width={36}
+              height={36}
+              className="h-9 w-9 object-contain drop-shadow-[0_2px_10px_rgba(0,162,238,0.35)]"
+              priority
+            />
           </div>
           <div>
             <span className="font-bold text-base text-white tracking-tight flex items-center gap-1.5">
               CampusGrid{' '}
-              <span className="text-[11px] font-black px-1.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+              <span className="text-[11px] font-black px-1.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
                 2.0
               </span>
             </span>
@@ -71,12 +78,13 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/5 py-4 px-4 text-center text-xs text-slate-500 relative z-10">
+      <footer className="border-t border-white/5 py-4 px-4 text-center text-xs text-slate-500 relative z-10 flex items-center justify-center gap-2 flex-wrap">
+        <Image src="/logo-icon.png" alt="CampusGrid" width={16} height={16} className="h-4 w-4 object-contain inline" />
         <span>CampusGrid 2.0 Placement Intelligence</span>
         <span className="mx-2 text-white/20">•</span>
         <span>100% Free Tier Architecture</span>
         <span className="mx-2 text-white/20">•</span>
-        <span className="text-indigo-400">campusgrid.online</span>
+        <span className="text-cyan-400">campusgrid.online</span>
       </footer>
     </div>
   );

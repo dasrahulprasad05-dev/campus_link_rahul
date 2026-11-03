@@ -111,9 +111,12 @@ app.get('/api/v1/dashboard', authenticate, async (req, res) => {
         ? await query('SELECT * FROM offers WHERE student_id = $1', [studentProfileId])
         : { rows: [] };
 
-      // Active jobs count
+      // Active jobs count and recent active jobs
       const jobsRes = await query(
         "SELECT COUNT(*) AS count FROM jobs WHERE status = 'active'"
+      );
+      const openJobsRes = await query(
+        "SELECT j.id, j.title, j.location, j.type, j.status, c.name AS company FROM jobs j LEFT JOIN companies c ON j.company_id = c.id WHERE j.status = 'active' ORDER BY j.created_at DESC LIMIT 10"
       );
 
       const apps = appsRes.rows;
@@ -134,7 +137,7 @@ app.get('/api/v1/dashboard', authenticate, async (req, res) => {
         applications: apps.map(a => ({
           id: a.id, job: a.job_title || 'Unknown', company: a.company_name || '', status: a.status, round: a.current_round
         })),
-        jobs: [], // Student dashboard loads jobs separately via /jobs endpoint
+        jobs: openJobsRes.rows,
       });
     }
 
@@ -343,7 +346,12 @@ app.post('/api/scheduler/check', handleSchedulerCheck);
 
 // New AI feature endpoints (proxy to Python service with robust local fallbacks)
 async function handleAIProxy(aiPath, req, res) {
-  const result = await proxyAI(aiPath, req.body);
+  const reqBody = { ...(req.body || {}) };
+  if (aiPath === '/v1/policy-qa' && !reqBody.question && reqBody.query) {
+    reqBody.question = reqBody.query;
+  }
+
+  const result = await proxyAI(aiPath, reqBody);
   if (result) return res.json({ success: true, data: result, ...result });
 
   // Graceful local fallbacks if Python microservice is offline
@@ -447,12 +455,16 @@ app.get('/api/v1/search', authenticate, async (req, res) => {
 const webDir = path.join(__dirname, '../web');
 app.use(express.static(webDir));
 
-// SPA fallback — serve index.html for non-API routes
+// SPA fallback — serve index.html for non-API routes if it exists
 app.get('*', (req, res) => {
   if (req.url.startsWith('/api/')) {
     return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Endpoint not found' } });
   }
-  res.sendFile(path.join(webDir, 'index.html'));
+  const indexPath = path.join(webDir, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    return res.sendFile(indexPath);
+  }
+  res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Resource not found' } });
 });
 
 

@@ -71,6 +71,36 @@ router.get('/', authenticate, authorize('admin', 'mentor', 'recruiter'), async (
   }
 });
 
+// GET /api/v1/students/me — get current student profile
+router.get('/me', authenticate, async (req, res) => {
+  try {
+    const profile = await studentRepo.getProfileByUserId(req.user.id);
+    if (!profile) {
+      return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Profile not found' } });
+    }
+    res.json({
+      success: true,
+      data: {
+        ...profile,
+        name: req.user.name || profile.name,
+        email: req.user.email || profile.email,
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: { code: 'DB_ERROR', message: err.message } });
+  }
+});
+
+// PATCH /api/v1/students/me — update current student profile
+router.patch('/me', authenticate, authorize('student', 'admin'), async (req, res) => {
+  try {
+    const updated = await studentRepo.updateProfile(req.user.id, req.body);
+    res.json({ success: true, data: updated });
+  } catch (err) {
+    res.status(500).json({ success: false, error: { code: 'DB_ERROR', message: err.message } });
+  }
+});
+
 // GET /api/v1/students/profile or /api/v1/students/:id/profile
 router.get('/:id/profile', authenticate, async (req, res) => {
   try {

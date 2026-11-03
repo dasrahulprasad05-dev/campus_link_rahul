@@ -27,6 +27,7 @@ export function useSSE() {
   const [isConnected, setIsConnected] = useState(false);
   const eventSourceRef = useRef<EventSource | null>(null);
   const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const connectRef = useRef<() => void>(() => {});
 
   const connect = useCallback(() => {
     if (!token || eventSourceRef.current) return;
@@ -60,15 +61,19 @@ export function useSSE() {
         es.close();
         eventSourceRef.current = null;
 
-        // Auto-reconnect after 5 seconds
+        // Auto-reconnect after 5 seconds via decoupled ref
         reconnectTimerRef.current = setTimeout(() => {
-          connect();
+          connectRef.current?.();
         }, 5000);
       };
     } catch (err) {
       console.warn('[SSE] Connection failed:', err);
     }
   }, [token]);
+
+  useEffect(() => {
+    connectRef.current = connect;
+  }, [connect]);
 
   useEffect(() => {
     connect();

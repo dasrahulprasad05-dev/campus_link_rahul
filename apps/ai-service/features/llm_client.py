@@ -52,11 +52,11 @@ def get_active_model(client) -> str:
 
     # 2. Preferred models ordered by preference
     preferred = [
-        "openai/gpt-oss-20b",
-        "openai/gpt-oss-120b",
-        "qwen/qwen3.8-27b",
         "llama-3.3-70b-versatile",
         "llama-3.1-8b-instant",
+        "mixtral-8x7b-32768",
+        "llama-3.2-11b-vision-preview",
+        "llama-3.2-3b-preview",
     ]
 
     try:
@@ -75,7 +75,7 @@ def get_active_model(client) -> str:
     except Exception as e:
         print(f"  [LLM] Model auto-discovery warning: {e}")
 
-    _selected_model = "openai/gpt-oss-20b"
+    _selected_model = "llama-3.3-70b-versatile"
     return _selected_model
 
 

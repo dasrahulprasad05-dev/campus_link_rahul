@@ -76,7 +76,16 @@ async function updateProfile(userId, updates) {
          updated_at = NOW()
      WHERE user_id = $8
      RETURNING *`,
-    [updates.target_role, updates.skills, updates.cgpa, updates.phone, updates.certifications, projCount, newReadiness, userId]
+    [
+      updates.target_role !== undefined ? updates.target_role : null,
+      updates.skills !== undefined ? updates.skills : null,
+      updates.cgpa !== undefined ? updates.cgpa : null,
+      updates.phone !== undefined ? updates.phone : null,
+      updates.certifications !== undefined ? updates.certifications : null,
+      projCount !== undefined ? projCount : null,
+      newReadiness,
+      userId
+    ]
   );
   return res.rows[0];
 }

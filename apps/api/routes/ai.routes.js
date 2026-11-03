@@ -54,7 +54,7 @@ async function generateRoadmapFallback(body = {}, req = null) {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: 'openai/gpt-oss-20b',
+          model: process.env.GROQ_MODEL || 'llama-3.3-70b-versatile',
           messages: [
             { role: 'system', content: 'You are an Indian campus placement coach specializing in personalized career roadmaps. Generate highly specific, actionable roadmaps based on the student profile. Return ONLY valid JSON with milestones array.' },
             { role: 'user', content: prompt }
@@ -139,17 +139,43 @@ function policyQAFallback(question = '') {
 }
 
 // Feature 3: Resume ↔ JD Matcher (NLP)
-router.post('/resume-match', async (req, res, next) => {
+async function handleResumeMatchRoute(req, res, next) {
   try {
+    const jobDescription = req.body.jobDescription || req.body.job_description || '';
+    const studentSkills = req.body.studentSkills || req.body.student_skills || [];
+    const resumeText = req.body.resumeText || req.body.resume_text || '';
+
     const result = await proxyToAI('/v1/resume-match', {
-      job_description: req.body.jobDescription || req.body.job_description || '',
-      student_skills: req.body.studentSkills || req.body.student_skills || [],
-    }, () => matchResumeToJD(req.body.jobDescription || '', req.body.studentSkills));
-    res.json({ success: true, data: result, ...result });
+      job_description: jobDescription,
+      student_skills: studentSkills,
+      resume_text: resumeText,
+    }, () => matchResumeToJD(jobDescription, studentSkills));
+
+    const score = result.match_score ?? result.score ?? 70;
+    const matched = result.matched_skills ?? result.matched ?? [];
+    const missing = result.missing_skills ?? result.missing ?? [];
+    const recommendations = result.recommendations ?? result.improvements ?? [];
+
+    const normalized = {
+      ...result,
+      match_score: score,
+      score: score,
+      matched_skills: matched,
+      matched: matched,
+      missing_skills: missing,
+      missing: missing,
+      recommendations: recommendations,
+      improvements: recommendations,
+    };
+
+    res.json({ success: true, data: normalized, ...normalized });
   } catch (err) {
     next(err);
   }
-});
+}
+
+router.post('/resume-match', handleResumeMatchRoute);
+router.post('/analyze-resume', handleResumeMatchRoute);
 
 // Feature 2: Skill-Gap Analysis (NLP)
 router.post('/skill-gap', async (req, res, next) => {
@@ -180,19 +206,49 @@ router.post('/readiness-score', async (req, res, next) => {
   }
 });
 
-// Feature 4: Mock Interview Answer Evaluation (NLP)
-router.post('/interview-feedback', async (req, res, next) => {
+// Feature 4: Mock Interview Answer Evaluation (NLP / STAR)
+async function handleInterviewFeedbackRoute(req, res, next) {
   try {
+    const answer = req.body.answer || '';
+    const question = req.body.question || '';
+    const role = req.body.role || req.body.target_role || req.body.targetRole || 'Software Engineer';
+    const category = req.body.category || req.body.rubric_category || 'behavioral';
+
     const result = await proxyToAI('/v1/interview-feedback', {
-      answer: req.body.answer || '',
-      question: req.body.question || '',
-      rubric_category: req.body.category || 'behavioral',
-    }, () => evaluateAnswer(req.body.answer, req.body.question));
-    res.json({ success: true, data: result, ...result });
+      answer,
+      question,
+      role,
+      target_role: role,
+      rubric_category: category,
+    }, () => evaluateAnswer(answer, question));
+
+    const score = result.score ?? 75;
+    const feedback = result.feedback || 'Good structured response.';
+    const modelAnswer = result.suggested_answer || result.model_answer || 'In my previous project, we encountered latency bottlenecks...';
+    const starAlignment = result.star_alignment || {
+      situation: result.strengths?.[0] || 'Clear context provided regarding the problem statement.',
+      task: 'Defined individual responsibility and objective.',
+      action: result.strengths?.[1] || 'Described technical steps and implementation strategy.',
+      result: result.improvements?.[0] || 'Strong answer with clear impact.',
+    };
+
+    const normalized = {
+      ...result,
+      score,
+      feedback,
+      suggested_answer: modelAnswer,
+      model_answer: modelAnswer,
+      star_alignment: starAlignment,
+    };
+
+    res.json({ success: true, data: normalized, ...normalized });
   } catch (err) {
     next(err);
   }
-});
+}
+
+router.post('/interview-feedback', handleInterviewFeedbackRoute);
+router.post('/evaluate-interview', handleInterviewFeedbackRoute);
 
 // Feature 5: Question Generator
 router.post('/generate-questions', async (req, res, next) => {
@@ -254,9 +310,10 @@ router.post('/at-risk', async (req, res, next) => {
 // Feature 10: Placement Policy Q&A (RAG)
 router.post('/policy-qa', async (req, res, next) => {
   try {
+    const questionText = req.body.question || req.body.query || '';
     const result = await proxyToAI('/v1/policy-qa', {
-      question: req.body.question || '',
-    }, () => policyQAFallback(req.body.question));
+      question: questionText,
+    }, () => policyQAFallback(questionText));
     res.json({ success: true, data: result, ...result });
   } catch (err) {
     next(err);

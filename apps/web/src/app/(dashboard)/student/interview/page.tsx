@@ -20,6 +20,7 @@ interface QuestionEvaluation {
   star_alignment: { situation: string; task: string; action: string; result: string };
   feedback: string;
   suggested_answer: string;
+  model_answer?: string;
 }
 
 export default function StudentInterviewPage() {
@@ -260,19 +261,19 @@ export default function StudentInterviewPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div className="p-3 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border)]">
                   <strong className="text-indigo-500 dark:text-indigo-300 block mb-1">Situation & Context:</strong>
-                  <span className="text-[var(--text-secondary)]">{evaluation.star_alignment.situation}</span>
+                  <span className="text-[var(--text-secondary)]">{evaluation.star_alignment?.situation || 'Context evaluated'}</span>
                 </div>
                 <div className="p-3 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border)]">
                   <strong className="text-indigo-500 dark:text-indigo-300 block mb-1">Task & Objective:</strong>
-                  <span className="text-[var(--text-secondary)]">{evaluation.star_alignment.task}</span>
+                  <span className="text-[var(--text-secondary)]">{evaluation.star_alignment?.task || 'Objective defined'}</span>
                 </div>
                 <div className="p-3 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border)]">
                   <strong className="text-indigo-500 dark:text-indigo-300 block mb-1">Action & Strategy:</strong>
-                  <span className="text-[var(--text-secondary)]">{evaluation.star_alignment.action}</span>
+                  <span className="text-[var(--text-secondary)]">{evaluation.star_alignment?.action || 'Actions described'}</span>
                 </div>
                 <div className="p-3 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border)]">
                   <strong className="text-indigo-500 dark:text-indigo-300 block mb-1">Result & Impact:</strong>
-                  <span className="text-[var(--text-secondary)]">{evaluation.star_alignment.result}</span>
+                  <span className="text-[var(--text-secondary)]">{evaluation.star_alignment?.result || 'Impact noted'}</span>
                 </div>
               </div>
 
@@ -285,7 +286,7 @@ export default function StudentInterviewPage() {
 
                 <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/25">
                   <h5 className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-1">Example Model Answer</h5>
-                  <p className="text-xs sm:text-sm text-[var(--text-primary)] leading-relaxed font-mono">{evaluation.suggested_answer}</p>
+                  <p className="text-xs sm:text-sm text-[var(--text-primary)] leading-relaxed font-mono">{evaluation.suggested_answer || evaluation.model_answer}</p>
                 </div>
               </div>
 

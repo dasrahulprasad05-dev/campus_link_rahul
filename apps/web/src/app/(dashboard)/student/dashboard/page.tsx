@@ -56,12 +56,15 @@ export default function StudentDashboardPage() {
         if (res && res.kpis) {
           const kpiMap: Record<string, any> = {};
           (res.kpis as any[]).forEach(k => { kpiMap[k.label] = k.value; });
+          if (kpiMap['Open Jobs']) {
+            setActiveJobsCount(parseInt(kpiMap['Open Jobs'], 10) || 0);
+          }
         }
         if (res && res.readiness) {
           const score = typeof res.readiness === 'object' ? res.readiness.score : res.readiness;
           if (typeof score === 'number') setReadinessScore(score);
         }
-        if (res && typeof res.jobs === 'object' && Array.isArray(res.jobs)) {
+        if (res && typeof res.jobs === 'object' && Array.isArray(res.jobs) && res.jobs.length > 0) {
           setActiveJobsCount(res.jobs.length);
         }
         if (res && typeof res.applications === 'object' && Array.isArray(res.applications)) {
